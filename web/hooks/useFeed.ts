@@ -21,6 +21,10 @@ interface FeedPost {
   comments_count: number
   reposts_count: number
   images: Array<{ id: string; image_url: string; display_order: number }> | null
+  is_repost?: boolean
+  reposted_by_user_id?: string | null
+  reposted_by_display_name?: string | null
+  repost_created_at?: string | null
 }
 
 interface UseFeedProps {
@@ -99,6 +103,10 @@ export default function useFeed({ type, currentUserId, worldId, profileUserId }:
       comments_count: Number(p.comments_count),
       reposts_count: Number(p.reposts_count),
       images: p.images as Array<{ id: string; image_url: string; display_order: number }> | null,
+      is_repost: p.is_repost as boolean | undefined,
+      reposted_by_user_id: p.reposted_by_user_id as string | null | undefined,
+      reposted_by_display_name: p.reposted_by_display_name as string | null | undefined,
+      repost_created_at: p.repost_created_at as string | null | undefined,
     }))
 
     setPosts(transformedPosts)
@@ -141,7 +149,7 @@ export default function useFeed({ type, currentUserId, worldId, profileUserId }:
 
     const cursor = type === 'recommended'
       ? String(posts.length)
-      : lastPost.created_at
+      : (lastPost.repost_created_at || lastPost.created_at)
 
     const data = await fetchPosts(cursor)
 
@@ -161,6 +169,10 @@ export default function useFeed({ type, currentUserId, worldId, profileUserId }:
       comments_count: Number(p.comments_count),
       reposts_count: Number(p.reposts_count),
       images: p.images as Array<{ id: string; image_url: string; display_order: number }> | null,
+      is_repost: p.is_repost as boolean | undefined,
+      reposted_by_user_id: p.reposted_by_user_id as string | null | undefined,
+      reposted_by_display_name: p.reposted_by_display_name as string | null | undefined,
+      repost_created_at: p.repost_created_at as string | null | undefined,
     }))
 
     setPosts((prev) => [...prev, ...newPosts])

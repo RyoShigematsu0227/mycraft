@@ -34,6 +34,9 @@ const errorTranslations: Record<string, string> = {
 
   // RLS errors
   'new row violates row-level security policy': '権限がありません',
+
+  // Custom trigger errors
+  'You must be a member of the world to create a post': 'このワールドに投稿するには、まずワールドに参加してください',
 }
 
 /**

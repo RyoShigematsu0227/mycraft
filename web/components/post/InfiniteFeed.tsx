@@ -87,7 +87,7 @@ export default function InfiniteFeed({
 
   return (
     <div>
-      {posts.map((post) => {
+      {posts.map((post, index) => {
         const images = (post.images || []).map((img) => ({
           id: img.id,
           post_id: post.id,
@@ -95,9 +95,14 @@ export default function InfiniteFeed({
           display_order: img.display_order,
         }))
 
+        // Use unique key for reposts (same post can appear multiple times)
+        const uniqueKey = post.is_repost
+          ? `${post.id}-repost-${post.reposted_by_user_id}-${index}`
+          : post.id
+
         return (
           <PostCard
-            key={post.id}
+            key={uniqueKey}
             post={{
               id: post.id,
               user_id: post.user_id,
@@ -138,6 +143,14 @@ export default function InfiniteFeed({
             isLiked={likedPosts.has(post.id)}
             isReposted={repostedPosts.has(post.id)}
             showWorldInfo={showWorldInfo}
+            repostedBy={
+              post.is_repost && post.reposted_by_user_id && post.reposted_by_display_name
+                ? {
+                    userId: post.reposted_by_user_id,
+                    displayName: post.reposted_by_display_name,
+                  }
+                : null
+            }
           />
         )
       })}

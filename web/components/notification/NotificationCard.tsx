@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { UserAvatar } from '@/components/user'
 import type { Database } from '@/types/database'
 
@@ -17,16 +18,14 @@ interface NotificationCardProps {
 }
 
 function getNotificationContent(notification: NotificationWithActor): {
-  message: string
+  actionText: string
   link: string
   icon: React.ReactNode
 } {
-  const actor = notification.actor
-
   switch (notification.type) {
     case 'like':
       return {
-        message: `${actor.display_name}があなたの投稿にいいねしました`,
+        actionText: 'があなたの投稿にいいねしました',
         link: `/posts/${notification.post_id}`,
         icon: (
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-pink-100 text-pink-500 dark:bg-pink-900/30">
@@ -38,7 +37,7 @@ function getNotificationContent(notification: NotificationWithActor): {
       }
     case 'comment':
       return {
-        message: `${actor.display_name}があなたの投稿にコメントしました`,
+        actionText: 'があなたの投稿にコメントしました',
         link: `/posts/${notification.post_id}`,
         icon: (
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-500 dark:bg-blue-900/30">
@@ -50,8 +49,8 @@ function getNotificationContent(notification: NotificationWithActor): {
       }
     case 'follow':
       return {
-        message: `${actor.display_name}があなたをフォローしました`,
-        link: `/users/${actor.user_id}`,
+        actionText: 'があなたをフォローしました',
+        link: `/users/${notification.actor.user_id}`,
         icon: (
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-500 dark:bg-green-900/30">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -62,7 +61,7 @@ function getNotificationContent(notification: NotificationWithActor): {
       }
     case 'repost':
       return {
-        message: `${actor.display_name}があなたの投稿をリポストしました`,
+        actionText: 'があなたの投稿をリポストしました',
         link: `/posts/${notification.post_id}`,
         icon: (
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-500 dark:bg-emerald-900/30">
@@ -74,7 +73,7 @@ function getNotificationContent(notification: NotificationWithActor): {
       }
     case 'comment_like':
       return {
-        message: `${actor.display_name}があなたのコメントにいいねしました`,
+        actionText: 'があなたのコメントにいいねしました',
         link: `/posts/${notification.post_id}`,
         icon: (
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-pink-100 text-pink-500 dark:bg-pink-900/30">
@@ -86,7 +85,7 @@ function getNotificationContent(notification: NotificationWithActor): {
       }
     default:
       return {
-        message: '通知があります',
+        actionText: '通知があります',
         link: '/',
         icon: null,
       }
@@ -111,7 +110,14 @@ function formatDate(dateString: string): string {
 }
 
 export default function NotificationCard({ notification, onClick }: NotificationCardProps) {
-  const { message, link, icon } = getNotificationContent(notification)
+  const router = useRouter()
+  const { actionText, link, icon } = getNotificationContent(notification)
+
+  const handleUserClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    router.push(`/users/${notification.actor.user_id}`)
+  }
 
   return (
     <Link
@@ -121,18 +127,28 @@ export default function NotificationCard({ notification, onClick }: Notification
         !notification.is_read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''
       }`}
     >
-      <UserAvatar
-        userId={notification.actor.user_id}
-        avatarUrl={notification.actor.avatar_url}
-        displayName={notification.actor.display_name}
-        size="md"
-        showLink={false}
-      />
+      <div onClick={handleUserClick} className="cursor-pointer">
+        <UserAvatar
+          userId={notification.actor.user_id}
+          avatarUrl={notification.actor.avatar_url}
+          displayName={notification.actor.display_name}
+          size="md"
+          showLink={false}
+        />
+      </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-2">
           {icon}
           <div className="min-w-0 flex-1">
-            <p className="text-sm text-gray-900 dark:text-gray-100">{message}</p>
+            <p className="text-sm text-gray-900 dark:text-gray-100">
+              <span
+                onClick={handleUserClick}
+                className="cursor-pointer font-medium hover:underline"
+              >
+                {notification.actor.display_name}
+              </span>
+              {actionText}
+            </p>
             <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
               {formatDate(notification.created_at)}
             </p>

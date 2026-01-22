@@ -502,7 +502,11 @@ export type Database = {
           created_at: string
           id: string
           images: Json
+          is_repost: boolean
           likes_count: number
+          repost_created_at: string
+          reposted_by_display_name: string
+          reposted_by_user_id: string
           reposts_count: number
           user_avatar_url: string
           user_display_name: string
@@ -522,7 +526,11 @@ export type Database = {
           created_at: string
           id: string
           images: Json
+          is_repost: boolean
           likes_count: number
+          repost_created_at: string
+          reposted_by_display_name: string
+          reposted_by_user_id: string
           reposts_count: number
           user_avatar_url: string
           user_display_name: string
