@@ -159,23 +159,23 @@ MVP開発のタスク一覧。フェーズ順に実装を進める。
 ## Phase 6: ワールド機能
 
 ### 6.1 ワールド作成・編集
-- [ ] ワールド作成ページ（/worlds/new）
-- [ ] ワールド編集ページ（/worlds/{world_id}/edit）
-- [ ] WorldForm コンポーネント
-- [ ] ワールドアイコンアップロード
+- [x] ワールド作成ページ（/worlds/new）
+- [x] ワールド編集ページ（/worlds/{world_id}/edit）
+- [x] WorldForm コンポーネント
+- [x] ワールドアイコンアップロード
 
 ### 6.2 ワールドページ
-- [ ] ワールド一覧ページ（/worlds）
-- [ ] ワールド詳細ページ（/worlds/{world_id}）
-- [ ] WorldCard コンポーネント
-- [ ] WorldIcon コンポーネント
-- [ ] メンバー一覧ページ（/worlds/{world_id}/members）
-- [ ] MemberList コンポーネント
+- [x] ワールド一覧ページ（/worlds）
+- [x] ワールド詳細ページ（/worlds/{world_id}）
+- [x] WorldCard コンポーネント
+- [x] WorldIcon コンポーネント
+- [x] メンバー一覧ページ（/worlds/{world_id}/members）
+- [x] MemberList コンポーネント
 
 ### 6.3 ワールド参加
-- [ ] JoinButton コンポーネント
-- [ ] useWorldMembership フック
-- [ ] 参加・脱退処理
+- [x] JoinButton コンポーネント
+- [x] useWorldMembership フック
+- [x] 参加・脱退処理
 
 ---
 
@@ -301,7 +301,7 @@ MVP開発のタスク一覧。フェーズ順に実装を進める。
 | Phase 3: 認証機能 | 完了 |
 | Phase 4: 共通レイアウト・UI | 完了 |
 | Phase 5: ユーザー機能 | 完了 |
-| Phase 6: ワールド機能 | 未着手 |
+| Phase 6: ワールド機能 | 完了 |
 | Phase 7: 投稿機能 | 未着手 |
 | Phase 8: コメント機能 | 未着手 |
 | Phase 9: フィード機能 | 未着手 |
