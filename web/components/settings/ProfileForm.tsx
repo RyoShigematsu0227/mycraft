@@ -29,6 +29,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
   const [avatarRemoved, setAvatarRemoved] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
 
   const handleAvatarChange = (file: File | null) => {
     setAvatarFile(file)
@@ -48,6 +49,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setSuccess(false)
 
     try {
       let newAvatarUrl = user.avatar_url
@@ -104,7 +106,13 @@ export default function ProfileForm({ user }: ProfileFormProps) {
 
       if (updateError) throw updateError
 
+      setSuccess(true)
+      setAvatarFile(null)
+      setAvatarRemoved(false)
       router.refresh()
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError(err instanceof Error ? err.message : '更新に失敗しました')
     } finally {
@@ -117,6 +125,12 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       {error && (
         <div className="rounded-md bg-red-50 p-4 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
           {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="rounded-md bg-green-50 p-4 text-sm text-green-600 dark:bg-green-900/20 dark:text-green-400">
+          プロフィールを保存しました
         </div>
       )}
 

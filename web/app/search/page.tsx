@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Layout } from '@/components/layout'
 import { SearchBar, SearchResults } from '@/components/search'
 import { BackButton } from '@/components/ui'
@@ -8,9 +9,19 @@ import useSearch from '@/hooks/useSearch'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function SearchPage() {
+  const searchParams = useSearchParams()
+  const initialQuery = searchParams.get('q') || ''
   const { user } = useAuth()
   const { users, worlds, posts, loading, search } = useSearch()
   const [hasSearched, setHasSearched] = useState(false)
+
+  // Search with initial query from URL
+  useEffect(() => {
+    if (initialQuery) {
+      setHasSearched(true)
+      search(initialQuery)
+    }
+  }, [initialQuery, search])
 
   const handleSearch = useCallback((query: string) => {
     if (query.trim()) {
@@ -27,7 +38,7 @@ export default function SearchPage() {
           <div className="flex items-center gap-4">
             <BackButton />
             <div className="flex-1">
-              <SearchBar onSearch={handleSearch} autoFocus />
+              <SearchBar initialQuery={initialQuery} onSearch={handleSearch} autoFocus />
             </div>
           </div>
         </div>
