@@ -1,11 +1,13 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { UserAvatar } from '@/components/user'
 import { WorldIcon } from '@/components/world'
 import PostImages from './PostImages'
 import LikeButton from './LikeButton'
 import RepostButton from './RepostButton'
+import { usePostStatsStore } from '@/lib/stores'
 import type { Database } from '@/types/database'
 
 type Post = Database['public']['Tables']['posts']['Row']
@@ -55,6 +57,25 @@ export default function PostCard({
   isReposted = false,
   showWorldInfo = true,
 }: PostCardProps) {
+  const stats = usePostStatsStore((state) => state.stats[post.id])
+  const initPost = usePostStatsStore((state) => state.initPost)
+
+  // Initialize store with all counts
+  useEffect(() => {
+    if (!stats) {
+      initPost(post.id, {
+        likeCount,
+        repostCount,
+        commentCount,
+        isLiked,
+        isReposted,
+      })
+    }
+  }, [post.id, likeCount, repostCount, commentCount, isLiked, isReposted, stats, initPost])
+
+  // Use store values if available, fallback to props
+  const displayCommentCount = stats?.commentCount ?? commentCount
+
   return (
     <article className="border-b border-gray-200 bg-white px-4 py-4 dark:border-gray-700 dark:bg-gray-900">
       <div className="flex gap-3">
@@ -136,7 +157,7 @@ export default function PostCard({
                   d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                 />
               </svg>
-              {commentCount > 0 && <span>{commentCount}</span>}
+              {displayCommentCount > 0 && <span>{displayCommentCount}</span>}
             </Link>
             <RepostButton
               postId={post.id}

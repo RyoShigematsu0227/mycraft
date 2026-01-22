@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { usePostStatsStore } from '@/lib/stores'
 
 interface UseLikeOptions {
   postId: string
-  currentUserId: string
+  currentUserId?: string
   initialLiked?: boolean
   initialCount?: number
 }
@@ -23,63 +25,69 @@ export function useLike({
   initialLiked = false,
   initialCount = 0,
 }: UseLikeOptions): UseLikeReturn {
-  const [isLiked, setIsLiked] = useState(initialLiked)
-  const [likeCount, setLikeCount] = useState(initialCount)
-  const [isLoading, setIsLoading] = useState(!initialLiked && !!currentUserId)
-  const supabase = createClient()
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
-  // Check if already liked
+  const stats = usePostStatsStore((state) => state.stats[postId])
+  const initPost = usePostStatsStore((state) => state.initPost)
+  const toggleLikeStore = usePostStatsStore((state) => state.toggleLike)
+  const rollbackLike = usePostStatsStore((state) => state.rollbackLike)
+
+  // Initialize store with initial values if not already set
   useEffect(() => {
-    if (initialLiked || !currentUserId) {
-      setIsLoading(false)
+    if (!stats) {
+      initPost(postId, {
+        likeCount: initialCount,
+        repostCount: 0,
+        commentCount: 0,
+        isLiked: initialLiked,
+        isReposted: false,
+      })
+    }
+  }, [postId, initialCount, initialLiked, stats, initPost])
+
+  const isLiked = stats?.isLiked ?? initialLiked
+  const likeCount = stats?.likeCount ?? initialCount
+
+  const toggleLike = useCallback(async () => {
+    if (!currentUserId) {
+      router.push('/login')
       return
     }
 
-    const checkLikeStatus = async () => {
-      const { data } = await supabase
-        .from('likes')
-        .select('id')
-        .eq('post_id', postId)
-        .eq('user_id', currentUserId)
-        .single()
+    if (isLoading) return
 
-      setIsLiked(!!data)
-      setIsLoading(false)
-    }
-
-    checkLikeStatus()
-  }, [postId, currentUserId, initialLiked, supabase])
-
-  const toggleLike = useCallback(async () => {
-    if (!currentUserId || isLoading) return
-
+    // Optimistic update via store
+    const { wasLiked, prevCount } = toggleLikeStore(postId)
     setIsLoading(true)
 
     try {
-      if (isLiked) {
-        await supabase
+      const supabase = createClient()
+
+      if (wasLiked) {
+        const { error } = await supabase
           .from('likes')
           .delete()
           .eq('post_id', postId)
           .eq('user_id', currentUserId)
 
-        setIsLiked(false)
-        setLikeCount((prev) => Math.max(0, prev - 1))
+        if (error) throw error
       } else {
-        await supabase.from('likes').insert({
+        const { error } = await supabase.from('likes').insert({
           post_id: postId,
           user_id: currentUserId,
         })
 
-        setIsLiked(true)
-        setLikeCount((prev) => prev + 1)
+        if (error) throw error
       }
     } catch (error) {
+      // Revert optimistic update on error
       console.error('Like toggle error:', error)
+      rollbackLike(postId, wasLiked, prevCount)
     } finally {
       setIsLoading(false)
     }
-  }, [postId, currentUserId, isLiked, isLoading, supabase])
+  }, [postId, currentUserId, isLoading, router, toggleLikeStore, rollbackLike])
 
   return { isLiked, likeCount, isLoading, toggleLike }
 }

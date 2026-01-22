@@ -17,7 +17,7 @@ export default function RepostButton({
 }: RepostButtonProps) {
   const { isReposted, repostCount, isLoading, toggleRepost } = useRepost({
     postId,
-    currentUserId: currentUserId || '',
+    currentUserId,
     initialReposted,
     initialCount,
   })
@@ -25,7 +25,7 @@ export default function RepostButton({
   return (
     <button
       onClick={toggleRepost}
-      disabled={!currentUserId || isLoading}
+      disabled={isLoading}
       className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition ${
         isReposted
           ? 'text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20'

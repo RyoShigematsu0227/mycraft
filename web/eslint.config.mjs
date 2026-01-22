@@ -15,6 +15,13 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      // Disable overly aggressive rule about setState in useEffect
+      // Fetching data on mount in useEffect is a valid pattern
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

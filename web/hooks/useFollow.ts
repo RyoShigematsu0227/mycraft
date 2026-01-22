@@ -1,11 +1,14 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useUserStatsStore } from '@/lib/stores'
 
 interface UseFollowOptions {
   targetUserId: string
-  currentUserId: string
+  currentUserId?: string
+  initialFollowing?: boolean
 }
 
 interface UseFollowReturn {
@@ -14,19 +17,42 @@ interface UseFollowReturn {
   toggleFollow: () => Promise<void>
 }
 
-export function useFollow({ targetUserId, currentUserId }: UseFollowOptions): UseFollowReturn {
-  const [isFollowing, setIsFollowing] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClient()
+export function useFollow({
+  targetUserId,
+  currentUserId,
+  initialFollowing,
+}: UseFollowOptions): UseFollowReturn {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(initialFollowing === undefined && !!currentUserId)
+  const [isToggling, setIsToggling] = useState(false)
 
-  // Check if already following
+  const targetStats = useUserStatsStore((state) => state.stats[targetUserId])
+  const initUser = useUserStatsStore((state) => state.initUser)
+  const setIsFollowing = useUserStatsStore((state) => state.setIsFollowing)
+  const toggleFollowStore = useUserStatsStore((state) => state.toggleFollow)
+  const rollbackFollow = useUserStatsStore((state) => state.rollbackFollow)
+
+  // Initialize store with initial values if not already set
   useEffect(() => {
-    const checkFollowStatus = async () => {
-      if (!currentUserId || !targetUserId) {
-        setIsLoading(false)
-        return
-      }
+    if (!targetStats && initialFollowing !== undefined) {
+      initUser(targetUserId, {
+        followersCount: 0,
+        followingCount: 0,
+        postsCount: 0,
+        isFollowing: initialFollowing,
+      })
+    }
+  }, [targetUserId, initialFollowing, targetStats, initUser])
 
+  // Check initial follow status if not provided
+  useEffect(() => {
+    if (initialFollowing !== undefined || !currentUserId || !targetUserId) {
+      setIsLoading(false)
+      return
+    }
+
+    const checkFollowStatus = async () => {
+      const supabase = createClient()
       const { data } = await supabase
         .from('follows')
         .select('id')
@@ -34,43 +60,70 @@ export function useFollow({ targetUserId, currentUserId }: UseFollowOptions): Us
         .eq('following_id', targetUserId)
         .single()
 
-      setIsFollowing(!!data)
+      const isFollowing = !!data
+
+      // Initialize or update store
+      if (!targetStats) {
+        initUser(targetUserId, {
+          followersCount: 0,
+          followingCount: 0,
+          postsCount: 0,
+          isFollowing,
+        })
+      } else {
+        setIsFollowing(targetUserId, isFollowing)
+      }
+
       setIsLoading(false)
     }
 
     checkFollowStatus()
-  }, [currentUserId, targetUserId, supabase])
+  }, [currentUserId, targetUserId, initialFollowing, targetStats, initUser, setIsFollowing])
+
+  const isFollowing = targetStats?.isFollowing ?? initialFollowing ?? false
 
   const toggleFollow = useCallback(async () => {
-    if (!currentUserId || !targetUserId || isLoading) return
+    if (!currentUserId) {
+      router.push('/login')
+      return
+    }
 
-    setIsLoading(true)
+    if (!targetUserId || isToggling) return
+
+    // Optimistic update via store
+    const { wasFollowing, prevFollowersCount, prevFollowingCount } = toggleFollowStore(
+      targetUserId,
+      currentUserId
+    )
+    setIsToggling(true)
 
     try {
-      if (isFollowing) {
-        // Unfollow
-        await supabase
+      const supabase = createClient()
+
+      if (wasFollowing) {
+        const { error } = await supabase
           .from('follows')
           .delete()
           .eq('follower_id', currentUserId)
           .eq('following_id', targetUserId)
 
-        setIsFollowing(false)
+        if (error) throw error
       } else {
-        // Follow
-        await supabase.from('follows').insert({
+        const { error } = await supabase.from('follows').insert({
           follower_id: currentUserId,
           following_id: targetUserId,
         })
 
-        setIsFollowing(true)
+        if (error) throw error
       }
     } catch (error) {
+      // Revert optimistic update on error
       console.error('Follow toggle error:', error)
+      rollbackFollow(targetUserId, currentUserId, wasFollowing, prevFollowersCount, prevFollowingCount)
     } finally {
-      setIsLoading(false)
+      setIsToggling(false)
     }
-  }, [currentUserId, targetUserId, isFollowing, isLoading, supabase])
+  }, [currentUserId, targetUserId, isToggling, router, toggleFollowStore, rollbackFollow])
 
-  return { isFollowing, isLoading, toggleFollow }
+  return { isFollowing, isLoading: isLoading || isToggling, toggleFollow }
 }

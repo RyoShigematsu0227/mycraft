@@ -27,9 +27,10 @@ interface UseFeedProps {
   type: FeedType
   currentUserId?: string
   worldId?: string
+  profileUserId?: string
 }
 
-export default function useFeed({ type, currentUserId, worldId }: UseFeedProps) {
+export default function useFeed({ type, currentUserId, worldId, profileUserId }: UseFeedProps) {
   const [posts, setPosts] = useState<FeedPost[]>([])
   const [loading, setLoading] = useState(true)
   const [hasMore, setHasMore] = useState(true)
@@ -40,7 +41,14 @@ export default function useFeed({ type, currentUserId, worldId }: UseFeedProps) 
     const supabase = createClient()
     let data: Record<string, unknown>[] | null = null
 
-    if (worldId) {
+    if (profileUserId) {
+      const result = await supabase.rpc('get_feed_user', {
+        p_user_id: profileUserId,
+        p_limit: 20,
+        p_cursor: cursor,
+      })
+      data = result.data
+    } else if (worldId) {
       const result = await supabase.rpc('get_feed_world', {
         p_world_id: worldId,
         p_limit: 20,
@@ -69,7 +77,7 @@ export default function useFeed({ type, currentUserId, worldId }: UseFeedProps) 
     }
 
     return data || []
-  }, [type, currentUserId, worldId])
+  }, [type, currentUserId, worldId, profileUserId])
 
   const loadInitial = useCallback(async () => {
     setLoading(true)
@@ -194,7 +202,7 @@ export default function useFeed({ type, currentUserId, worldId }: UseFeedProps) 
   }, [posts, hasMore, loading, type, fetchPosts, currentUserId])
 
   useEffect(() => {
-    loadInitial()
+    void loadInitial()
   }, [loadInitial])
 
   return {

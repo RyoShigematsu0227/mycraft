@@ -22,6 +22,7 @@ interface CommentCardProps {
   postId: string
   currentUserId?: string
   depth?: number
+  onReplySuccess?: () => void
 }
 
 function formatDate(dateString: string): string {
@@ -46,9 +47,15 @@ export default function CommentCard({
   postId,
   currentUserId,
   depth = 0,
+  onReplySuccess,
 }: CommentCardProps) {
   const [showReplyForm, setShowReplyForm] = useState(false)
   const maxDepth = 5
+
+  const handleReplySuccess = () => {
+    setShowReplyForm(false)
+    onReplySuccess?.()
+  }
 
   return (
     <div className={depth > 0 ? 'ml-8 border-l-2 border-gray-100 pl-4 dark:border-gray-800' : ''}>
@@ -61,7 +68,6 @@ export default function CommentCard({
             size="sm"
           />
           <div className="min-w-0 flex-1">
-            {/* Header */}
             <div className="flex items-center gap-2 text-sm">
               <Link
                 href={`/users/${comment.user.user_id}`}
@@ -81,12 +87,10 @@ export default function CommentCard({
               </span>
             </div>
 
-            {/* Content */}
             <p className="mt-1 whitespace-pre-wrap text-sm text-gray-900 dark:text-gray-100">
               {comment.content}
             </p>
 
-            {/* Actions */}
             <div className="mt-2 flex items-center gap-2">
               <CommentLikeButton
                 commentId={comment.id}
@@ -107,7 +111,6 @@ export default function CommentCard({
               )}
             </div>
 
-            {/* Reply form */}
             {showReplyForm && (
               <div className="mt-3">
                 <CommentForm
@@ -115,7 +118,7 @@ export default function CommentCard({
                   currentUserId={currentUserId}
                   parentCommentId={comment.id}
                   placeholder={`@${comment.user.user_id} への返信...`}
-                  onSuccess={() => setShowReplyForm(false)}
+                  onSuccess={handleReplySuccess}
                   autoFocus
                 />
               </div>
@@ -124,7 +127,6 @@ export default function CommentCard({
         </div>
       </div>
 
-      {/* Nested replies */}
       {comment.replies && comment.replies.length > 0 && (
         <div>
           {comment.replies.map((reply) => (
@@ -134,6 +136,7 @@ export default function CommentCard({
               postId={postId}
               currentUserId={currentUserId}
               depth={depth + 1}
+              onReplySuccess={onReplySuccess}
             />
           ))}
         </div>

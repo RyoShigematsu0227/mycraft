@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import CommentCard from './CommentCard'
 import CommentForm from './CommentForm'
@@ -25,96 +25,121 @@ interface CommentSectionProps {
 export default function CommentSection({ postId, currentUserId }: CommentSectionProps) {
   const [comments, setComments] = useState<CommentWithUser[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshKey, setRefreshKey] = useState(0)
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      const supabase = createClient()
+  const fetchComments = useCallback(async () => {
+    const supabase = createClient()
 
-      // Fetch all comments for this post
-      const { data: commentsData, error } = await supabase
-        .from('comments')
-        .select(`
-          *,
-          user:users!comments_user_id_fkey(*)
-        `)
-        .eq('post_id', postId)
-        .order('created_at', { ascending: true })
+    const { data: commentsData, error } = await supabase
+      .from('comments')
+      .select(`
+        *,
+        user:users!comments_user_id_fkey(*)
+      `)
+      .eq('post_id', postId)
+      .order('created_at', { ascending: true })
 
-      if (error) {
-        console.error('Error fetching comments:', error)
-        setLoading(false)
-        return
-      }
-
-      // Fetch likes counts
-      const commentIds = commentsData.map((c) => c.id)
-
-      let likesData: { comment_id: string }[] = []
-      let userLikesData: { comment_id: string }[] = []
-
-      if (commentIds.length > 0) {
-        const [likesResult, userLikesResult] = await Promise.all([
-          supabase
-            .from('comment_likes')
-            .select('comment_id')
-            .in('comment_id', commentIds),
-          currentUserId
-            ? supabase
-                .from('comment_likes')
-                .select('comment_id')
-                .eq('user_id', currentUserId)
-                .in('comment_id', commentIds)
-            : Promise.resolve({ data: [] }),
-        ])
-
-        likesData = likesResult.data || []
-        userLikesData = (userLikesResult as { data: { comment_id: string }[] | null }).data || []
-      }
-
-      // Count likes per comment
-      const likesCount = new Map<string, number>()
-      likesData.forEach((like) => {
-        likesCount.set(like.comment_id, (likesCount.get(like.comment_id) || 0) + 1)
-      })
-
-      // User's liked comments
-      const userLikedSet = new Set(userLikesData.map((l) => l.comment_id))
-
-      // Build comment tree
-      const commentsWithUser: CommentWithUser[] = commentsData.map((c) => ({
-        ...c,
-        user: c.user as User,
-        likes_count: likesCount.get(c.id) || 0,
-        is_liked: userLikedSet.has(c.id),
-        replies: [],
-      }))
-
-      // Organize into tree structure
-      const commentMap = new Map<string, CommentWithUser>()
-      const rootComments: CommentWithUser[] = []
-
-      commentsWithUser.forEach((comment) => {
-        commentMap.set(comment.id, comment)
-      })
-
-      commentsWithUser.forEach((comment) => {
-        if (comment.parent_comment_id) {
-          const parent = commentMap.get(comment.parent_comment_id)
-          if (parent) {
-            parent.replies = parent.replies || []
-            parent.replies.push(comment)
-          }
-        } else {
-          rootComments.push(comment)
-        }
-      })
-
-      setComments(rootComments)
+    if (error) {
+      console.error('Error fetching comments:', error)
       setLoading(false)
+      return
     }
 
-    fetchComments()
+    const commentIds = commentsData.map((c) => c.id)
+
+    let likesData: { comment_id: string }[] = []
+    let userLikesData: { comment_id: string }[] = []
+
+    if (commentIds.length > 0) {
+      const [likesResult, userLikesResult] = await Promise.all([
+        supabase
+          .from('comment_likes')
+          .select('comment_id')
+          .in('comment_id', commentIds),
+        currentUserId
+          ? supabase
+              .from('comment_likes')
+              .select('comment_id')
+              .eq('user_id', currentUserId)
+              .in('comment_id', commentIds)
+          : Promise.resolve({ data: [] }),
+      ])
+
+      likesData = likesResult.data || []
+      userLikesData = (userLikesResult as { data: { comment_id: string }[] | null }).data || []
+    }
+
+    const likesCount = new Map<string, number>()
+    likesData.forEach((like) => {
+      likesCount.set(like.comment_id, (likesCount.get(like.comment_id) || 0) + 1)
+    })
+
+    const userLikedSet = new Set(userLikesData.map((l) => l.comment_id))
+
+    const commentsWithUser: CommentWithUser[] = commentsData.map((c) => ({
+      ...c,
+      user: c.user as User,
+      likes_count: likesCount.get(c.id) || 0,
+      is_liked: userLikedSet.has(c.id),
+      replies: [],
+    }))
+
+    const commentMap = new Map<string, CommentWithUser>()
+    const rootComments: CommentWithUser[] = []
+
+    commentsWithUser.forEach((comment) => {
+      commentMap.set(comment.id, comment)
+    })
+
+    commentsWithUser.forEach((comment) => {
+      if (comment.parent_comment_id) {
+        const parent = commentMap.get(comment.parent_comment_id)
+        if (parent) {
+          parent.replies = parent.replies || []
+          parent.replies.push(comment)
+        }
+      } else {
+        rootComments.push(comment)
+      }
+    })
+
+    setComments(rootComments)
+    setLoading(false)
   }, [postId, currentUserId])
+
+  // Initial fetch and refresh on key change
+  useEffect(() => {
+    void fetchComments()
+  }, [fetchComments, refreshKey])
+
+  // Realtime subscription for new comments
+  useEffect(() => {
+    const supabase = createClient()
+
+    const channel = supabase
+      .channel(`comments:${postId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'comments',
+          filter: `post_id=eq.${postId}`,
+        },
+        () => {
+          fetchComments()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [postId, fetchComments])
+
+  const handleCommentSuccess = useCallback(() => {
+    setRefreshKey((k) => k + 1)
+  }, [])
 
   if (loading) {
     return <Loading />
@@ -122,12 +147,14 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
 
   return (
     <div className="border-t border-gray-200 dark:border-gray-700">
-      {/* Comment form */}
       <div className="border-b border-gray-200 p-4 dark:border-gray-700">
-        <CommentForm postId={postId} currentUserId={currentUserId} />
+        <CommentForm
+          postId={postId}
+          currentUserId={currentUserId}
+          onSuccess={handleCommentSuccess}
+        />
       </div>
 
-      {/* Comments list */}
       <div className="divide-y divide-gray-100 dark:divide-gray-800">
         {comments.length === 0 ? (
           <div className="p-8">
@@ -154,6 +181,7 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
                 comment={comment}
                 postId={postId}
                 currentUserId={currentUserId}
+                onReplySuccess={handleCommentSuccess}
               />
             ))}
           </div>

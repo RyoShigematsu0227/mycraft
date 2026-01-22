@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useCallback } from 'react'
 import { PostCard } from '@/components/post'
-import { Loading, EmptyState, Button } from '@/components/ui'
+import { Loading, EmptyState } from '@/components/ui'
 import useFeed, { FeedType } from '@/hooks/useFeed'
 
 interface InfiniteFeedProps {
   type: FeedType
   currentUserId?: string
   worldId?: string
+  profileUserId?: string
   showWorldInfo?: boolean
 }
 
@@ -16,12 +17,14 @@ export default function InfiniteFeed({
   type,
   currentUserId,
   worldId,
+  profileUserId,
   showWorldInfo = true,
 }: InfiniteFeedProps) {
   const { posts, loading, hasMore, likedPosts, repostedPosts, loadMore } = useFeed({
     type,
     currentUserId,
     worldId,
+    profileUserId,
   })
 
   const observerRef = useRef<IntersectionObserver | null>(null)

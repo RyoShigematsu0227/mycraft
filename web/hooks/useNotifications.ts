@@ -75,7 +75,7 @@ export default function useNotifications({ userId }: UseNotificationsProps) {
   }, [userId])
 
   useEffect(() => {
-    fetchNotifications()
+    void fetchNotifications()
   }, [fetchNotifications])
 
   // Subscribe to realtime updates

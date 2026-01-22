@@ -55,7 +55,7 @@ export default function UserAvatar({
 
   if (showLink) {
     return (
-      <Link href={`/@${userId}`} className="hover:opacity-80 transition-opacity">
+      <Link href={`/users/${userId}`} className="hover:opacity-80 transition-opacity">
         {avatar}
       </Link>
     )

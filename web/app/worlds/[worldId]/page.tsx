@@ -2,8 +2,9 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Layout } from '@/components/layout'
-import { WorldIcon, JoinButton } from '@/components/world'
-import { Button, EmptyState } from '@/components/ui'
+import { WorldIcon, JoinButton, WorldStats } from '@/components/world'
+import { InfiniteFeed } from '@/components/post'
+import { Button } from '@/components/ui'
 
 interface WorldPageProps {
   params: Promise<{ worldId: string }>
@@ -102,17 +103,11 @@ export default async function WorldPage({ params }: WorldPageProps) {
                   {world.description}
                 </p>
               )}
-              <div className="mt-3 flex gap-4 text-sm">
-                <Link
-                  href={`/worlds/${world.id}/members`}
-                  className="text-gray-600 hover:underline dark:text-gray-400"
-                >
-                  <span className="font-bold text-gray-900 dark:text-gray-100">
-                    {memberCount || 0}
-                  </span>{' '}
-                  メンバー
-                </Link>
-              </div>
+              <WorldStats
+                worldId={world.id}
+                initialMemberCount={memberCount || 0}
+                isMember={isMember}
+              />
             </div>
           </div>
 
@@ -128,22 +123,12 @@ export default async function WorldPage({ params }: WorldPageProps) {
         </div>
 
         {/* Posts Section */}
-        <div className="p-4">
-          <EmptyState
-            icon={
-              <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
-              </svg>
-            }
-            title="まだ投稿がありません"
-            description={isMember || isOwner ? 'このワールドで最初の投稿をしましょう' : undefined}
-          />
-        </div>
+        <InfiniteFeed
+          type="latest"
+          currentUserId={authUser?.id}
+          worldId={world.id}
+          showWorldInfo={false}
+        />
       </div>
     </Layout>
   )

@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { usePostStatsStore } from '@/lib/stores'
 
 interface UseRepostOptions {
   postId: string
-  currentUserId: string
+  currentUserId?: string
   initialReposted?: boolean
   initialCount?: number
 }
@@ -23,63 +25,69 @@ export function useRepost({
   initialReposted = false,
   initialCount = 0,
 }: UseRepostOptions): UseRepostReturn {
-  const [isReposted, setIsReposted] = useState(initialReposted)
-  const [repostCount, setRepostCount] = useState(initialCount)
-  const [isLoading, setIsLoading] = useState(!initialReposted && !!currentUserId)
-  const supabase = createClient()
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
-  // Check if already reposted
+  const stats = usePostStatsStore((state) => state.stats[postId])
+  const initPost = usePostStatsStore((state) => state.initPost)
+  const toggleRepostStore = usePostStatsStore((state) => state.toggleRepost)
+  const rollbackRepost = usePostStatsStore((state) => state.rollbackRepost)
+
+  // Initialize store with initial values if not already set
   useEffect(() => {
-    if (initialReposted || !currentUserId) {
-      setIsLoading(false)
+    if (!stats) {
+      initPost(postId, {
+        likeCount: 0,
+        repostCount: initialCount,
+        commentCount: 0,
+        isLiked: false,
+        isReposted: initialReposted,
+      })
+    }
+  }, [postId, initialCount, initialReposted, stats, initPost])
+
+  const isReposted = stats?.isReposted ?? initialReposted
+  const repostCount = stats?.repostCount ?? initialCount
+
+  const toggleRepost = useCallback(async () => {
+    if (!currentUserId) {
+      router.push('/login')
       return
     }
 
-    const checkRepostStatus = async () => {
-      const { data } = await supabase
-        .from('reposts')
-        .select('id')
-        .eq('post_id', postId)
-        .eq('user_id', currentUserId)
-        .single()
+    if (isLoading) return
 
-      setIsReposted(!!data)
-      setIsLoading(false)
-    }
-
-    checkRepostStatus()
-  }, [postId, currentUserId, initialReposted, supabase])
-
-  const toggleRepost = useCallback(async () => {
-    if (!currentUserId || isLoading) return
-
+    // Optimistic update via store
+    const { wasReposted, prevCount } = toggleRepostStore(postId)
     setIsLoading(true)
 
     try {
-      if (isReposted) {
-        await supabase
+      const supabase = createClient()
+
+      if (wasReposted) {
+        const { error } = await supabase
           .from('reposts')
           .delete()
           .eq('post_id', postId)
           .eq('user_id', currentUserId)
 
-        setIsReposted(false)
-        setRepostCount((prev) => Math.max(0, prev - 1))
+        if (error) throw error
       } else {
-        await supabase.from('reposts').insert({
+        const { error } = await supabase.from('reposts').insert({
           post_id: postId,
           user_id: currentUserId,
         })
 
-        setIsReposted(true)
-        setRepostCount((prev) => prev + 1)
+        if (error) throw error
       }
     } catch (error) {
+      // Revert optimistic update on error
       console.error('Repost toggle error:', error)
+      rollbackRepost(postId, wasReposted, prevCount)
     } finally {
       setIsLoading(false)
     }
-  }, [postId, currentUserId, isReposted, isLoading, supabase])
+  }, [postId, currentUserId, isLoading, router, toggleRepostStore, rollbackRepost])
 
   return { isReposted, repostCount, isLoading, toggleRepost }
 }

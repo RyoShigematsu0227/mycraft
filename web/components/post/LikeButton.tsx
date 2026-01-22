@@ -17,7 +17,7 @@ export default function LikeButton({
 }: LikeButtonProps) {
   const { isLiked, likeCount, isLoading, toggleLike } = useLike({
     postId,
-    currentUserId: currentUserId || '',
+    currentUserId,
     initialLiked,
     initialCount,
   })
@@ -25,7 +25,7 @@ export default function LikeButton({
   return (
     <button
       onClick={toggleLike}
-      disabled={!currentUserId || isLoading}
+      disabled={isLoading}
       className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition ${
         isLiked
           ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'

@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
-import { UserAvatar, UserCard } from '@/components/user'
-import { WorldCard } from '@/components/world'
+import { UserAvatar } from '@/components/user'
 import { PostCard } from '@/components/post'
 import { Loading, EmptyState } from '@/components/ui'
 import type { SearchTab } from '@/hooks/useSearch'
@@ -184,12 +184,15 @@ export default function SearchResults({
                   href={`/worlds/${world.id}`}
                   className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800"
                 >
-                  <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700">
+                  <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700">
                     {world.icon_url ? (
-                      <img
+                      <Image
                         src={world.icon_url}
                         alt={world.name}
+                        width={48}
+                        height={48}
                         className="h-full w-full object-cover"
+                        unoptimized={world.icon_url.startsWith('http')}
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">

@@ -126,6 +126,7 @@ export default function NotificationCard({ notification, onClick }: Notification
         avatarUrl={notification.actor.avatar_url}
         displayName={notification.actor.display_name}
         size="md"
+        showLink={false}
       />
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-2">

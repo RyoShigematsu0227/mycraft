@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { usePostStatsStore } from '@/lib/stores'
 
 interface UseCommentProps {
   postId: string
@@ -14,6 +15,9 @@ export default function useComment({ postId, currentUserId }: UseCommentProps) {
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const incrementCommentCount = usePostStatsStore((state) => state.incrementCommentCount)
+  const decrementCommentCount = usePostStatsStore((state) => state.decrementCommentCount)
 
   const createComment = async (content: string, parentCommentId?: string) => {
     if (!currentUserId) {
@@ -38,7 +42,9 @@ export default function useComment({ postId, currentUserId }: UseCommentProps) {
 
       if (insertError) throw insertError
 
-      router.refresh()
+      // Update comment count in store
+      incrementCommentCount(postId)
+
       return data
     } catch (err) {
       setError(err instanceof Error ? err.message : 'コメントの投稿に失敗しました')
@@ -63,7 +69,9 @@ export default function useComment({ postId, currentUserId }: UseCommentProps) {
 
       if (deleteError) throw deleteError
 
-      router.refresh()
+      // Update comment count in store
+      decrementCommentCount(postId)
+
       return true
     } catch (err) {
       setError(err instanceof Error ? err.message : 'コメントの削除に失敗しました')

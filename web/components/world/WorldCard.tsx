@@ -1,8 +1,10 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
 import WorldIcon from './WorldIcon'
 import JoinButton from './JoinButton'
+import { useWorldStatsStore } from '@/lib/stores'
 import type { Database } from '@/types/database'
 
 type World = Database['public']['Tables']['worlds']['Row']
@@ -18,11 +20,27 @@ interface WorldCardProps {
 export default function WorldCard({
   world,
   currentUserId,
-  memberCount,
+  memberCount = 0,
   isMember = false,
   showJoinButton = true,
 }: WorldCardProps) {
   const isOwner = currentUserId === world.owner_id
+
+  const stats = useWorldStatsStore((state) => state.stats[world.id])
+  const initWorld = useWorldStatsStore((state) => state.initWorld)
+
+  // Initialize store with initial values
+  useEffect(() => {
+    if (!stats) {
+      initWorld(world.id, {
+        memberCount,
+        isMember,
+      })
+    }
+  }, [world.id, memberCount, isMember, stats, initWorld])
+
+  // Use store value if available, fallback to prop
+  const displayMemberCount = stats?.memberCount ?? memberCount
 
   return (
     <div className="flex items-start gap-4 rounded-lg bg-white p-4 shadow dark:bg-gray-800">
@@ -41,11 +59,9 @@ export default function WorldCard({
             >
               {world.name}
             </Link>
-            {memberCount !== undefined && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {memberCount}人のメンバー
-              </p>
-            )}
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {displayMemberCount}人のメンバー
+            </p>
           </div>
           {showJoinButton && currentUserId && !isOwner && (
             <JoinButton

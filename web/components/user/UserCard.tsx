@@ -40,13 +40,13 @@ export default function UserCard({
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <Link
-              href={`/@${user.user_id}`}
+              href={`/users/${user.user_id}`}
               className="block truncate text-base font-bold text-gray-900 hover:underline dark:text-gray-100"
             >
               {user.display_name}
             </Link>
             <Link
-              href={`/@${user.user_id}`}
+              href={`/users/${user.user_id}`}
               className="block truncate text-sm text-gray-500 dark:text-gray-400"
             >
               @{user.user_id}
@@ -64,7 +64,7 @@ export default function UserCard({
         {stats && (
           <div className="mt-2 flex gap-4 text-sm">
             <Link
-              href={`/@${user.user_id}/following`}
+              href={`/users/${user.user_id}/following`}
               className="text-gray-600 hover:underline dark:text-gray-400"
             >
               <span className="font-bold text-gray-900 dark:text-gray-100">
@@ -73,7 +73,7 @@ export default function UserCard({
               フォロー中
             </Link>
             <Link
-              href={`/@${user.user_id}/followers`}
+              href={`/users/${user.user_id}/followers`}
               className="text-gray-600 hover:underline dark:text-gray-400"
             >
               <span className="font-bold text-gray-900 dark:text-gray-100">

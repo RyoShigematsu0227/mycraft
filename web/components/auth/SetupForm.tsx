@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import type { InsertTables } from '@/types/database'
+import type { TablesInsert } from '@/types/database'
 
 export default function SetupForm() {
   const router = useRouter()
@@ -81,7 +81,7 @@ export default function SetupForm() {
       id: user.id,
       user_id: userId,
       display_name: displayName.trim(),
-    } as InsertTables<'users'>)
+    } as TablesInsert<'users'>)
 
     if (insertError) {
       if (insertError.code === '23505') {
