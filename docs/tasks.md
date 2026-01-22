@@ -9,104 +9,104 @@ MVP開発のタスク一覧。フェーズ順に実装を進める。
 ## Phase 1: プロジェクトセットアップ
 
 ### 1.1 リポジトリ・開発環境
-- [ ] GitHubリポジトリ作成
-- [ ] .gitignore設定
-- [ ] README.md作成
+- [x] GitHubリポジトリ作成
+- [x] .gitignore設定
+- [x] README.md作成
 
 ### 1.2 Next.jsプロジェクト
-- [ ] Next.js (latest) プロジェクト作成（TypeScript, Tailwind CSS, App Router）
-- [ ] ESLint, Prettier設定
-- [ ] パスエイリアス設定（@/）
-- [ ] 基本的なフォルダ構成作成
+- [x] Next.js (latest) プロジェクト作成（TypeScript, Tailwind CSS, App Router）
+- [x] ESLint, Prettier設定
+- [x] パスエイリアス設定（@/）
+- [x] 基本的なフォルダ構成作成
 
 ### 1.3 Supabase
-- [ ] Supabaseプロジェクト作成
-- [ ] ローカル開発環境セットアップ（supabase init）
-- [ ] 環境変数設定（.env.local）
+- [x] Supabaseプロジェクト作成
+- [x] ローカル開発環境セットアップ（supabase init）
+- [x] 環境変数設定（.env.local）
 
 ### 1.4 共通ライブラリ
-- [ ] Supabaseクライアント設定
-- [ ] Tanstack Query設定
-- [ ] Zustand設定
+- [x] Supabaseクライアント設定
+- [x] Tanstack Query設定
+- [x] Zustand設定
 
 ---
 
 ## Phase 2: データベース構築
 
 ### 2.1 マイグレーション作成
-- [ ] users テーブル
-- [ ] worlds テーブル
-- [ ] world_members テーブル
-- [ ] posts テーブル
-- [ ] post_images テーブル
-- [ ] likes テーブル
-- [ ] comments テーブル
-- [ ] comment_likes テーブル
-- [ ] reposts テーブル
-- [ ] follows テーブル
-- [ ] notifications テーブル
+- [x] users テーブル
+- [x] worlds テーブル
+- [x] world_members テーブル
+- [x] posts テーブル
+- [x] post_images テーブル
+- [x] likes テーブル
+- [x] comments テーブル
+- [x] comment_likes テーブル
+- [x] reposts テーブル
+- [x] follows テーブル
+- [x] notifications テーブル
 
 ### 2.2 RLSポリシー設定
-- [ ] users RLS
-- [ ] worlds RLS
-- [ ] world_members RLS
-- [ ] posts RLS（visibility考慮）
-- [ ] post_images RLS
-- [ ] likes RLS
-- [ ] comments RLS
-- [ ] comment_likes RLS
-- [ ] reposts RLS
-- [ ] follows RLS
-- [ ] notifications RLS
+- [x] users RLS
+- [x] worlds RLS
+- [x] world_members RLS
+- [x] posts RLS（visibility考慮）
+- [x] post_images RLS
+- [x] likes RLS
+- [x] comments RLS
+- [x] comment_likes RLS
+- [x] reposts RLS
+- [x] follows RLS
+- [x] notifications RLS
 
 ### 2.3 Database Functions
-- [ ] get_feed_latest
-- [ ] get_feed_recommended
-- [ ] get_feed_following
-- [ ] get_feed_world
-- [ ] get_post_with_details
-- [ ] get_comments_tree
-- [ ] search_users
-- [ ] search_worlds
-- [ ] search_posts
-- [ ] get_user_stats
+- [x] get_feed_latest
+- [x] get_feed_recommended
+- [x] get_feed_following
+- [x] get_feed_world
+- [x] get_post_with_details
+- [x] get_comments_tree
+- [x] search_users
+- [x] search_worlds
+- [x] search_posts
+- [x] get_user_stats
 
 ### 2.4 Triggers
-- [ ] 通知作成トリガー（いいね、コメント、フォロー、リポスト）
+- [x] 通知作成トリガー（いいね、コメント、フォロー、リポスト）
 
 ### 2.5 Storage
-- [ ] avatarsバケット作成
-- [ ] world-iconsバケット作成
-- [ ] post-imagesバケット作成
-- [ ] Storageポリシー設定
+- [x] avatarsバケット作成
+- [x] world-iconsバケット作成
+- [x] post-imagesバケット作成
+- [x] Storageポリシー設定
 
 ### 2.6 型生成
-- [ ] Supabase型定義ファイル生成
+- [x] Supabase型定義ファイル生成
 
 ---
 
 ## Phase 3: 認証機能
 
 ### 3.1 Supabase Auth設定
-- [ ] Discord OAuth設定
-- [ ] Google OAuth設定
-- [ ] Email認証設定
+- [x] Discord OAuth設定
+- [x] Google OAuth設定
+- [x] Email認証設定
 
 ### 3.2 認証UI
-- [ ] ログインページ（/login）
-- [ ] 新規登録ページ（/signup）
-- [ ] LoginForm コンポーネント
-- [ ] SignupForm コンポーネント
-- [ ] ソーシャルログインボタン
+- [x] ログインページ（/login）
+- [x] 新規登録ページ（/signup）
+- [x] LoginForm コンポーネント
+- [x] SignupForm コンポーネント
+- [x] ソーシャルログインボタン
 
 ### 3.3 認証フック・状態管理
-- [ ] useAuth フック
-- [ ] AuthGuard コンポーネント
-- [ ] 認証状態のZustand store
+- [x] useAuth フック
+- [x] AuthGuard コンポーネント
+- [x] 認証状態のZustand store
 
 ### 3.4 初回登録フロー
-- [ ] プロフィール初期設定ページ
-- [ ] ユーザーID設定（ユニークチェック）
+- [x] プロフィール初期設定ページ
+- [x] ユーザーID設定（ユニークチェック）
 
 ---
 
@@ -296,9 +296,9 @@ MVP開発のタスク一覧。フェーズ順に実装を進める。
 
 | フェーズ | 状態 |
 |----------|------|
-| Phase 1: プロジェクトセットアップ | 未着手 |
-| Phase 2: データベース構築 | 未着手 |
-| Phase 3: 認証機能 | 未着手 |
+| Phase 1: プロジェクトセットアップ | 完了 |
+| Phase 2: データベース構築 | 完了 |
+| Phase 3: 認証機能 | 完了 |
 | Phase 4: 共通レイアウト・UI | 未着手 |
 | Phase 5: ユーザー機能 | 未着手 |
 | Phase 6: ワールド機能 | 未着手 |
