@@ -60,18 +60,16 @@ export default function PostCard({
   const stats = usePostStatsStore((state) => state.stats[post.id])
   const initPost = usePostStatsStore((state) => state.initPost)
 
-  // Initialize store with all counts
+  // Initialize store with all counts (merges with existing)
   useEffect(() => {
-    if (!stats) {
-      initPost(post.id, {
-        likeCount,
-        repostCount,
-        commentCount,
-        isLiked,
-        isReposted,
-      })
-    }
-  }, [post.id, likeCount, repostCount, commentCount, isLiked, isReposted, stats, initPost])
+    initPost(post.id, {
+      likeCount,
+      repostCount,
+      commentCount,
+      isLiked,
+      isReposted,
+    })
+  }, [post.id, likeCount, repostCount, commentCount, isLiked, isReposted, initPost])
 
   // Use store values if available, fallback to props
   const displayCommentCount = stats?.commentCount ?? commentCount

@@ -26,14 +26,22 @@ export default function ProfileForm({ user }: ProfileFormProps) {
   )
   const [avatarUrl, setAvatarUrl] = useState(user.avatar_url || '')
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarRemoved, setAvatarRemoved] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   const handleAvatarChange = (file: File | null) => {
     setAvatarFile(file)
+    setAvatarRemoved(false)
     if (file) {
       setAvatarUrl(URL.createObjectURL(file))
     }
+  }
+
+  const handleAvatarRemove = () => {
+    setAvatarFile(null)
+    setAvatarUrl('')
+    setAvatarRemoved(true)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,10 +52,29 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     try {
       let newAvatarUrl = user.avatar_url
 
-      // Upload avatar if changed
-      if (avatarFile) {
+      // Handle avatar removal
+      if (avatarRemoved) {
+        // Delete old avatar from storage if exists
+        if (user.avatar_url) {
+          const oldPath = user.avatar_url.split('/avatars/')[1]
+          if (oldPath) {
+            await supabase.storage.from('avatars').remove([oldPath])
+          }
+        }
+        newAvatarUrl = null
+      }
+      // Upload new avatar if changed
+      else if (avatarFile) {
         const fileExt = avatarFile.name.split('.').pop()
         const filePath = `${user.id}/avatar.${fileExt}`
+
+        // Delete old avatar first if it exists with different extension
+        if (user.avatar_url) {
+          const oldPath = user.avatar_url.split('/avatars/')[1]
+          if (oldPath && oldPath !== filePath) {
+            await supabase.storage.from('avatars').remove([oldPath])
+          }
+        }
 
         const { error: uploadError } = await supabase.storage
           .from('avatars')
@@ -97,8 +124,10 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         <ImageUpload
           value={avatarUrl}
           onChange={handleAvatarChange}
+          onRemove={handleAvatarRemove}
           className="h-24 w-24"
           aspectRatio="square"
+          enableCrop
         />
         <div className="flex-1">
           <Input

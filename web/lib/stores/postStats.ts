@@ -11,8 +11,8 @@ interface PostStats {
 interface PostStatsState {
   stats: Record<string, PostStats>
 
-  // Initialize stats for a post
-  initPost: (postId: string, stats: PostStats) => void
+  // Initialize stats for a post (merges with existing values)
+  initPost: (postId: string, stats: Partial<PostStats>) => void
 
   // Update individual counts
   setLikeCount: (postId: string, count: number) => void
@@ -48,11 +48,14 @@ const defaultStats: PostStats = {
 export const usePostStatsStore = create<PostStatsState>((set, get) => ({
   stats: {},
 
-  initPost: (postId, stats) =>
+  initPost: (postId, newStats) =>
     set((state) => ({
       stats: {
         ...state.stats,
-        [postId]: stats,
+        [postId]: {
+          ...(state.stats[postId] || defaultStats),
+          ...newStats,
+        },
       },
     })),
 

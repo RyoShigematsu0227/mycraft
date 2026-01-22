@@ -33,18 +33,13 @@ export function useLike({
   const toggleLikeStore = usePostStatsStore((state) => state.toggleLike)
   const rollbackLike = usePostStatsStore((state) => state.rollbackLike)
 
-  // Initialize store with initial values if not already set
+  // Initialize store with like-related values (merges with existing)
   useEffect(() => {
-    if (!stats) {
-      initPost(postId, {
-        likeCount: initialCount,
-        repostCount: 0,
-        commentCount: 0,
-        isLiked: initialLiked,
-        isReposted: false,
-      })
-    }
-  }, [postId, initialCount, initialLiked, stats, initPost])
+    initPost(postId, {
+      likeCount: initialCount,
+      isLiked: initialLiked,
+    })
+  }, [postId, initialCount, initialLiked, initPost])
 
   const isLiked = stats?.isLiked ?? initialLiked
   const likeCount = stats?.likeCount ?? initialCount

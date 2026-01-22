@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import Image from 'next/image'
+import ImageCropper from './ImageCropper'
 
 interface ImageUploadProps {
   value?: string | null
@@ -12,6 +13,7 @@ interface ImageUploadProps {
   className?: string
   placeholder?: string
   aspectRatio?: 'square' | 'video' | 'auto'
+  enableCrop?: boolean
 }
 
 export default function ImageUpload({
@@ -23,15 +25,23 @@ export default function ImageUpload({
   className = '',
   placeholder = '画像をアップロード',
   aspectRatio = 'auto',
+  enableCrop = false,
 }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [cropSource, setCropSource] = useState<string | null>(null)
 
   const aspectRatios = {
     square: 'aspect-square',
     video: 'aspect-video',
     auto: '',
+  }
+
+  const cropAspectRatios = {
+    square: 1,
+    video: 16 / 9,
+    auto: undefined,
   }
 
   const handleClick = () => {
@@ -54,14 +64,39 @@ export default function ImageUpload({
       return
     }
 
-    // Create preview
+    // If cropping is enabled, open cropper
+    if (enableCrop && aspectRatio !== 'auto') {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setCropSource(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    } else {
+      // Create preview without cropping
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+      onChange(file)
+    }
+  }
+
+  const handleCropComplete = (croppedFile: File) => {
     const reader = new FileReader()
     reader.onloadend = () => {
       setPreview(reader.result as string)
     }
-    reader.readAsDataURL(file)
+    reader.readAsDataURL(croppedFile)
+    onChange(croppedFile)
+    setCropSource(null)
+  }
 
-    onChange(file)
+  const handleCropCancel = () => {
+    setCropSource(null)
+    if (inputRef.current) {
+      inputRef.current.value = ''
+    }
   }
 
   const handleRemove = (e: React.MouseEvent) => {
@@ -89,15 +124,23 @@ export default function ImageUpload({
 
       {displayImage ? (
         <div
-          className={`relative overflow-hidden rounded-lg ${aspectRatios[aspectRatio]} ${aspectRatio === 'auto' ? 'min-h-32' : ''}`}
+          className={`group relative cursor-pointer overflow-hidden rounded-lg ${aspectRatios[aspectRatio]} ${aspectRatio === 'auto' ? 'min-h-32' : ''}`}
+          onClick={handleClick}
         >
           <Image
             src={displayImage}
             alt="Preview"
             fill
-            className="object-cover"
+            className="object-cover transition group-hover:opacity-80"
             unoptimized
           />
+          {/* Change overlay */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/30">
+            <span className="text-sm font-medium text-white opacity-0 transition group-hover:opacity-100">
+              変更
+            </span>
+          </div>
+          {/* Remove button */}
           <button
             type="button"
             onClick={handleRemove}
@@ -134,6 +177,16 @@ export default function ImageUpload({
       )}
 
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+
+      {/* Crop modal */}
+      {cropSource && (
+        <ImageCropper
+          imageSrc={cropSource}
+          aspectRatio={cropAspectRatios[aspectRatio]}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
     </div>
   )
 }

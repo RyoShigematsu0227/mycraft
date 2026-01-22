@@ -33,18 +33,13 @@ export function useRepost({
   const toggleRepostStore = usePostStatsStore((state) => state.toggleRepost)
   const rollbackRepost = usePostStatsStore((state) => state.rollbackRepost)
 
-  // Initialize store with initial values if not already set
+  // Initialize store with repost-related values (merges with existing)
   useEffect(() => {
-    if (!stats) {
-      initPost(postId, {
-        likeCount: 0,
-        repostCount: initialCount,
-        commentCount: 0,
-        isLiked: false,
-        isReposted: initialReposted,
-      })
-    }
-  }, [postId, initialCount, initialReposted, stats, initPost])
+    initPost(postId, {
+      repostCount: initialCount,
+      isReposted: initialReposted,
+    })
+  }, [postId, initialCount, initialReposted, initPost])
 
   const isReposted = stats?.isReposted ?? initialReposted
   const repostCount = stats?.repostCount ?? initialCount
