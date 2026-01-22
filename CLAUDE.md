@@ -82,6 +82,7 @@ supabase gen types typescript --local > web/types/database.ts
 ### After Coding
 - **A-1 (MUST)**: 新しいパターンや決定事項は `docs/decisions.md` に記録
 - **A-2 (SHOULD)**: 実装完了したタスクは `docs/tasks.md` でチェックを入れる
+- **A-3 (MUST)**: 明確な指示が無い中で独断でコミットはしない
 
 ## Component Naming
 
