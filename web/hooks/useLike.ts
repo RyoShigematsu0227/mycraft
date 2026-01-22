@@ -75,9 +75,10 @@ export function useLike({
 
         if (error) throw error
       }
-    } catch (error) {
+    } catch (error: unknown) {
       // Revert optimistic update on error
-      console.error('Like toggle error:', error)
+      const err = error as { message?: string; code?: string; details?: string }
+      console.error('Like toggle error:', err.message || err.code || JSON.stringify(error))
       rollbackLike(postId, wasLiked, prevCount)
     } finally {
       setIsLoading(false)

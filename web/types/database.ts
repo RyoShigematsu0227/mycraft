@@ -634,6 +634,8 @@ export type Database = {
           created_at: string
           id: string
           images: Json
+          is_liked: boolean
+          is_reposted: boolean
           likes_count: number
           reposts_count: number
           user_avatar_url: string
@@ -641,6 +643,7 @@ export type Database = {
           user_id: string
           user_user_id: string
           visibility: string
+          world_icon_url: string
           world_id: string
           world_name: string
         }[]

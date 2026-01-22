@@ -40,9 +40,12 @@ interface SearchPost {
   user_user_id: string
   user_avatar_url: string | null
   world_name: string | null
+  world_icon_url: string | null
   likes_count: number
   comments_count: number
   reposts_count: number
+  is_liked: boolean
+  is_reposted: boolean
   images: Array<{ id: string; image_url: string; display_order: number }> | null
 }
 
@@ -275,7 +278,7 @@ export default function SearchResults({
                         ? {
                             id: post.world_id,
                             name: post.world_name,
-                            icon_url: null,
+                            icon_url: post.world_icon_url,
                             description: null,
                             how_to_join: null,
                             owner_id: '',
@@ -289,6 +292,8 @@ export default function SearchResults({
                     likeCount={post.likes_count}
                     repostCount={post.reposts_count}
                     commentCount={post.comments_count}
+                    isLiked={post.is_liked}
+                    isReposted={post.is_reposted}
                   />
                 )
               })

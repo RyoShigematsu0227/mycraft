@@ -37,9 +37,12 @@ interface SearchPost {
   user_user_id: string
   user_avatar_url: string | null
   world_name: string | null
+  world_icon_url: string | null
   likes_count: number
   comments_count: number
   reposts_count: number
+  is_liked: boolean
+  is_reposted: boolean
   images: Array<{ id: string; image_url: string; display_order: number }> | null
 }
 
@@ -113,9 +116,12 @@ export default function useSearch(): UseSearchResult {
           user_user_id: p.user_user_id as string,
           user_avatar_url: p.user_avatar_url as string | null,
           world_name: p.world_name as string | null,
+          world_icon_url: p.world_icon_url as string | null,
           likes_count: Number(p.likes_count),
           comments_count: Number(p.comments_count),
           reposts_count: Number(p.reposts_count),
+          is_liked: p.is_liked as boolean,
+          is_reposted: p.is_reposted as boolean,
           images: p.images as Array<{ id: string; image_url: string; display_order: number }> | null,
         })))
       }
