@@ -113,46 +113,46 @@ MVP開発のタスク一覧。フェーズ順に実装を進める。
 ## Phase 4: 共通レイアウト・UIコンポーネント
 
 ### 4.1 レイアウト
-- [ ] Layout コンポーネント
-- [ ] Header コンポーネント
-- [ ] Sidebar コンポーネント
-- [ ] BottomNav コンポーネント（モバイル用）
+- [x] Layout コンポーネント
+- [x] Header コンポーネント
+- [x] Sidebar コンポーネント
+- [x] BottomNav コンポーネント（モバイル用）
 
 ### 4.2 汎用UIコンポーネント
-- [ ] Button コンポーネント
-- [ ] Input コンポーネント
-- [ ] Textarea コンポーネント
-- [ ] Modal コンポーネント
-- [ ] Avatar コンポーネント
-- [ ] ImageUpload コンポーネント
-- [ ] Loading コンポーネント
-- [ ] EmptyState コンポーネント
+- [x] Button コンポーネント
+- [x] Input コンポーネント
+- [x] Textarea コンポーネント
+- [x] Modal コンポーネント
+- [x] Avatar コンポーネント
+- [x] ImageUpload コンポーネント
+- [x] Loading コンポーネント
+- [x] EmptyState コンポーネント
 
 ### 4.3 デフォルトアセット
-- [ ] デフォルトアバター画像
-- [ ] デフォルトワールドアイコン（風景）
+- [x] デフォルトアバター画像
+- [x] デフォルトワールドアイコン（風景）
 
 ---
 
 ## Phase 5: ユーザー機能
 
 ### 5.1 プロフィール設定
-- [ ] プロフィール設定ページ（/settings/profile）
-- [ ] ProfileForm コンポーネント
-- [ ] アバター画像アップロード
-- [ ] Minecraft ID設定
+- [x] プロフィール設定ページ（/settings/profile）
+- [x] ProfileForm コンポーネント
+- [x] アバター画像アップロード
+- [x] Minecraft ID設定
 
 ### 5.2 ユーザーページ
-- [ ] ユーザーページ（/@{user_id}）
-- [ ] UserCard コンポーネント
-- [ ] UserAvatar コンポーネント
-- [ ] ユーザーの投稿一覧表示
+- [x] ユーザーページ（/users/{user_id}）※App Router制約により/@から/users/に変更
+- [x] UserCard コンポーネント
+- [x] UserAvatar コンポーネント
+- [x] ユーザーの投稿一覧表示（Phase 7完了後に統合）
 
 ### 5.3 フォロー機能
-- [ ] FollowButton コンポーネント
-- [ ] useFollow フック
-- [ ] フォロワー一覧ページ（/@{user_id}/followers）
-- [ ] フォロー中一覧ページ（/@{user_id}/following）
+- [x] FollowButton コンポーネント
+- [x] useFollow フック
+- [x] フォロワー一覧ページ（/users/{user_id}/followers）
+- [x] フォロー中一覧ページ（/users/{user_id}/following）
 
 ---
 
@@ -299,8 +299,8 @@ MVP開発のタスク一覧。フェーズ順に実装を進める。
 | Phase 1: プロジェクトセットアップ | 完了 |
 | Phase 2: データベース構築 | 完了 |
 | Phase 3: 認証機能 | 完了 |
-| Phase 4: 共通レイアウト・UI | 未着手 |
-| Phase 5: ユーザー機能 | 未着手 |
+| Phase 4: 共通レイアウト・UI | 完了 |
+| Phase 5: ユーザー機能 | 完了 |
 | Phase 6: ワールド機能 | 未着手 |
 | Phase 7: 投稿機能 | 未着手 |
 | Phase 8: コメント機能 | 未着手 |

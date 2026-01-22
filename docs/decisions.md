@@ -60,4 +60,25 @@ Zustand（グローバル状態） + Tanstack Query（サーバー状態）を�
 
 ---
 
+### [2026-01-22] ユーザーページURLパターン
+
+**背景**
+ユーザーページのURLを `/@{user_id}` にする予定だったが、Next.js App Routerでは `@` プレフィックスがParallel Routes（スロット）用に予約されているため、そのまま使用できない。
+
+**選択肢**
+1. `/users/{user_id}` - 標準的なパターン
+   - Pros: シンプル、App Routerと競合しない
+   - Cons: TwitterライクなURL形式ではない
+2. `/%40{user_id}` - URLエンコード使用
+   - Pros: 見た目は@を維持
+   - Cons: 見た目が悪い、ルーティング複雑
+3. Catch-all routeで `/@username` をハンドリング
+   - Pros: 希望のURL形式
+   - Cons: 実装が複雑、他のルートとの競合リスク
+
+**決定**
+`/users/{user_id}` を採用。シンプルさと保守性を優先。UI上では `@user_id` と表示することで、ユーザー体験は維持。
+
+---
+
 （以降、開発中に追記）
