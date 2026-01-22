@@ -41,11 +41,11 @@ export default function WorldForm({ world, userId }: WorldFormProps) {
     try {
       let newIconUrl = world?.icon_url || null
 
-      // Upload icon if changed
+      // Upload icon if changed (use userId as folder prefix for RLS)
       if (iconFile) {
-        const worldId = world?.id || crypto.randomUUID()
         const fileExt = iconFile.name.split('.').pop()
-        const filePath = `${worldId}/icon.${fileExt}`
+        const fileName = `${Date.now()}.${fileExt}`
+        const filePath = `${userId}/${fileName}`
 
         const { error: uploadError } = await supabase.storage
           .from('world-icons')

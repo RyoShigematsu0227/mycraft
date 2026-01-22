@@ -182,23 +182,23 @@ MVP開発のタスク一覧。フェーズ順に実装を進める。
 ## Phase 7: 投稿機能
 
 ### 7.1 投稿作成
-- [ ] 新規投稿ページ（/posts/new）
-- [ ] PostForm コンポーネント
-- [ ] 画像アップロード（複数枚対応、0〜4枚）
-- [ ] ワールド選択
-- [ ] 公開範囲選択
+- [x] 新規投稿ページ（/posts/new）
+- [x] PostForm コンポーネント
+- [x] 画像アップロード（複数枚対応、0〜4枚）
+- [x] ワールド選択
+- [x] 公開範囲選択
 
 ### 7.2 投稿表示
-- [ ] 投稿詳細ページ（/posts/{post_id}）
-- [ ] PostCard コンポーネント
-- [ ] PostImages コンポーネント
-- [ ] 投稿削除機能
+- [x] 投稿詳細ページ（/posts/{post_id}）
+- [x] PostCard コンポーネント
+- [x] PostImages コンポーネント
+- [x] 投稿削除機能
 
 ### 7.3 リアクション
-- [ ] LikeButton コンポーネント
-- [ ] useLike フック
-- [ ] RepostButton コンポーネント
-- [ ] useRepost フック
+- [x] LikeButton コンポーネント
+- [x] useLike フック
+- [x] RepostButton コンポーネント
+- [x] useRepost フック
 
 ---
 
@@ -302,7 +302,7 @@ MVP開発のタスク一覧。フェーズ順に実装を進める。
 | Phase 4: 共通レイアウト・UI | 完了 |
 | Phase 5: ユーザー機能 | 完了 |
 | Phase 6: ワールド機能 | 完了 |
-| Phase 7: 投稿機能 | 未着手 |
+| Phase 7: 投稿機能 | 完了 |
 | Phase 8: コメント機能 | 未着手 |
 | Phase 9: フィード機能 | 未着手 |
 | Phase 10: 通知機能 | 未着手 |
