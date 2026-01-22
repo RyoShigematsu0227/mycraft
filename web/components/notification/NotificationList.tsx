@@ -1,7 +1,8 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import NotificationCard from './NotificationCard'
-import { Loading, EmptyState, Button } from '@/components/ui'
+import { Loading, EmptyState } from '@/components/ui'
 import useNotifications from '@/hooks/useNotifications'
 
 interface NotificationListProps {
@@ -10,6 +11,15 @@ interface NotificationListProps {
 
 export default function NotificationList({ userId }: NotificationListProps) {
   const { notifications, loading, markAsRead, unreadCount } = useNotifications({ userId })
+  const hasMarkedAsRead = useRef(false)
+
+  // 通知一覧を表示した時点ですべて既読にする
+  useEffect(() => {
+    if (!loading && unreadCount > 0 && !hasMarkedAsRead.current) {
+      hasMarkedAsRead.current = true
+      markAsRead()
+    }
+  }, [loading, unreadCount, markAsRead])
 
   if (loading) {
     return <Loading />
@@ -35,27 +45,13 @@ export default function NotificationList({ userId }: NotificationListProps) {
   }
 
   return (
-    <div>
-      {unreadCount > 0 && (
-        <div className="flex justify-end border-b border-gray-200 px-4 py-2 dark:border-gray-700">
-          <Button variant="ghost" size="sm" onClick={() => markAsRead()}>
-            すべて既読にする
-          </Button>
-        </div>
-      )}
-      <div className="divide-y divide-gray-100 dark:divide-gray-800">
-        {notifications.map((notification) => (
-          <NotificationCard
-            key={notification.id}
-            notification={notification}
-            onClick={() => {
-              if (!notification.is_read) {
-                markAsRead(notification.id)
-              }
-            }}
-          />
-        ))}
-      </div>
+    <div className="divide-y divide-gray-100 dark:divide-gray-800">
+      {notifications.map((notification) => (
+        <NotificationCard
+          key={notification.id}
+          notification={notification}
+        />
+      ))}
     </div>
   )
 }

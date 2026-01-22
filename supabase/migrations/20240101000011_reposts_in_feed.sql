@@ -138,10 +138,13 @@ RETURNS TABLE (
 BEGIN
   RETURN QUERY
   WITH following_ids AS (
+    -- Include both followed users AND the current user
     SELECT following_id FROM follows WHERE follower_id = p_user_id
+    UNION
+    SELECT p_user_id
   ),
   feed_items AS (
-    -- Original posts from followed users
+    -- Original posts from followed users and self
     SELECT
       p.id,
       p.user_id,
@@ -160,7 +163,7 @@ BEGIN
 
     UNION ALL
 
-    -- Reposts by followed users
+    -- Reposts by followed users and self
     SELECT
       p.id,
       p.user_id,

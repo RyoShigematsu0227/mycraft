@@ -1,6 +1,8 @@
 -- =============================================
--- Get feed user (posts by a specific user)
+-- Get feed user (posts and reposts by a specific user)
 -- =============================================
+DROP FUNCTION IF EXISTS get_feed_user(uuid, int, timestamptz);
+
 CREATE OR REPLACE FUNCTION get_feed_user(
   p_user_id uuid,
   p_limit int DEFAULT 20,
@@ -21,39 +23,84 @@ RETURNS TABLE (
   likes_count bigint,
   comments_count bigint,
   reposts_count bigint,
-  images json
+  images json,
+  is_repost boolean,
+  reposted_by_user_id varchar(30),
+  reposted_by_display_name varchar(50),
+  repost_created_at timestamptz
 ) AS $$
 BEGIN
   RETURN QUERY
+  WITH feed_items AS (
+    -- Original posts by the user
+    SELECT
+      p.id,
+      p.user_id,
+      p.world_id,
+      p.content,
+      p.visibility,
+      p.created_at,
+      p.created_at as sort_time,
+      false as is_repost,
+      NULL::varchar(30) as reposted_by_user_id,
+      NULL::varchar(50) as reposted_by_display_name,
+      NULL::timestamptz as repost_created_at
+    FROM posts p
+    WHERE p.user_id = p_user_id
+      AND p.visibility = 'public'
+
+    UNION ALL
+
+    -- Reposts by the user
+    SELECT
+      p.id,
+      p.user_id,
+      p.world_id,
+      p.content,
+      p.visibility,
+      p.created_at,
+      r.created_at as sort_time,
+      true as is_repost,
+      ru.user_id as reposted_by_user_id,
+      ru.display_name as reposted_by_display_name,
+      r.created_at as repost_created_at
+    FROM reposts r
+    JOIN posts p ON r.post_id = p.id
+    JOIN users ru ON r.user_id = ru.id
+    WHERE r.user_id = p_user_id
+      AND p.visibility = 'public'
+  )
   SELECT
-    p.id,
-    p.user_id,
-    p.world_id,
-    p.content,
-    p.visibility,
-    p.created_at,
+    fi.id,
+    fi.user_id,
+    fi.world_id,
+    fi.content,
+    fi.visibility,
+    fi.created_at,
     u.display_name as user_display_name,
     u.user_id as user_user_id,
     u.avatar_url as user_avatar_url,
     w.name as world_name,
     w.icon_url as world_icon_url,
-    (SELECT COUNT(*) FROM likes WHERE likes.post_id = p.id) as likes_count,
-    (SELECT COUNT(*) FROM comments WHERE comments.post_id = p.id) as comments_count,
-    (SELECT COUNT(*) FROM reposts WHERE reposts.post_id = p.id) as reposts_count,
+    (SELECT COUNT(*) FROM likes WHERE likes.post_id = fi.id) as likes_count,
+    (SELECT COUNT(*) FROM comments WHERE comments.post_id = fi.id) as comments_count,
+    (SELECT COUNT(*) FROM reposts WHERE reposts.post_id = fi.id) as reposts_count,
     (
       SELECT COALESCE(json_agg(
         json_build_object('id', pi.id, 'image_url', pi.image_url, 'display_order', pi.display_order)
         ORDER BY pi.display_order
       ), '[]'::json)
-      FROM post_images pi WHERE pi.post_id = p.id
-    ) as images
-  FROM posts p
-  JOIN users u ON p.user_id = u.id
-  LEFT JOIN worlds w ON p.world_id = w.id
-  WHERE p.user_id = p_user_id
-    AND p.visibility = 'public'
-    AND (p_cursor IS NULL OR p.created_at < p_cursor)
-  ORDER BY p.created_at DESC
+      FROM post_images pi WHERE pi.post_id = fi.id
+    ) as images,
+    fi.is_repost,
+    fi.reposted_by_user_id,
+    fi.reposted_by_display_name,
+    fi.repost_created_at
+  FROM feed_items fi
+  JOIN users u ON fi.user_id = u.id
+  LEFT JOIN worlds w ON fi.world_id = w.id
+  WHERE (p_cursor IS NULL OR fi.sort_time < p_cursor)
+  ORDER BY fi.sort_time DESC
   LIMIT p_limit;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

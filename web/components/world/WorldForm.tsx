@@ -125,6 +125,7 @@ export default function WorldForm({ world, userId }: WorldFormProps) {
           className="h-24 w-24"
           aspectRatio="square"
           placeholder="アイコン"
+          enableCrop
         />
         <div className="flex-1">
           <Input

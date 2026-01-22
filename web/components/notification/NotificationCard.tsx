@@ -14,7 +14,6 @@ interface NotificationWithActor extends Notification {
 
 interface NotificationCardProps {
   notification: NotificationWithActor
-  onClick?: () => void
 }
 
 function getNotificationContent(notification: NotificationWithActor): {
@@ -109,7 +108,7 @@ function formatDate(dateString: string): string {
   return date.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' })
 }
 
-export default function NotificationCard({ notification, onClick }: NotificationCardProps) {
+export default function NotificationCard({ notification }: NotificationCardProps) {
   const router = useRouter()
   const { actionText, link, icon } = getNotificationContent(notification)
 
@@ -122,10 +121,7 @@ export default function NotificationCard({ notification, onClick }: Notification
   return (
     <Link
       href={link}
-      onClick={onClick}
-      className={`flex items-start gap-3 px-4 py-3 transition hover:bg-gray-50 dark:hover:bg-gray-800 ${
-        !notification.is_read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''
-      }`}
+      className="flex items-start gap-3 px-4 py-3 transition hover:bg-gray-50 dark:hover:bg-gray-800"
     >
       <div onClick={handleUserClick} className="cursor-pointer">
         <UserAvatar
@@ -155,9 +151,6 @@ export default function NotificationCard({ notification, onClick }: Notification
           </div>
         </div>
       </div>
-      {!notification.is_read && (
-        <div className="mt-2 h-2 w-2 rounded-full bg-blue-500" />
-      )}
     </Link>
   )
 }
