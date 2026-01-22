@@ -148,6 +148,7 @@ export default function SearchResults({
                     avatarUrl={user.avatar_url}
                     displayName={user.display_name}
                     size="md"
+                    showLink={false}
                   />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-gray-900 dark:text-gray-100">
