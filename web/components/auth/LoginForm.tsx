@@ -17,7 +17,7 @@ export default function LoginForm() {
 
     const supabase = createClient()
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
@@ -26,6 +26,20 @@ export default function LoginForm() {
       setError(error.message)
       setLoading(false)
       return
+    }
+
+    // Check if user has completed profile setup
+    if (data.user) {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('user_id')
+        .eq('id', data.user.id)
+        .single()
+
+      if (!profile) {
+        window.location.href = '/setup'
+        return
+      }
     }
 
     window.location.href = '/'

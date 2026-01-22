@@ -30,7 +30,7 @@ export default function SignupForm() {
 
     const supabase = createClient()
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -44,6 +44,13 @@ export default function SignupForm() {
       return
     }
 
+    // If session exists, email confirmation is disabled - redirect to setup
+    if (data.session) {
+      window.location.href = '/setup'
+      return
+    }
+
+    // If no session, email confirmation is required
     setSuccess(true)
     setLoading(false)
   }
