@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Layout } from '@/components/layout'
@@ -7,6 +8,46 @@ import { Button, BackButton } from '@/components/ui'
 
 interface PostPageProps {
   params: Promise<{ postId: string }>
+}
+
+export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+  const { postId } = await params
+  const supabase = await createClient()
+
+  const { data: post } = await supabase
+    .from('posts')
+    .select(`
+      content,
+      user:users!posts_user_id_fkey(display_name, user_id),
+      images:post_images(image_url)
+    `)
+    .eq('id', postId)
+    .single()
+
+  if (!post || !post.user) {
+    return { title: '投稿が見つかりません' }
+  }
+
+  const user = post.user as { display_name: string; user_id: string }
+  const images = post.images as { image_url: string }[] | null
+  const description = post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content
+  const title = `${user.display_name}さんの投稿`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: images && images.length > 0 ? [{ url: images[0].image_url }] : undefined,
+    },
+    twitter: {
+      card: images && images.length > 0 ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      images: images && images.length > 0 ? [images[0].image_url] : undefined,
+    },
+  }
 }
 
 export default async function PostPage({ params }: PostPageProps) {

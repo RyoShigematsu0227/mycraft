@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
@@ -8,6 +9,39 @@ import { Button } from '@/components/ui'
 
 interface WorldPageProps {
   params: Promise<{ worldId: string }>
+}
+
+export async function generateMetadata({ params }: WorldPageProps): Promise<Metadata> {
+  const { worldId } = await params
+  const supabase = await createClient()
+
+  const { data: world } = await supabase
+    .from('worlds')
+    .select('name, description, icon_url')
+    .eq('id', worldId)
+    .single()
+
+  if (!world) {
+    return { title: 'ワールドが見つかりません' }
+  }
+
+  const description = world.description || `${world.name} - Minecraftワールド`
+
+  return {
+    title: world.name,
+    description,
+    openGraph: {
+      title: world.name,
+      description,
+      images: world.icon_url ? [{ url: world.icon_url }] : undefined,
+    },
+    twitter: {
+      card: 'summary',
+      title: world.name,
+      description,
+      images: world.icon_url ? [world.icon_url] : undefined,
+    },
+  }
 }
 
 export default async function WorldPage({ params }: WorldPageProps) {

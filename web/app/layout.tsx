@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import ThemeProvider from '@/theme/theme-provider'
 import { QueryProvider } from '@/lib/query/provider'
+import { ToastContainer } from '@/components/ui'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -15,8 +16,29 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'MyCraft',
-  description: 'MinecraftワールドのSNSアプリ',
+  title: {
+    default: 'MyCraft',
+    template: '%s | MyCraft',
+  },
+  description: 'Minecraftワールドの住人になりきって投稿し、スクリーンショットや建築を共有するSNS',
+  keywords: ['Minecraft', 'マイクラ', 'SNS', 'ワールド', '建築', 'スクリーンショット'],
+  authors: [{ name: 'MyCraft' }],
+  openGraph: {
+    type: 'website',
+    locale: 'ja_JP',
+    siteName: 'MyCraft',
+    title: 'MyCraft',
+    description: 'Minecraftワールドの住人になりきって投稿し、スクリーンショットや建築を共有するSNS',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'MyCraft',
+    description: 'Minecraftワールドの住人になりきって投稿し、スクリーンショットや建築を共有するSNS',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function RootLayout({
@@ -33,7 +55,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            {children}
+            <ToastContainer />
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

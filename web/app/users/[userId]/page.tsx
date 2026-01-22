@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
@@ -8,6 +9,39 @@ import { Button } from '@/components/ui'
 
 interface UserPageProps {
   params: Promise<{ userId: string }>
+}
+
+export async function generateMetadata({ params }: UserPageProps): Promise<Metadata> {
+  const { userId } = await params
+  const supabase = await createClient()
+
+  const { data: user } = await supabase
+    .from('users')
+    .select('display_name, bio, avatar_url')
+    .eq('user_id', userId)
+    .single()
+
+  if (!user) {
+    return { title: 'ユーザーが見つかりません' }
+  }
+
+  const description = user.bio || `${user.display_name}さんのプロフィール`
+
+  return {
+    title: user.display_name,
+    description,
+    openGraph: {
+      title: `${user.display_name} (@${userId})`,
+      description,
+      images: user.avatar_url ? [{ url: user.avatar_url }] : undefined,
+    },
+    twitter: {
+      card: 'summary',
+      title: `${user.display_name} (@${userId})`,
+      description,
+      images: user.avatar_url ? [user.avatar_url] : undefined,
+    },
+  }
 }
 
 export default async function UserPage({ params }: UserPageProps) {
