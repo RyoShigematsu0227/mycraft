@@ -1,13 +1,20 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@/hooks/useAuth'
 import { useState, useRef, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import type { Database } from '@/types/database'
+
+type User = Database['public']['Tables']['users']['Row']
 
 export default function Header() {
-  const { user, isAuthenticated, signOut } = useAuth()
+  const { user: authUser, isAuthenticated, signOut } = useAuth()
   const [showMenu, setShowMenu] = useState(false)
+  const [profile, setProfile] = useState<User | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const supabase = createClient()
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -19,12 +26,26 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  // Fetch user profile for avatar
+  useEffect(() => {
+    async function fetchProfile() {
+      if (!authUser?.id) return
+      const { data } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', authUser.id)
+        .single()
+      if (data) setProfile(data)
+    }
+    fetchProfile()
+  }, [authUser?.id, supabase])
+
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-900/80">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600 text-white">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
@@ -78,20 +99,40 @@ export default function Header() {
               <div className="relative" ref={menuRef}>
                 <button
                   onClick={() => setShowMenu(!showMenu)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-gray-200 text-gray-600 hover:opacity-80 dark:bg-gray-700 dark:text-gray-300"
                 >
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  {profile?.avatar_url ? (
+                    <Image
+                      src={profile.avatar_url}
+                      alt={profile.display_name}
+                      width={32}
+                      height={32}
+                      className="h-full w-full object-cover"
+                      unoptimized
                     />
-                  </svg>
+                  ) : (
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                  )}
                 </button>
 
                 {showMenu && (
                   <div className="absolute right-0 mt-2 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                    {profile && (
+                      <Link
+                        href={`/users/${profile.user_id}`}
+                        className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                        onClick={() => setShowMenu(false)}
+                      >
+                        マイページ
+                      </Link>
+                    )}
                     <Link
                       href="/settings/profile"
                       className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -122,7 +163,7 @@ export default function Header() {
               </Link>
               <Link
                 href="/signup"
-                className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
               >
                 登録
               </Link>

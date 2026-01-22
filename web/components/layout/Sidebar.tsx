@@ -87,7 +87,7 @@ export default function Sidebar() {
   const allNavItems = isAuthenticated ? [...navItems, ...authNavItems] : navItems
 
   return (
-    <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-64 shrink-0 border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 lg:block">
+    <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-64 shrink-0 lg:block">
       <nav className="flex flex-col gap-1 p-4">
         {allNavItems.map((item) => {
           const isActive = pathname === item.href
@@ -97,7 +97,7 @@ export default function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 rounded-lg px-3 py-2 transition ${
                 isActive
-                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                   : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
               }`}
             >
@@ -112,7 +112,7 @@ export default function Sidebar() {
             <hr className="my-2 border-gray-200 dark:border-gray-800" />
             <Link
               href="/posts/new"
-              className="flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 font-medium text-white transition hover:bg-green-700"
+              className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path

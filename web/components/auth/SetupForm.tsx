@@ -136,7 +136,7 @@ export default function SetupForm() {
               <span className="text-xs text-gray-500">確認中...</span>
             )}
             {!checkingUserId && userIdAvailable === true && (
-              <span className="text-xs text-green-600 dark:text-green-400">
+              <span className="text-xs text-blue-600 dark:text-blue-400">
                 このユーザーIDは使用できます
               </span>
             )}

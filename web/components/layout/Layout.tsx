@@ -13,7 +13,7 @@ export default function Layout({ children, showSidebar = true }: LayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
-      <div className="mx-auto flex max-w-7xl">
+      <div className="flex">
         {showSidebar && <Sidebar />}
         <main className="min-h-[calc(100vh-3.5rem)] flex-1 pb-20 lg:pb-0">{children}</main>
       </div>

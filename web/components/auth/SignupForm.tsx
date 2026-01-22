@@ -74,11 +74,11 @@ export default function SignupForm() {
   if (success) {
     return (
       <div className="w-full max-w-md space-y-6 text-center">
-        <div className="rounded-md bg-green-50 p-4 dark:bg-green-900/20">
-          <h2 className="text-lg font-semibold text-green-800 dark:text-green-200">
+        <div className="rounded-md bg-blue-50 p-4 dark:bg-blue-900/20">
+          <h2 className="text-lg font-semibold text-blue-800 dark:text-blue-200">
             確認メールを送信しました
           </h2>
-          <p className="mt-2 text-sm text-green-700 dark:text-green-300">
+          <p className="mt-2 text-sm text-blue-700 dark:text-blue-300">
             メールアドレスに送信された確認リンクをクリックして、登録を完了してください。
           </p>
         </div>

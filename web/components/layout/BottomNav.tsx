@@ -117,9 +117,9 @@ export default function BottomNav() {
               href={item.href}
               className={`flex flex-col items-center gap-1 px-3 py-2 ${
                 highlight
-                  ? 'text-green-600 dark:text-green-400'
+                  ? 'text-blue-600 dark:text-blue-400'
                   : isActive
-                    ? 'text-green-600 dark:text-green-400'
+                    ? 'text-blue-600 dark:text-blue-400'
                     : 'text-gray-500 dark:text-gray-400'
               }`}
             >

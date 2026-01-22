@@ -112,7 +112,7 @@ export default async function UserPage({ params }: UserPageProps) {
               {(user.minecraft_java_username || user.minecraft_bedrock_gamertag) && (
                 <div className="mt-3 flex flex-wrap gap-2 text-sm">
                   {user.minecraft_java_username && (
-                    <span className="rounded bg-green-100 px-2 py-1 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                    <span className="rounded bg-blue-100 px-2 py-1 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
                       Java: {user.minecraft_java_username}
                     </span>
                   )}
