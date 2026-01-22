@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { translateError } from '@/lib/utils/errorMessages'
 import { Button, Input, Textarea, ImageUpload } from '@/components/ui'
 import type { Database } from '@/types/database'
 
@@ -114,7 +115,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : '更新に失敗しました')
+      setError(err instanceof Error ? translateError(err.message) : '更新に失敗しました')
     } finally {
       setLoading(false)
     }

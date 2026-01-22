@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { translateError } from '@/lib/utils/errorMessages'
 import Link from 'next/link'
 
 export default function SignupForm() {
@@ -39,7 +40,7 @@ export default function SignupForm() {
     })
 
     if (error) {
-      setError(error.message)
+      setError(translateError(error.message))
       setLoading(false)
       return
     }
@@ -67,7 +68,7 @@ export default function SignupForm() {
     })
 
     if (error) {
-      setError(error.message)
+      setError(translateError(error.message))
     }
   }
 

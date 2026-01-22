@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { translateError } from '@/lib/utils/errorMessages'
 import Link from 'next/link'
 
 export default function LoginForm() {
@@ -23,7 +24,7 @@ export default function LoginForm() {
     })
 
     if (error) {
-      setError(error.message)
+      setError(translateError(error.message))
       setLoading(false)
       return
     }
@@ -57,7 +58,7 @@ export default function LoginForm() {
     })
 
     if (error) {
-      setError(error.message)
+      setError(translateError(error.message))
     }
   }
 

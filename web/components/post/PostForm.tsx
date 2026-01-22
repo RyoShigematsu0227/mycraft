@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
+import { translateError } from '@/lib/utils/errorMessages'
 import { Button, Textarea } from '@/components/ui'
 import { WorldIcon } from '@/components/world'
 import type { Database } from '@/types/database'
@@ -113,7 +114,7 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
       router.push(`/posts/${post.id}`)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : '投稿に失敗しました')
+      setError(err instanceof Error ? translateError(err.message) : '投稿に失敗しました')
       setLoading(false)
     }
   }
