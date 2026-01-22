@@ -13,6 +13,7 @@ export default function Header() {
   const { user: authUser, isAuthenticated, signOut } = useAuth()
   const [showMenu, setShowMenu] = useState(false)
   const [profile, setProfile] = useState<User | null>(null)
+  const [unreadCount, setUnreadCount] = useState(0)
   const menuRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
@@ -38,6 +39,41 @@ export default function Header() {
       if (data) setProfile(data)
     }
     fetchProfile()
+  }, [authUser?.id, supabase])
+
+  // Fetch unread notification count
+  useEffect(() => {
+    async function fetchUnreadCount() {
+      if (!authUser?.id) return
+      const { count } = await supabase
+        .from('notifications')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', authUser.id)
+        .eq('is_read', false)
+      setUnreadCount(count || 0)
+    }
+    fetchUnreadCount()
+
+    // Subscribe to realtime updates
+    const channel = supabase
+      .channel('header-notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${authUser?.id}`,
+        },
+        () => {
+          fetchUnreadCount()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [authUser?.id, supabase])
 
   return (
@@ -83,7 +119,7 @@ export default function Header() {
               {/* Notifications */}
               <Link
                 href="/notifications"
-                className="rounded-full p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="relative rounded-full p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -93,6 +129,11 @@ export default function Header() {
                     d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
                   />
                 </svg>
+                {unreadCount > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
               </Link>
 
               {/* User menu */}

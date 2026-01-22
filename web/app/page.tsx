@@ -1,6 +1,6 @@
 import { Layout } from '@/components/layout'
 import { EmptyState, Button } from '@/components/ui'
-import { Feed } from '@/components/post'
+import { HomeFeed } from '@/components/post'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
@@ -69,8 +69,8 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Feed */}
-        <Feed currentUserId={profile?.id} />
+        {/* Feed with tabs */}
+        <HomeFeed currentUserId={profile?.id} />
       </div>
     </Layout>
   )

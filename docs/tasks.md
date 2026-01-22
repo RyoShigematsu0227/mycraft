@@ -205,66 +205,66 @@ MVP開発のタスク一覧。フェーズ順に実装を進める。
 ## Phase 8: コメント機能
 
 ### 8.1 コメント表示
-- [ ] CommentSection コンポーネント
-- [ ] CommentCard コンポーネント
-- [ ] CommentThread コンポーネント（ネスト対応）
+- [x] CommentSection コンポーネント
+- [x] CommentCard コンポーネント
+- [x] CommentThread コンポーネント（ネスト対応）
 
 ### 8.2 コメント投稿
-- [ ] CommentForm コンポーネント
-- [ ] useComment フック
-- [ ] 返信機能（無制限ネスト）
+- [x] CommentForm コンポーネント
+- [x] useComment フック
+- [x] 返信機能（無制限ネスト）
 
 ### 8.3 コメントいいね
-- [ ] CommentLikeButton コンポーネント
-- [ ] useCommentLike フック
+- [x] CommentLikeButton コンポーネント
+- [x] useCommentLike フック
 
 ---
 
 ## Phase 9: フィード機能
 
 ### 9.1 ホームフィード
-- [ ] ホームページ（/）
-- [ ] FeedTabs コンポーネント（新着/おすすめ切り替え）
-- [ ] InfiniteFeed コンポーネント
-- [ ] useFeed フック
+- [x] ホームページ（/）
+- [x] FeedTabs コンポーネント（新着/おすすめ切り替え）
+- [x] InfiniteFeed コンポーネント
+- [x] useFeed フック
 
 ### 9.2 フォロー中フィード
-- [ ] フォロー中ページ（/following）
-- [ ] useFollowingFeed フック
+- [x] フォロー中タブ（useFeedで統合実装）
+- [x] useFollowingFeed フック（useFeedで統合）
 
 ### 9.3 ワールドフィード
-- [ ] ワールドページ内のフィード表示
-- [ ] useWorldFeed フック
+- [x] ワールドページ内のフィード表示（useFeedで対応）
+- [x] useWorldFeed フック（useFeedで統合）
 
 ---
 
 ## Phase 10: 通知機能
 
 ### 10.1 通知表示
-- [ ] 通知ページ（/notifications）
-- [ ] NotificationList コンポーネント
-- [ ] NotificationCard コンポーネント
-- [ ] useNotifications フック
+- [x] 通知ページ（/notifications）
+- [x] NotificationList コンポーネント
+- [x] NotificationCard コンポーネント
+- [x] useNotifications フック
 
 ### 10.2 通知状態
-- [ ] 未読数表示（Header）
-- [ ] 既読処理
-- [ ] Supabase Realtime連携（リアルタイム通知）
+- [x] 未読数表示（Header）
+- [x] 既読処理
+- [x] Supabase Realtime連携（リアルタイム通知）
 
 ---
 
 ## Phase 11: 検索機能
 
 ### 11.1 検索UI
-- [ ] 検索ページ（/search）
-- [ ] SearchBar コンポーネント
-- [ ] SearchResults コンポーネント
+- [x] 検索ページ（/search）
+- [x] SearchBar コンポーネント
+- [x] SearchResults コンポーネント
 
 ### 11.2 検索機能実装
-- [ ] ユーザー検索
-- [ ] ワールド検索
-- [ ] 投稿検索
-- [ ] useSearch フック
+- [x] ユーザー検索
+- [x] ワールド検索
+- [x] 投稿検索
+- [x] useSearch フック
 
 ---
 
@@ -303,8 +303,8 @@ MVP開発のタスク一覧。フェーズ順に実装を進める。
 | Phase 5: ユーザー機能 | 完了 |
 | Phase 6: ワールド機能 | 完了 |
 | Phase 7: 投稿機能 | 完了 |
-| Phase 8: コメント機能 | 未着手 |
-| Phase 9: フィード機能 | 未着手 |
-| Phase 10: 通知機能 | 未着手 |
-| Phase 11: 検索機能 | 未着手 |
+| Phase 8: コメント機能 | 完了 |
+| Phase 9: フィード機能 | 完了 |
+| Phase 10: 通知機能 | 完了 |
+| Phase 11: 検索機能 | 完了 |
 | Phase 12: 仕上げ | 未着手 |

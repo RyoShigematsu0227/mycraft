@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Layout } from '@/components/layout'
 import { PostCard } from '@/components/post'
+import { CommentSection } from '@/components/comment'
 import { Button, BackButton } from '@/components/ui'
 
 interface PostPageProps {
@@ -109,12 +110,8 @@ export default async function PostPage({ params }: PostPageProps) {
           isReposted={isReposted}
         />
 
-        {/* Comments section placeholder */}
-        <div className="border-b border-gray-200 p-4 dark:border-gray-700">
-          <p className="text-center text-gray-500 dark:text-gray-400">
-            コメント機能はPhase 8で実装
-          </p>
-        </div>
+        {/* Comments section */}
+        <CommentSection postId={postId} currentUserId={authUser?.id} />
       </div>
     </Layout>
   )
