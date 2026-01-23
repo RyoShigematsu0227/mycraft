@@ -1,11 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getWorld, getWorldOwner, getWorldMemberCount, getWorldMetadata } from '@/lib/data'
-import { WorldIcon, JoinButton, WorldStats } from '@/components/world'
+import { WorldHeader } from '@/components/world'
 import { InfiniteFeed } from '@/components/post'
-import { Button } from '@/components/ui'
 
 interface WorldPageProps {
   params: Promise<{ worldId: string }>
@@ -78,70 +76,14 @@ export default async function WorldPage({ params }: WorldPageProps) {
 
   return (
     <div className="mx-auto max-w-2xl">
-      {/* World Header */}
-      <div className="border-b border-gray-200 bg-background px-4 py-6 dark:border-gray-700 dark:bg-surface">
-        <div className="flex items-start gap-4">
-          <WorldIcon
-            worldId={world.id}
-            iconUrl={world.icon_url}
-            name={world.name}
-            size="xl"
-            showLink={false}
-          />
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-              <div className="min-w-0">
-                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                  {world.name}
-                </h1>
-                {owner && (
-                  <Link
-                    href={`/users/${owner.user_id}`}
-                    className="text-sm text-gray-500 hover:underline dark:text-gray-400"
-                  >
-                    作成者: @{owner.user_id}
-                  </Link>
-                )}
-              </div>
-              <div className="shrink-0">
-                {isOwner ? (
-                  <Link href={`/worlds/${world.id}/edit`}>
-                    <Button variant="outline" size="sm">
-                      編集
-                    </Button>
-                  </Link>
-                ) : authUser ? (
-                  <JoinButton
-                    worldId={world.id}
-                    currentUserId={authUser.id}
-                    initialIsMember={isMember}
-                  />
-                ) : null}
-              </div>
-            </div>
-            {world.description && (
-              <p className="mt-3 text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">
-                {world.description}
-              </p>
-            )}
-            <WorldStats
-              worldId={world.id}
-              initialMemberCount={memberCount}
-              isMember={isMember}
-            />
-          </div>
-        </div>
-
-        {/* How to Join */}
-        {world.how_to_join && (
-          <div className="mt-4 rounded-lg bg-surface p-4 dark:bg-gray-700/50">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">参加方法</h3>
-            <p className="mt-1 text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap break-words">
-              {world.how_to_join}
-            </p>
-          </div>
-        )}
-      </div>
+      <WorldHeader
+        world={world}
+        owner={owner}
+        memberCount={memberCount}
+        isMember={isMember}
+        isOwner={isOwner}
+        currentUserId={authUser?.id}
+      />
 
       {/* Posts Section */}
       <InfiniteFeed
