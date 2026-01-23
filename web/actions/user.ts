@@ -1,13 +1,14 @@
 'use server'
 
 import { updateTag } from 'next/cache'
-import { createClient } from '@/lib/supabase/server'
+import { createClient as createServerClient } from '@/lib/supabase/server'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
 
 /**
  * フォローをトグル
  */
 export async function toggleFollow(targetUserId: string, currentUserId: string) {
-  const supabase = await createClient()
+  const supabase = await createServerClient()
 
   // Check if already following
   const { data: existingFollow } = await supabase
@@ -58,7 +59,7 @@ export async function updateProfile(
     minecraftBedrockGamertag?: string
   }
 ) {
-  const supabase = await createClient()
+  const supabase = await createServerClient()
 
   const updateData: Record<string, unknown> = {}
   if (data.displayName !== undefined) updateData.display_name = data.displayName
@@ -85,6 +86,36 @@ export async function updateProfile(
     updateTag(`user-${user.user_id}`)
   }
   updateTag(`user-id-${userId}`)
+
+  return { success: true }
+}
+
+/**
+ * アカウントを完全に削除（auth.usersからも削除）
+ */
+export async function deleteAccount(userId: string) {
+  // サービスロールキーを使用してadminクライアントを作成
+  const supabaseAdmin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
+  // public.usersから削除（カスケードで関連データも削除）
+  const { error: deleteUserError } = await supabaseAdmin
+    .from('users')
+    .delete()
+    .eq('id', userId)
+
+  if (deleteUserError) {
+    throw new Error(`ユーザーデータの削除に失敗しました: ${deleteUserError.message}`)
+  }
+
+  // auth.usersから削除
+  const { error: deleteAuthError } = await supabaseAdmin.auth.admin.deleteUser(userId)
+
+  if (deleteAuthError) {
+    throw new Error(`認証情報の削除に失敗しました: ${deleteAuthError.message}`)
+  }
 
   return { success: true }
 }
