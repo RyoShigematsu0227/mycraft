@@ -63,11 +63,13 @@ export default function WorldCard({
             </p>
           </div>
           {showJoinButton && currentUserId && !isOwner && (
-            <JoinButton
-              worldId={world.id}
-              currentUserId={currentUserId}
-              initialIsMember={isMember}
-            />
+            <div className="shrink-0">
+              <JoinButton
+                worldId={world.id}
+                currentUserId={currentUserId}
+                initialIsMember={isMember}
+              />
+            </div>
           )}
         </div>
         {world.description && (
