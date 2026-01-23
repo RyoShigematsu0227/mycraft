@@ -16,7 +16,7 @@ export default function FeedTabs({ activeTab, onTabChange, showFollowing = true 
   ]
 
   return (
-    <div className="flex border-b border-gray-200 dark:border-gray-700">
+    <div className="sticky top-[52px] z-10 flex border-b border-gray-200 bg-white/80 backdrop-blur dark:border-gray-700 dark:bg-gray-900/80">
       {tabs.map((tab) => (
         <button
           key={tab.id}
