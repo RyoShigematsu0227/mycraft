@@ -33,7 +33,7 @@ export default function UserCard({
   return (
     <div className="group relative overflow-hidden rounded-2xl bg-surface transition-all duration-300 hover:shadow-lg">
       {/* Background gradient */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-accent/10 blur-3xl transition-all duration-500 group-hover:scale-150 group-hover:bg-accent/20" />
         <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-accent-secondary/10 blur-3xl transition-all duration-500 group-hover:scale-150 group-hover:bg-accent-secondary/20" />
       </div>

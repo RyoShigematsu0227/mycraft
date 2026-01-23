@@ -93,9 +93,9 @@ export default function WorldList({ worlds, currentUserId }: WorldListProps) {
     <div>
       {/* Filter Tabs */}
       {currentUserId && (
-        <div className="sticky top-[52px] z-10 border-b border-border bg-background/95 px-4 py-4 backdrop-blur-sm">
+        <div className="sticky top-[52px] z-10 overflow-hidden border-b border-border bg-background/95 px-4 py-4 backdrop-blur-sm">
           {/* Tabs Container */}
-          <div ref={tabsRef} className="relative flex gap-2 overflow-x-auto">
+          <div ref={tabsRef} className="relative flex gap-2">
             {/* Animated Background Indicator */}
             <div
               className="absolute top-0 h-full rounded-xl bg-gradient-to-r from-accent to-accent-secondary transition-all duration-300 ease-out"
@@ -112,7 +112,7 @@ export default function WorldList({ worlds, currentUserId }: WorldListProps) {
                   key={f.key}
                   ref={isActive ? activeTabRef : null}
                   onClick={() => setFilter(f.key)}
-                  className={`relative z-10 flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-300 ${
+                  className={`relative z-10 flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2.5 text-sm font-semibold transition-all duration-300 ${
                     isActive
                       ? 'text-white'
                       : 'text-muted hover:bg-surface-hover hover:text-foreground'
@@ -139,7 +139,7 @@ export default function WorldList({ worlds, currentUserId }: WorldListProps) {
       )}
 
       {/* World Grid */}
-      <div className="p-4">
+      <div className="overflow-x-hidden p-4">
         {filteredWorlds.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-surface">

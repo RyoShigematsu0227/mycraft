@@ -59,7 +59,7 @@ export default function WorldCard({
       className="group relative block overflow-hidden rounded-2xl bg-surface transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl dark:bg-surface"
     >
       {/* Background Layer */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 overflow-hidden">
         {/* Gradient Background */}
         <div className={`absolute inset-0 bg-gradient-to-br ${getGradient(world.name)} opacity-60 transition-opacity duration-500 group-hover:opacity-100`} />
 
@@ -92,9 +92,9 @@ export default function WorldCard({
 
         <div className="flex items-start gap-4">
           {/* World Icon */}
-          <div className="relative">
-            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-accent/50 to-accent-secondary/50 opacity-0 blur transition-opacity duration-300 group-hover:opacity-100" />
-            <div className="relative h-16 w-16 overflow-hidden rounded-xl bg-gray-200 shadow-lg ring-2 ring-white/50 transition-transform duration-300 group-hover:scale-110 dark:bg-gray-700 dark:ring-white/20">
+          <div className="relative overflow-hidden rounded-2xl p-1">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent/50 to-accent-secondary/50 opacity-0 blur transition-opacity duration-300 group-hover:opacity-100" />
+            <div className="relative h-16 w-16 overflow-hidden rounded-xl bg-gray-200 shadow-lg ring-2 ring-white/50 transition-transform duration-300 group-hover:scale-105 dark:bg-gray-700 dark:ring-white/20">
               <Image
                 src={world.icon_url || '/defaults/default-world-icon.png'}
                 alt={world.name}
