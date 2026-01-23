@@ -50,11 +50,11 @@ export default function WorldCard({
         size="lg"
       />
       <div className="min-w-0 flex-1">
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <Link
               href={`/worlds/${world.id}`}
-              className="block truncate text-base font-bold text-gray-900 hover:underline dark:text-gray-100"
+              className="block text-base font-bold text-gray-900 hover:underline dark:text-gray-100 sm:truncate"
             >
               {world.name}
             </Link>

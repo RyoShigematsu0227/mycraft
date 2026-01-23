@@ -89,9 +89,9 @@ export default async function WorldPage({ params }: WorldPageProps) {
             showLink={false}
           />
           <div className="min-w-0 flex-1">
-            <div className="flex items-start justify-between gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
-                <h1 className="truncate text-xl font-bold text-gray-900 dark:text-gray-100">
+                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                   {world.name}
                 </h1>
                 {owner && (
