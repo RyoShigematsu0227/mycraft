@@ -11,6 +11,11 @@ interface SearchBarProps {
 export default function SearchBar({ initialQuery = '', onSearch, autoFocus = false }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery)
 
+  // Sync query with initialQuery from URL
+  useEffect(() => {
+    setQuery(initialQuery)
+  }, [initialQuery])
+
   // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {

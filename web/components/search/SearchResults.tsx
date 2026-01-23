@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { UserAvatar } from '@/components/user'
+import { WorldIcon } from '@/components/world'
 import { PostCard } from '@/components/post'
 import { Loading, EmptyState } from '@/components/ui'
 import type { SearchTab } from '@/hooks/useSearch'
@@ -188,34 +188,13 @@ export default function SearchResults({
                   href={`/worlds/${world.id}`}
                   className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800"
                 >
-                  <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700">
-                    {world.icon_url ? (
-                      <Image
-                        src={world.icon_url}
-                        alt={world.name}
-                        width={48}
-                        height={48}
-                        className="h-full w-full object-cover"
-                        unoptimized={world.icon_url.startsWith('http')}
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <svg
-                          className="h-6 w-6 text-gray-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
+                  <WorldIcon
+                    worldId={world.id}
+                    iconUrl={world.icon_url}
+                    name={world.name}
+                    size="md"
+                    showLink={false}
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-gray-900 dark:text-gray-100">
                       {world.name}
