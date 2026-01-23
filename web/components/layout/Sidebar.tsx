@@ -71,22 +71,17 @@ export default function Sidebar() {
   // Fetch user's worlds with member counts
   useEffect(() => {
     async function fetchUserWorlds() {
-      console.log('fetchUserWorlds called, authUser?.id:', authUser?.id)
       if (!authUser?.id) return
       const client = createClient()
-      const { data, error } = await client
+      const { data } = await client
         .from('world_members')
         .select('world:worlds(*)')
         .eq('user_id', authUser.id)
-
-      console.log('world_members data:', data, 'error:', error)
 
       if (data) {
         const worlds = data
           .map((item) => item.world)
           .filter((w): w is World => w !== null)
-
-        console.log('filtered worlds:', worlds)
 
         // Fetch member counts for each world
         const worldsWithCounts = await Promise.all(
@@ -98,7 +93,6 @@ export default function Sidebar() {
             return { ...world, memberCount: count || 0 }
           })
         )
-        console.log('worldsWithCounts:', worldsWithCounts)
         setUserWorlds(worldsWithCounts)
       }
     }
