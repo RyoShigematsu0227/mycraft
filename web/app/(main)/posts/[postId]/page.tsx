@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getPost, getPostStats, getPostMetadata } from '@/lib/data'
-import { PostCard, DeletePostButton } from '@/components/post'
+import { PostCard } from '@/components/post'
 import { CommentSection } from '@/components/comment'
 import { BackButton } from '@/components/ui'
 
@@ -83,18 +83,13 @@ export default async function PostPage({ params }: PostPageProps) {
     isReposted = !!repostCheck.data
   }
 
-  const isOwner = authUser?.id === post.user_id
-
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
       <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur dark:border-border dark:bg-background/80">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <BackButton />
-            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">投稿</h1>
-          </div>
-          {isOwner && <DeletePostButton postId={postId} userId={authUser?.id} />}
+        <div className="flex items-center gap-4">
+          <BackButton />
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">投稿</h1>
         </div>
       </div>
 

@@ -1,5 +1,4 @@
 export { default as PostCard } from './PostCard'
-export { default as DeletePostButton } from './DeletePostButton'
 export { default as PostImages } from './PostImages'
 export { default as PostForm } from './PostForm'
 export { default as LikeButton } from './LikeButton'
