@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import type { TablesInsert } from '@/types/database'
 
@@ -9,10 +10,30 @@ export default function SetupForm() {
   const router = useRouter()
   const [userId, setUserId] = useState('')
   const [displayName, setDisplayName] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [checkingUserId, setCheckingUserId] = useState(false)
   const [userIdAvailable, setUserIdAvailable] = useState<boolean | null>(null)
+
+  // OAuthプロバイダーからプロフィール情報を取得
+  useEffect(() => {
+    async function fetchOAuthProfile() {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (user?.user_metadata) {
+        // アバターURL（Google: picture or avatar_url, Discord: avatar_url）
+        const avatar = user.user_metadata.avatar_url || user.user_metadata.picture
+        if (avatar) setAvatarUrl(avatar)
+
+        // 表示名（Google: full_name or name, Discord: full_name）
+        const name = user.user_metadata.full_name || user.user_metadata.name
+        if (name && !displayName) setDisplayName(name)
+      }
+    }
+    fetchOAuthProfile()
+  }, [])
 
   const validateUserId = (value: string) => {
     // Only alphanumeric and underscore, 3-30 characters
@@ -81,6 +102,7 @@ export default function SetupForm() {
       id: user.id,
       user_id: userId,
       display_name: displayName.trim(),
+      avatar_url: avatarUrl,
     } as TablesInsert<'users'>)
 
     if (insertError) {
@@ -112,6 +134,22 @@ export default function SetupForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* アバタープレビュー */}
+        {avatarUrl && (
+          <div className="flex flex-col items-center gap-2">
+            <div className="relative h-20 w-20 overflow-hidden rounded-full ring-2 ring-accent/20">
+              <Image
+                src={avatarUrl}
+                alt="プロフィール画像"
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
+            <p className="text-xs text-muted">プロフィール画像を引き継ぎます</p>
+          </div>
+        )}
+
         <div>
           <label htmlFor="userId" className="block text-sm font-medium">
             ユーザーID

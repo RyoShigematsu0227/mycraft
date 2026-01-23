@@ -1,5 +1,4 @@
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Note: Using gen_random_uuid() instead of gen_random_uuid() as it's built-in to PostgreSQL
 
 -- =============================================
 -- Users table (extends Supabase Auth)
@@ -20,7 +19,7 @@ CREATE TABLE users (
 -- Worlds table
 -- =============================================
 CREATE TABLE worlds (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   name varchar(100) NOT NULL,
   description text,
   how_to_join text,
@@ -34,7 +33,7 @@ CREATE TABLE worlds (
 -- World members table
 -- =============================================
 CREATE TABLE world_members (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   world_id uuid NOT NULL REFERENCES worlds(id) ON DELETE CASCADE,
   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   joined_at timestamptz NOT NULL DEFAULT now(),
@@ -45,7 +44,7 @@ CREATE TABLE world_members (
 -- Posts table
 -- =============================================
 CREATE TABLE posts (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   world_id uuid REFERENCES worlds(id) ON DELETE SET NULL,
   content text NOT NULL,
@@ -57,7 +56,7 @@ CREATE TABLE posts (
 -- Post images table
 -- =============================================
 CREATE TABLE post_images (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   post_id uuid NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
   image_url text NOT NULL,
   display_order int NOT NULL CHECK (display_order >= 0 AND display_order <= 3)
@@ -67,7 +66,7 @@ CREATE TABLE post_images (
 -- Likes table
 -- =============================================
 CREATE TABLE likes (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   post_id uuid NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -78,7 +77,7 @@ CREATE TABLE likes (
 -- Comments table
 -- =============================================
 CREATE TABLE comments (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   post_id uuid NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
   parent_comment_id uuid REFERENCES comments(id) ON DELETE CASCADE,
@@ -90,7 +89,7 @@ CREATE TABLE comments (
 -- Comment likes table
 -- =============================================
 CREATE TABLE comment_likes (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   comment_id uuid NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -101,7 +100,7 @@ CREATE TABLE comment_likes (
 -- Reposts table
 -- =============================================
 CREATE TABLE reposts (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   post_id uuid NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -112,7 +111,7 @@ CREATE TABLE reposts (
 -- Follows table
 -- =============================================
 CREATE TABLE follows (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   follower_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   following_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -124,7 +123,7 @@ CREATE TABLE follows (
 -- Notifications table
 -- =============================================
 CREATE TABLE notifications (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   type varchar(20) NOT NULL CHECK (type IN ('like', 'comment', 'follow', 'repost', 'comment_like')),
   actor_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
