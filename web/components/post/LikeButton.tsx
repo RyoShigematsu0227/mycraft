@@ -38,7 +38,7 @@ export default function LikeButton({
       <button
         onClick={handleClick}
         disabled={isLoading}
-        className={`group/like relative flex items-center gap-1.5 rounded-full px-3 py-2 text-sm transition-all duration-200 ${
+        className={`group/like relative flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-2 text-sm transition-all duration-200 ${
           isLiked
             ? 'text-rose-500 hover:bg-rose-500/10 dark:hover:bg-rose-500/20'
             : 'text-gray-500 hover:bg-rose-500/10 hover:text-rose-500 dark:text-gray-400 dark:hover:bg-rose-500/20 dark:hover:text-rose-400'

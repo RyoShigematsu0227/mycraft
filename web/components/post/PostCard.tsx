@@ -32,6 +32,7 @@ interface PostCardProps {
     userId: string
     displayName: string
   } | null
+  interactive?: boolean
 }
 
 function formatDate(dateString: string): string {
@@ -61,6 +62,7 @@ export default function PostCard({
   isReposted = false,
   showWorldInfo = true,
   repostedBy = null,
+  interactive = true,
 }: PostCardProps) {
   const router = useRouter()
   const stats = usePostStatsStore((state) => state.stats[post.id])
@@ -79,6 +81,7 @@ export default function PostCard({
   const displayCommentCount = stats?.commentCount ?? commentCount
 
   const handleCardClick = (e: React.MouseEvent) => {
+    if (!interactive) return
     const target = e.target as HTMLElement
     if (target.closest('a') || target.closest('button')) {
       return
@@ -89,14 +92,22 @@ export default function PostCard({
   return (
     <article
       onClick={handleCardClick}
-      className="group relative cursor-pointer overflow-hidden bg-surface transition-all duration-300 hover:bg-surface-hover"
+      className={`group relative overflow-hidden bg-surface transition-all duration-300 ${
+        interactive ? 'cursor-pointer hover:bg-surface-hover' : ''
+      }`}
     >
       {/* Animated gradient border on left */}
-      <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-accent via-accent-secondary to-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      {interactive && (
+        <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-accent via-accent-secondary to-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      )}
 
       {/* Subtle animated glow on hover */}
-      <div className="pointer-events-none absolute -right-32 -top-32 h-64 w-64 rounded-full bg-accent/5 opacity-0 blur-3xl transition-all duration-700 group-hover:opacity-100" />
-      <div className="pointer-events-none absolute -bottom-32 -left-32 h-64 w-64 rounded-full bg-accent-secondary/5 opacity-0 blur-3xl transition-all duration-700 group-hover:opacity-100" />
+      {interactive && (
+        <>
+          <div className="pointer-events-none absolute -right-32 -top-32 h-64 w-64 rounded-full bg-accent/5 opacity-0 blur-3xl transition-all duration-700 group-hover:opacity-100" />
+          <div className="pointer-events-none absolute -bottom-32 -left-32 h-64 w-64 rounded-full bg-accent-secondary/5 opacity-0 blur-3xl transition-all duration-700 group-hover:opacity-100" />
+        </>
+      )}
 
       {/* Content wrapper */}
       <div className="relative px-4 py-4">
@@ -118,9 +129,11 @@ export default function PostCard({
         <div className="flex items-start gap-3">
           {/* Avatar with glow effect */}
           <div className="relative shrink-0">
-            <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-accent/40 to-accent-secondary/40 opacity-0 blur transition-opacity duration-300 group-hover:opacity-100" />
+            {interactive && (
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-accent/40 to-accent-secondary/40 opacity-0 blur transition-opacity duration-300 group-hover:opacity-100" />
+            )}
             <Link href={`/users/${post.user.user_id}`} className="relative block">
-              <div className="relative h-11 w-11 overflow-hidden rounded-full bg-gray-200 ring-2 ring-surface transition-all duration-300 group-hover:ring-accent/30 dark:bg-gray-700">
+              <div className={`relative h-11 w-11 overflow-hidden rounded-full bg-gray-200 ring-2 ring-surface transition-all duration-300 dark:bg-gray-700 ${interactive ? 'group-hover:ring-accent/30' : ''}`}>
                 <Image
                   src={post.user.avatar_url || '/defaults/default-avatar.svg'}
                   alt={post.user.display_name}
@@ -208,7 +221,7 @@ export default function PostCard({
                     e.stopPropagation()
                     router.push(`/posts/${post.id}`)
                   }}
-                  className="group/action flex items-center gap-1.5 rounded-full px-3 py-2 text-gray-500 transition-all duration-200 hover:bg-sky-500/10 hover:text-sky-500 dark:text-gray-400 dark:hover:text-sky-400"
+                  className="group/action flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-2 text-gray-500 transition-all duration-200 hover:bg-sky-500/10 hover:text-sky-500 dark:text-gray-400 dark:hover:text-sky-400"
                 >
                   <div className="relative">
                     <svg className="h-5 w-5 transition-transform duration-200 group-hover/action:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -241,10 +254,27 @@ export default function PostCard({
                 />
               </div>
 
-              {/* Share/More actions */}
+              {/* Share button */}
               <button
-                onClick={(e) => e.stopPropagation()}
-                className="rounded-full p-2 text-gray-400 transition-colors hover:bg-accent/10 hover:text-accent"
+                onClick={async (e) => {
+                  e.stopPropagation()
+                  const url = `${window.location.origin}/posts/${post.id}`
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({
+                        title: `${post.user.display_name}さんの投稿`,
+                        text: post.content.slice(0, 100),
+                        url,
+                      })
+                    } catch {
+                      // User cancelled or share failed
+                    }
+                  } else {
+                    await navigator.clipboard.writeText(url)
+                    alert('リンクをコピーしました')
+                  }
+                }}
+                className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-accent/10 hover:text-accent"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -257,7 +287,9 @@ export default function PostCard({
 
       {/* Bottom border with gradient on hover */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      {interactive && (
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      )}
     </article>
   )
 }

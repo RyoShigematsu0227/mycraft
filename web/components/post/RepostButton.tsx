@@ -38,7 +38,7 @@ export default function RepostButton({
       <button
         onClick={handleClick}
         disabled={isLoading}
-        className={`group/repost relative flex items-center gap-1.5 rounded-full px-3 py-2 text-sm transition-all duration-200 ${
+        className={`group/repost relative flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-2 text-sm transition-all duration-200 ${
           isReposted
             ? 'text-emerald-500 hover:bg-emerald-500/10 dark:hover:bg-emerald-500/20'
             : 'text-gray-500 hover:bg-emerald-500/10 hover:text-emerald-500 dark:text-gray-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-400'

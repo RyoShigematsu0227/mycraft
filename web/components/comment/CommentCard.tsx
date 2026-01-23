@@ -112,7 +112,7 @@ export default function CommentCard({
               {depth < maxDepth && currentUserId && (
                 <button
                   onClick={() => setShowReplyForm(!showReplyForm)}
-                  className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+                  className={`flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
                     showReplyForm
                       ? 'bg-accent/10 text-accent'
                       : 'text-muted hover:bg-accent/10 hover:text-accent'

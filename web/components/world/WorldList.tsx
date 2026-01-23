@@ -161,30 +161,34 @@ export default function WorldList({ worlds, currentUserId }: WorldListProps) {
         ) : (
           <div className="grid gap-4">
             {/* Section Headers for "All" filter */}
-            {filter === 'all' && joinedWorlds.length > 0 && (
+            {filter === 'all' && (
               <>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-secondary">
-                    <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <h2 className="text-sm font-bold text-foreground">所属中のワールド</h2>
-                  <div className="h-px flex-1 bg-border" />
-                </div>
-                {joinedWorlds.map(({ world, memberCount, isMember }) => (
-                  <WorldCard
-                    key={world.id}
-                    world={world}
-                    currentUserId={currentUserId}
-                    memberCount={memberCount}
-                    isMember={isMember}
-                  />
-                ))}
+                {joinedWorlds.length > 0 && (
+                  <>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-secondary">
+                        <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-sm font-bold text-foreground">所属中のワールド</h2>
+                      <div className="h-px flex-1 bg-border" />
+                    </div>
+                    {joinedWorlds.map(({ world, memberCount, isMember }) => (
+                      <WorldCard
+                        key={world.id}
+                        world={world}
+                        currentUserId={currentUserId}
+                        memberCount={memberCount}
+                        isMember={isMember}
+                      />
+                    ))}
+                  </>
+                )}
 
                 {otherWorlds.length > 0 && (
                   <>
-                    <div className="mt-4 flex items-center gap-3">
+                    <div className={`flex items-center gap-3 ${joinedWorlds.length > 0 ? 'mt-4' : ''}`}>
                       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface">
                         <svg className="h-4 w-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

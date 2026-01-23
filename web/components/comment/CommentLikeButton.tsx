@@ -36,7 +36,7 @@ export default function CommentLikeButton({
     <button
       onClick={handleClick}
       disabled={loading}
-      className={`group/like relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+      className={`group/like relative flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
         isLiked
           ? 'text-rose-500 hover:bg-rose-500/10'
           : 'text-muted hover:bg-rose-500/10 hover:text-rose-500'

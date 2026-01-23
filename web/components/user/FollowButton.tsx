@@ -56,12 +56,12 @@ export default function FollowButton({
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       disabled={isLoading}
-      className={`relative overflow-hidden rounded-full font-semibold transition-all duration-300 ${sizeClasses[size]} ${
+      className={`relative cursor-pointer overflow-hidden rounded-full font-semibold transition-all duration-300 ${sizeClasses[size]} ${
         isFollowing
           ? isHovering
             ? 'border-2 border-red-500/50 bg-red-500/10 text-red-500 hover:border-red-500'
             : 'border-2 border-border bg-surface text-foreground hover:bg-surface-hover'
-          : 'border-2 border-transparent bg-gradient-to-r from-accent to-accent-secondary text-white shadow-lg shadow-accent/25 hover:shadow-xl hover:shadow-accent/30'
+          : 'bg-gradient-to-r from-accent to-accent-secondary text-white shadow-lg shadow-accent/25 hover:shadow-xl hover:shadow-accent/30'
       } disabled:cursor-not-allowed disabled:opacity-50`}
     >
       {/* Shimmer effect on follow */}

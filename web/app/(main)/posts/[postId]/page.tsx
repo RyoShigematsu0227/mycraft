@@ -121,6 +121,7 @@ export default async function PostPage({ params }: PostPageProps) {
         commentCount={stats.commentsCount}
         isLiked={isLiked}
         isReposted={isReposted}
+        interactive={false}
       />
 
       {/* Comments section */}

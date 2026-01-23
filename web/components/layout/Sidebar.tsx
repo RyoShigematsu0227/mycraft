@@ -160,7 +160,7 @@ export default function Sidebar() {
         {/* Theme toggle */}
         <button
           onClick={toggleTheme}
-          className="rounded-lg p-2 text-muted transition-all duration-200 hover:bg-surface-hover hover:text-foreground"
+          className="cursor-pointer rounded-lg p-2 text-muted transition-all duration-200 hover:bg-surface-hover hover:text-foreground"
         >
           {theme === 'dark' ? (
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -176,8 +176,8 @@ export default function Sidebar() {
 
       {/* User Profile Card (when logged in) */}
       {isAuthenticated && profile && (
-        <div className="relative mx-3 mb-3 overflow-hidden rounded-2xl bg-gradient-to-br from-surface to-surface-hover p-3 ring-1 ring-border">
-          <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
+        <div className="relative mx-3 mb-3 rounded-2xl bg-gradient-to-br from-surface to-surface-hover p-3 ring-1 ring-border">
+          <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
           <div className="relative flex items-center gap-3">
             <Link href={`/users/${profile.user_id}`} className="group relative shrink-0">
               <div className="absolute -inset-0.5 rounded-full bg-gradient-to-br from-accent to-accent-secondary opacity-0 blur transition-opacity duration-300 group-hover:opacity-75" />
@@ -211,7 +211,7 @@ export default function Sidebar() {
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="rounded-lg p-1.5 text-muted transition-colors hover:bg-background hover:text-foreground"
+                className="cursor-pointer rounded-lg p-1.5 text-muted transition-colors hover:bg-background hover:text-foreground"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -247,7 +247,7 @@ export default function Sidebar() {
                       setShowUserMenu(false)
                       signOut()
                     }}
-                    className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-rose-500 transition-colors hover:bg-rose-500/10"
+                    className="flex w-full cursor-pointer items-center gap-2.5 px-3 py-2 text-left text-sm text-rose-500 transition-colors hover:bg-rose-500/10"
                   >
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -390,7 +390,7 @@ export default function Sidebar() {
               {userWorlds.length > 4 && (
                 <button
                   onClick={() => setShowAllWorlds(!showAllWorlds)}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-medium text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
+                  className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-medium text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
                 >
                   {showAllWorlds ? (
                     <>
