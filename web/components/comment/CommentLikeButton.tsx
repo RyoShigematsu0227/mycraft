@@ -29,7 +29,7 @@ export default function CommentLikeButton({
       className={`flex items-center gap-1 rounded-full px-2 py-1 text-xs transition ${
         isLiked
           ? 'text-pink-500'
-          : 'text-gray-500 hover:bg-gray-100 hover:text-pink-500 dark:text-gray-400 dark:hover:bg-gray-800'
+          : 'text-gray-500 hover:bg-surface hover:text-pink-500 dark:text-gray-400 dark:hover:bg-surface'
       }`}
     >
       <svg

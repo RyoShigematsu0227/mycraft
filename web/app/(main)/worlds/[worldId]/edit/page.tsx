@@ -39,7 +39,7 @@ export default async function EditWorldPage({ params }: EditWorldPageProps) {
       <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
         ワールドを編集
       </h1>
-      <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
+      <div className="rounded-lg bg-background p-6 shadow dark:bg-surface">
         <WorldForm world={world} userId={authUser.id} />
       </div>
     </div>

@@ -192,16 +192,16 @@ export default function BottomNav() {
       {showMenu && (
         <div
           ref={menuRef}
-          className="fixed bottom-16 left-0 right-0 z-50 rounded-t-2xl border-t border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900 lg:hidden"
+          className="fixed bottom-16 left-0 right-0 z-50 rounded-t-2xl border-t border-border bg-background p-4 dark:border-border dark:bg-background lg:hidden"
         >
           {/* User info */}
           {profile && (
             <Link
               href={`/users/${profile.user_id}`}
-              className="mb-4 flex items-center gap-3 rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="mb-4 flex items-center gap-3 rounded-lg p-2 hover:bg-surface dark:hover:bg-surface"
               onClick={() => setShowMenu(false)}
             >
-              <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-gray-200 dark:bg-surface">
                 {profile.avatar_url ? (
                   <Image
                     src={profile.avatar_url}
@@ -242,7 +242,7 @@ export default function BottomNav() {
                 toggleTheme()
                 setShowMenu(false)
               }}
-              className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-surface dark:text-gray-300 dark:hover:bg-surface"
             >
               {theme === 'dark' ? (
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -269,7 +269,7 @@ export default function BottomNav() {
             {/* Settings */}
             <Link
               href="/settings/profile"
-              className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-surface dark:text-gray-300 dark:hover:bg-surface"
               onClick={() => setShowMenu(false)}
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -295,7 +295,7 @@ export default function BottomNav() {
                 setShowMenu(false)
                 signOut()
               }}
-              className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-800"
+              className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-red-600 hover:bg-surface dark:text-red-400 dark:hover:bg-surface"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
@@ -312,7 +312,7 @@ export default function BottomNav() {
       )}
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 lg:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background dark:border-border dark:bg-background lg:hidden">
         <div className="flex h-16 items-center justify-around">
           {navItems.map((item) => {
             const isActive = pathname === item.href
@@ -351,7 +351,7 @@ export default function BottomNav() {
                 showMenu ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'
               }`}
             >
-              <div className="relative h-6 w-6 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div className="relative h-6 w-6 overflow-hidden rounded-full bg-gray-200 dark:bg-surface">
                 {profile?.avatar_url ? (
                   <Image
                     src={profile.avatar_url}

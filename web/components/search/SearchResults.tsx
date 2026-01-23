@@ -110,7 +110,7 @@ export default function SearchResults({
   return (
     <div>
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700">
+      <div className="flex border-b border-border dark:border-border">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -118,12 +118,12 @@ export default function SearchResults({
             className={`flex-1 px-4 py-3 text-center text-sm font-medium transition ${
               activeTab === tab.id
                 ? 'border-b-2 border-blue-500 text-blue-500'
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300'
+                : 'text-muted hover:bg-surface hover:text-foreground dark:text-muted dark:hover:bg-surface dark:hover:text-foreground'
             }`}
           >
             {tab.label}
             {tab.count > 0 && (
-              <span className="ml-1.5 rounded-full bg-gray-100 px-2 py-0.5 text-xs dark:bg-gray-700">
+              <span className="ml-1.5 rounded-full bg-surface px-2 py-0.5 text-xs dark:bg-surface">
                 {tab.count}
               </span>
             )}
@@ -134,7 +134,7 @@ export default function SearchResults({
       {/* Results */}
       <div>
         {activeTab === 'users' && (
-          <div className="divide-y divide-gray-100 dark:divide-gray-800">
+          <div className="divide-y divide-border dark:divide-border">
             {users.length === 0 ? (
               <div className="p-8 text-center text-gray-500 dark:text-gray-400">
                 ユーザーが見つかりませんでした
@@ -144,7 +144,7 @@ export default function SearchResults({
                 <Link
                   key={user.id}
                   href={`/users/${user.user_id}`}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-surface dark:hover:bg-surface"
                 >
                   <UserAvatar
                     userId={user.user_id}
@@ -176,7 +176,7 @@ export default function SearchResults({
         )}
 
         {activeTab === 'worlds' && (
-          <div className="divide-y divide-gray-100 dark:divide-gray-800">
+          <div className="divide-y divide-border dark:divide-border">
             {worlds.length === 0 ? (
               <div className="p-8 text-center text-gray-500 dark:text-gray-400">
                 ワールドが見つかりませんでした
@@ -186,7 +186,7 @@ export default function SearchResults({
                 <Link
                   key={world.id}
                   href={`/worlds/${world.id}`}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-surface dark:hover:bg-surface"
                 >
                   <WorldIcon
                     worldId={world.id}

@@ -53,16 +53,16 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' }:
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
     >
       <div
-        className={`w-full ${sizes[size]} rounded-xl bg-white shadow-xl dark:bg-gray-900`}
+        className={`w-full ${sizes[size]} rounded-xl bg-background shadow-xl dark:bg-surface`}
         role="dialog"
         aria-modal="true"
       >
         {title && (
-          <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-800">
+          <div className="flex items-center justify-between border-b border-border px-4 py-3 dark:border-border">
             <h2 className="text-lg font-semibold">{title}</h2>
             <button
               onClick={onClose}
-              className="rounded-lg p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="rounded-lg p-1 text-muted hover:bg-surface dark:hover:bg-surface-hover"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path

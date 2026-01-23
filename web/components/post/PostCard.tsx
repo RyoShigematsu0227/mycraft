@@ -93,7 +93,7 @@ export default function PostCard({
   return (
     <article
       onClick={handleCardClick}
-      className="group relative cursor-pointer border-b border-gray-100 bg-white px-4 py-4 transition-colors duration-200 hover:bg-gray-50/50 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800/50"
+      className="group relative cursor-pointer border-b border-border bg-surface px-4 py-4 transition-colors duration-200 hover:bg-surface-hover dark:border-border dark:bg-surface dark:hover:bg-surface-hover"
     >
       {/* Subtle left accent on hover */}
       <div className="absolute left-0 top-0 h-full w-1 scale-y-0 bg-gradient-to-b from-blue-400 to-blue-600 transition-transform duration-200 group-hover:scale-y-100" />
@@ -146,7 +146,7 @@ export default function PostCard({
             <div className="mt-1.5 flex items-center gap-2">
               <Link
                 href={`/worlds/${post.world.id}`}
-                className="flex items-center gap-2 rounded-full bg-gray-100 px-2.5 py-1 text-sm transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                className="flex items-center gap-2 rounded-full bg-surface px-2.5 py-1 text-sm transition-colors hover:bg-surface-hover dark:bg-surface dark:hover:bg-surface-hover"
               >
                 <WorldIcon
                   worldId={post.world.id}

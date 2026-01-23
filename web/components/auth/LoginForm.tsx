@@ -91,7 +91,7 @@ export default function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800"
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-border dark:bg-surface"
           />
         </div>
 
@@ -105,7 +105,7 @@ export default function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800"
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-border dark:bg-surface"
           />
         </div>
 
@@ -120,10 +120,10 @@ export default function LoginForm() {
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300 dark:border-gray-700" />
+          <div className="w-full border-t border-border dark:border-border" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-2 text-gray-500 dark:bg-gray-900 dark:text-gray-400">
+          <span className="bg-background px-2 text-muted dark:bg-background dark:text-muted">
             または
           </span>
         </div>
@@ -142,7 +142,7 @@ export default function LoginForm() {
 
         <button
           onClick={() => handleOAuthLogin('google')}
-          className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+          className="flex w-full items-center justify-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-foreground hover:bg-surface dark:border-border dark:bg-surface dark:text-foreground dark:hover:bg-surface-hover"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path

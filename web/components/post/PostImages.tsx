@@ -28,7 +28,7 @@ export default function PostImages({ images }: PostImagesProps) {
           <button
             key={image.id}
             onClick={() => setSelectedIndex(index)}
-            className={`relative overflow-hidden bg-gray-100 dark:bg-gray-800 ${
+            className={`relative overflow-hidden bg-surface dark:bg-surface ${
               images.length === 3 && index === 0 ? 'row-span-2' : ''
             }`}
             style={{
@@ -53,7 +53,7 @@ export default function PostImages({ images }: PostImagesProps) {
           onClick={() => setSelectedIndex(null)}
         >
           <button
-            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+            className="absolute right-4 top-4 rounded-full bg-background/10 p-2 text-white hover:bg-background/20"
             onClick={() => setSelectedIndex(null)}
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -64,7 +64,7 @@ export default function PostImages({ images }: PostImagesProps) {
           {sortedImages.length > 1 && (
             <>
               <button
-                className="absolute left-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 disabled:opacity-50"
+                className="absolute left-4 rounded-full bg-background/10 p-2 text-white hover:bg-background/20 disabled:opacity-50"
                 onClick={(e) => {
                   e.stopPropagation()
                   setSelectedIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : prev))
@@ -76,7 +76,7 @@ export default function PostImages({ images }: PostImagesProps) {
                 </svg>
               </button>
               <button
-                className="absolute right-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 disabled:opacity-50"
+                className="absolute right-4 rounded-full bg-background/10 p-2 text-white hover:bg-background/20 disabled:opacity-50"
                 onClick={(e) => {
                   e.stopPropagation()
                   setSelectedIndex((prev) =>

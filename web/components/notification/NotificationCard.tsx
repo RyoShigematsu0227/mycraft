@@ -121,7 +121,7 @@ export default function NotificationCard({ notification }: NotificationCardProps
   return (
     <Link
       href={link}
-      className="flex items-start gap-3 px-4 py-3 transition hover:bg-gray-50 dark:hover:bg-gray-800"
+      className="flex items-start gap-3 px-4 py-3 transition hover:bg-surface dark:hover:bg-surface"
     >
       <div onClick={handleUserClick} className="cursor-pointer">
         <UserAvatar

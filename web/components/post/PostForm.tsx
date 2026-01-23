@@ -169,7 +169,7 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
         <select
           value={selectedWorldId}
           onChange={(e) => setSelectedWorldId(e.target.value)}
-          className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800"
+          className="rounded-md border border-border bg-background px-3 py-1.5 text-sm dark:border-border dark:bg-surface"
         >
           {worlds.map((world) => (
             <option key={world.id} value={world.id}>
@@ -194,7 +194,7 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
         <select
           value={visibility}
           onChange={(e) => setVisibility(e.target.value as Visibility)}
-          className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm dark:border-gray-600 dark:bg-gray-800"
+          className="rounded-md border border-border bg-background px-3 py-1.5 text-sm dark:border-border dark:bg-surface"
         >
           <option value="public">全体公開</option>
           <option value="world_only">ワールド限定</option>
@@ -237,7 +237,7 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
+      <div className="flex items-center justify-between border-t border-border pt-4 dark:border-border">
         <div>
           <input
             ref={fileInputRef}
@@ -251,7 +251,7 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={images.length >= 4}
-            className="rounded-full p-2 text-gray-500 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-400 dark:hover:bg-gray-800"
+            className="rounded-full p-2 text-muted hover:bg-surface disabled:cursor-not-allowed disabled:opacity-50 dark:text-muted dark:hover:bg-surface"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path

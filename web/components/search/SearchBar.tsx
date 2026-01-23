@@ -47,7 +47,7 @@ export default function SearchBar({ initialQuery = '', onSearch, autoFocus = fal
         onChange={(e) => setQuery(e.target.value)}
         placeholder="ユーザー、ワールド、投稿を検索..."
         autoFocus={autoFocus}
-        className="w-full rounded-full border border-gray-300 bg-white py-3 pl-12 pr-10 text-sm placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400"
+        className="w-full rounded-full border border-border bg-background py-3 pl-12 pr-10 text-sm placeholder-muted focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-border dark:bg-surface dark:placeholder-muted"
       />
       {query && (
         <button

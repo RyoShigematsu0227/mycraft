@@ -5,7 +5,7 @@ interface SkeletonProps {
 export default function Skeleton({ className = '' }: SkeletonProps) {
   return (
     <div
-      className={`animate-pulse rounded bg-gray-200 dark:bg-gray-700 ${className}`}
+      className={`animate-pulse rounded bg-surface dark:bg-surface ${className}`}
     />
   )
 }
@@ -13,7 +13,7 @@ export default function Skeleton({ className = '' }: SkeletonProps) {
 // Pre-built skeleton patterns for common components
 export function PostCardSkeleton() {
   return (
-    <div className="border-b border-gray-200 bg-white px-4 py-4 dark:border-gray-700 dark:bg-gray-900">
+    <div className="border-b border-border bg-background px-4 py-4 dark:border-border dark:bg-background">
       <div className="flex gap-3">
         <Skeleton className="h-10 w-10 rounded-full" />
         <div className="flex-1 space-y-3">

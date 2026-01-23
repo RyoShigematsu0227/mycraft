@@ -17,9 +17,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       secondary:
         'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 shadow-md hover:from-gray-200 hover:to-gray-300 hover:shadow-lg hover:-translate-y-0.5 focus-visible:ring-gray-500 dark:from-gray-700 dark:to-gray-800 dark:text-gray-100 dark:hover:from-gray-600 dark:hover:to-gray-700',
       outline:
-        'border-2 border-gray-200 bg-white/50 backdrop-blur-sm hover:border-gray-300 hover:bg-white hover:shadow-md hover:-translate-y-0.5 focus-visible:ring-gray-500 dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-gray-600 dark:hover:bg-gray-800',
+        'border-2 border-border bg-background/50 backdrop-blur-sm hover:border-muted hover:bg-background hover:shadow-md hover:-translate-y-0.5 focus-visible:ring-muted dark:border-border dark:bg-surface/50 dark:hover:border-muted dark:hover:bg-surface',
       ghost:
-        'bg-transparent hover:bg-gray-100/80 hover:backdrop-blur-sm focus-visible:ring-gray-500 dark:hover:bg-gray-800/80',
+        'bg-transparent hover:bg-surface/80 hover:backdrop-blur-sm focus-visible:ring-muted dark:hover:bg-surface/80',
       danger:
         'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg shadow-red-500/25 hover:from-red-600 hover:to-red-700 hover:shadow-xl hover:shadow-red-500/30 hover:-translate-y-0.5 focus-visible:ring-red-500',
     }

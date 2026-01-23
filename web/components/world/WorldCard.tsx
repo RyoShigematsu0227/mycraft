@@ -44,13 +44,13 @@ export default function WorldCard({
   return (
     <Link
       href={`/worlds/${world.id}`}
-      className="group relative block overflow-hidden rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100 transition-all duration-300 hover:shadow-lg hover:ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 dark:hover:ring-gray-600"
+      className="group relative block overflow-hidden rounded-2xl bg-background p-5 shadow-sm ring-1 ring-border transition-all duration-300 hover:shadow-lg hover:ring-muted dark:bg-surface dark:ring-border dark:hover:ring-muted"
     >
       {/* Background gradient accent */}
       <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-gradient-to-br from-blue-400/10 to-purple-400/10 blur-3xl transition-all duration-500 group-hover:scale-150" />
 
       <div className="relative flex items-start gap-4">
-        <div className="rounded-xl ring-2 ring-white shadow-md transition-transform duration-300 group-hover:scale-105 dark:ring-gray-700">
+        <div className="rounded-xl ring-2 ring-background shadow-md transition-transform duration-300 group-hover:scale-105 dark:ring-border">
           <WorldIcon
             worldId={world.id}
             iconUrl={world.icon_url}

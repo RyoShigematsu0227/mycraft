@@ -40,11 +40,11 @@ export default async function FollowersPage({ params }: FollowersPageProps) {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 px-4 py-3 backdrop-blur dark:border-gray-700 dark:bg-gray-900/80">
+      <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur dark:border-border dark:bg-background/80">
         <div className="flex items-center gap-4">
           <Link
             href={`/users/${userId}`}
-            className="rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="rounded-full p-2 hover:bg-surface dark:hover:bg-surface"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path

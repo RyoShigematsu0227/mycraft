@@ -167,7 +167,7 @@ export default function Sidebar() {
   }, [authUser?.id, supabase])
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-72 shrink-0 border-r border-gray-100 bg-gradient-to-b from-white to-gray-50/50 dark:border-gray-800 dark:from-gray-900 dark:to-gray-900/50 lg:flex lg:flex-col">
+    <aside className="sticky top-0 hidden h-screen w-72 shrink-0 border-r border-border bg-gradient-to-b from-background to-surface/50 dark:border-border dark:from-background dark:to-surface/50 lg:flex lg:flex-col">
       {/* Logo */}
       <div className="flex h-16 items-center px-5">
         <Link href="/" className="group flex items-center gap-3">
@@ -202,7 +202,7 @@ export default function Sidebar() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="検索"
-              className="w-full rounded-xl border-0 bg-gray-100 py-2.5 pl-10 pr-4 text-sm text-gray-900 ring-1 ring-transparent transition-all duration-200 placeholder:text-gray-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400 dark:focus:bg-gray-800"
+              className="w-full rounded-xl border-0 bg-surface py-2.5 pl-10 pr-4 text-sm text-foreground ring-1 ring-transparent transition-all duration-200 placeholder:text-muted focus:bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-surface dark:text-foreground dark:placeholder:text-muted dark:focus:bg-surface"
             />
           </div>
         </form>
@@ -221,7 +221,7 @@ export default function Sidebar() {
                 className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all duration-200 ${
                   isActive
                     ? 'bg-gradient-to-r from-blue-500/10 to-blue-600/10 text-blue-600 dark:from-blue-500/20 dark:to-blue-600/20 dark:text-blue-400'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200'
+                    : 'text-gray-600 hover:bg-surface hover:text-foreground dark:text-gray-400 dark:hover:bg-surface dark:hover:text-foreground'
                 }`}
               >
                 <span className={`relative transition-transform duration-200 ${!isActive ? 'group-hover:scale-110' : ''}`}>
@@ -276,7 +276,7 @@ export default function Sidebar() {
                     className={`group flex items-center gap-3 rounded-xl px-3.5 py-2 transition-all duration-200 ${
                       isActive
                         ? 'bg-gradient-to-r from-blue-500/10 to-blue-600/10 text-blue-600 dark:from-blue-500/20 dark:to-blue-600/20 dark:text-blue-400'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200'
+                        : 'text-gray-600 hover:bg-surface hover:text-foreground dark:text-gray-400 dark:hover:bg-surface dark:hover:text-foreground'
                     }`}
                   >
                     <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-lg bg-gray-200 ring-2 ring-white shadow-sm transition-transform duration-200 group-hover:scale-105 dark:bg-gray-700 dark:ring-gray-800">
@@ -299,11 +299,11 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom section */}
-      <div className="border-t border-gray-100 p-4 dark:border-gray-800">
+      <div className="border-t border-border p-4 dark:border-border">
         {/* Theme toggle */}
         <button
           onClick={toggleTheme}
-          className="mb-3 flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+          className="mb-3 flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-gray-600 transition-all duration-200 hover:bg-surface hover:text-foreground dark:text-gray-400 dark:hover:bg-surface dark:hover:text-foreground"
         >
           {theme === 'dark' ? (
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -330,7 +330,7 @@ export default function Sidebar() {
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-left transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-left transition-all duration-200 hover:bg-surface dark:hover:bg-surface"
             >
               <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-gray-200 to-gray-300 ring-2 ring-white shadow-md dark:from-gray-700 dark:to-gray-600 dark:ring-gray-800">
                 {profile.avatar_url ? (
@@ -368,10 +368,10 @@ export default function Sidebar() {
             </button>
 
             {showUserMenu && (
-              <div className="absolute bottom-full left-0 mb-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white py-1 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+              <div className="absolute bottom-full left-0 mb-2 w-full overflow-hidden rounded-xl border border-border bg-background py-1 shadow-xl dark:border-border dark:bg-surface">
                 <Link
                   href={`/users/${profile.user_id}`}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-surface dark:text-gray-300 dark:hover:bg-surface-hover"
                   onClick={() => setShowUserMenu(false)}
                 >
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -381,7 +381,7 @@ export default function Sidebar() {
                 </Link>
                 <Link
                   href="/settings/profile"
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-surface dark:text-gray-300 dark:hover:bg-surface-hover"
                   onClick={() => setShowUserMenu(false)}
                 >
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -390,7 +390,7 @@ export default function Sidebar() {
                   </svg>
                   設定
                 </Link>
-                <hr className="my-1 border-gray-100 dark:border-gray-700" />
+                <hr className="my-1 border-border dark:border-border" />
                 <button
                   onClick={() => {
                     setShowUserMenu(false)
@@ -410,7 +410,7 @@ export default function Sidebar() {
           <div className="space-y-2">
             <Link
               href="/login"
-              className="block w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-center text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-600 dark:hover:bg-gray-700"
+              className="block w-full rounded-xl border-2 border-border bg-background px-4 py-2.5 text-center text-sm font-semibold text-foreground transition-all duration-200 hover:border-muted hover:bg-surface dark:border-border dark:bg-surface dark:text-foreground dark:hover:border-muted dark:hover:bg-surface-hover"
             >
               ログイン
             </Link>

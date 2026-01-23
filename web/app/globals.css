@@ -2,20 +2,32 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3ebe0;
+  --foreground: #3d3530;
+  --surface: #fdfaf6;
+  --surface-hover: #f5f0e8;
+  --border: #e0d5c8;
+  --muted: #8a7f72;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: #121216;
+  --foreground: #e8e8e8;
+  --surface: #1c1c22;
+  --surface-hover: #26262e;
+  --border: #2e2e38;
+  --muted: #888899;
 }
 
 body {
@@ -84,29 +96,29 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #d0c5b5;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #b5a898;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: #2e2e38;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: #3a3a45;
 }
 
 /* Glass effect utility */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(253, 250, 246, 0.85);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 
 .dark .glass {
-  background: rgba(17, 24, 39, 0.7);
+  background: rgba(28, 28, 34, 0.85);
 }

@@ -58,7 +58,7 @@ export default function CommentCard({
   }
 
   return (
-    <div className={depth > 0 ? 'ml-8 border-l-2 border-gray-100 pl-4 dark:border-gray-800' : ''}>
+    <div className={depth > 0 ? 'ml-8 border-l-2 border-border pl-4 dark:border-border' : ''}>
       <div className="py-3">
         <div className="flex gap-3">
           <UserAvatar
@@ -101,7 +101,7 @@ export default function CommentCard({
               {depth < maxDepth && (
                 <button
                   onClick={() => setShowReplyForm(!showReplyForm)}
-                  className="flex items-center gap-1 rounded-full px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-gray-800"
+                  className="flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted hover:bg-surface hover:text-blue-500 dark:text-muted dark:hover:bg-surface"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />

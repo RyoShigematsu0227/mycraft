@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4 dark:bg-gray-900">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-surface px-4 dark:bg-background">
       <div className="text-center">
         <h1 className="text-9xl font-bold text-gray-200 dark:text-gray-700">404</h1>
         <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -20,7 +20,7 @@ export default function NotFound() {
           </Link>
           <Link
             href="/search"
-            className="rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+            className="rounded-lg border border-border bg-background px-6 py-3 font-medium text-foreground transition hover:bg-surface dark:border-border dark:bg-surface dark:text-foreground dark:hover:bg-surface-hover"
           >
             検索する
           </Link>

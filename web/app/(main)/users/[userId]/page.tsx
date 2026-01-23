@@ -76,7 +76,7 @@ export default async function UserPage({ params }: UserPageProps) {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Profile Header */}
-      <div className="border-b border-gray-200 bg-white px-4 py-6 dark:border-gray-700 dark:bg-gray-800">
+      <div className="border-b border-gray-200 bg-background px-4 py-6 dark:border-gray-700 dark:bg-surface">
         <div className="flex items-start gap-4">
           <UserAvatar
             userId={user.user_id}

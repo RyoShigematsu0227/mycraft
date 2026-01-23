@@ -97,7 +97,7 @@ export default function ImageCropper({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div className="mx-4 w-full max-w-lg rounded-lg bg-white p-4 dark:bg-gray-800">
+      <div className="mx-4 w-full max-w-lg rounded-lg bg-background p-4 dark:bg-surface">
         <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-gray-100">
           画像をトリミング
         </h3>

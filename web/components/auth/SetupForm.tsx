@@ -127,7 +127,7 @@ export default function SetupForm() {
               minLength={3}
               maxLength={30}
               pattern="[a-zA-Z0-9_]+"
-              className="w-full rounded-md border border-gray-300 py-2 pl-8 pr-3 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800"
+              className="w-full rounded-md border border-border bg-background py-2 pl-8 pr-3 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-border dark:bg-surface"
               placeholder="your_username"
             />
           </div>
@@ -162,7 +162,7 @@ export default function SetupForm() {
             onChange={(e) => setDisplayName(e.target.value)}
             required
             maxLength={50}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800"
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-border dark:bg-surface"
             placeholder="Your Name"
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">最大50文字</p>

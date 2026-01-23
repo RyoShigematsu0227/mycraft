@@ -29,7 +29,7 @@ export default function UserCard({
   const isOwnProfile = currentUserId === user.id
 
   return (
-    <div className="flex items-start gap-4 rounded-lg bg-white p-4 shadow dark:bg-gray-800">
+    <div className="flex items-start gap-4 rounded-lg bg-background p-4 shadow dark:bg-surface">
       <UserAvatar
         userId={user.user_id}
         avatarUrl={user.avatar_url}

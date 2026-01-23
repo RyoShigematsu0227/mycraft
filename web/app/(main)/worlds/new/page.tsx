@@ -18,7 +18,7 @@ export default async function NewWorldPage() {
       <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
         新しいワールドを作成
       </h1>
-      <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
+      <div className="rounded-lg bg-background p-6 shadow dark:bg-surface">
         <WorldForm userId={authUser.id} />
       </div>
     </div>

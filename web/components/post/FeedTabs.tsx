@@ -16,7 +16,7 @@ export default function FeedTabs({ activeTab, onTabChange, showFollowing = true 
   ]
 
   return (
-    <div className="sticky top-[52px] z-10 flex border-b border-gray-100 bg-white/80 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/80">
+    <div className="sticky top-[52px] z-10 flex border-b border-border bg-background/80 backdrop-blur-md dark:border-border dark:bg-background/80">
       {tabs.map((tab) => (
         <button
           key={tab.id}
@@ -24,7 +24,7 @@ export default function FeedTabs({ activeTab, onTabChange, showFollowing = true 
           className={`relative flex-1 px-4 py-3.5 text-center text-sm font-semibold transition-colors duration-200 ${
             activeTab === tab.id
               ? 'text-blue-600 dark:text-blue-400'
-              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-gray-300'
+              : 'text-muted hover:bg-surface hover:text-foreground dark:text-muted dark:hover:bg-surface/50 dark:hover:text-foreground'
           }`}
         >
           {tab.label}

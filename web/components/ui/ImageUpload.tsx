@@ -160,7 +160,7 @@ export default function ImageUpload({
         <button
           type="button"
           onClick={handleClick}
-          className={`flex w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-gray-400 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-500 dark:hover:bg-gray-700 ${aspectRatios[aspectRatio]} ${aspectRatio === 'auto' ? 'min-h-32 py-8' : ''}`}
+          className={`flex w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-surface transition hover:border-gray-400 hover:bg-surface dark:border-gray-600 dark:bg-surface dark:hover:border-gray-500 dark:hover:bg-gray-700 ${aspectRatios[aspectRatio]} ${aspectRatio === 'auto' ? 'min-h-32 py-8' : ''}`}
         >
           <div className="flex flex-col items-center gap-2 text-gray-500 dark:text-gray-400">
             <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
