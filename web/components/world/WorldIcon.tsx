@@ -10,7 +10,7 @@ interface WorldIconProps {
   className?: string
 }
 
-const DEFAULT_WORLD_ICON = '/defaults/default-world-icon.svg'
+const DEFAULT_WORLD_ICON = '/defaults/default-world-icon.png'
 
 export default function WorldIcon({
   worldId,

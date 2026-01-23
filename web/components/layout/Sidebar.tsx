@@ -281,7 +281,7 @@ export default function Sidebar() {
                   >
                     <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-lg bg-gray-200 ring-2 ring-white shadow-sm transition-transform duration-200 group-hover:scale-105 dark:bg-gray-700 dark:ring-gray-800">
                       <Image
-                        src={world.icon_url || '/defaults/default-world-icon.svg'}
+                        src={world.icon_url || '/defaults/default-world-icon.png'}
                         alt={world.name}
                         width={28}
                         height={28}
