@@ -296,11 +296,7 @@ export default function PostCard({
                     const url = `${window.location.origin}/posts/${post.id}`
                     if (navigator.share) {
                       try {
-                        await navigator.share({
-                          title: `${post.user.display_name}さんの投稿`,
-                          text: post.content.slice(0, 100),
-                          url,
-                        })
+                        await navigator.share({ url })
                       } catch {
                         // User cancelled or share failed
                       }
@@ -311,8 +307,8 @@ export default function PostCard({
                   }}
                   className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-accent/10 hover:text-accent"
                 >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15" />
                   </svg>
                 </button>
 
