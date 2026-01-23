@@ -112,7 +112,7 @@ export default function WorldList({ worlds, currentUserId }: WorldListProps) {
                   key={f.key}
                   ref={isActive ? activeTabRef : null}
                   onClick={() => setFilter(f.key)}
-                  className={`relative z-10 flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-300 ${
+                  className={`relative z-10 flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2.5 text-sm font-semibold transition-all duration-300 ${
                     isActive
                       ? 'text-white'
                       : 'text-muted hover:bg-surface-hover hover:text-foreground'
