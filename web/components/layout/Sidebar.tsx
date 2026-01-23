@@ -28,7 +28,6 @@ export default function Sidebar() {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showAllWorlds, setShowAllWorlds] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-  const supabase = createClient()
 
   // Handle search
   const handleSearch = (e: React.FormEvent) => {
@@ -57,7 +56,8 @@ export default function Sidebar() {
     async function fetchProfile() {
       if (!authUser?.id) return
       if (profile?.id === authUser.id) return
-      const { data } = await supabase
+      const client = createClient()
+      const { data } = await client
         .from('users')
         .select('*')
         .eq('id', authUser.id)
@@ -71,48 +71,57 @@ export default function Sidebar() {
   // Fetch user's worlds with member counts
   useEffect(() => {
     async function fetchUserWorlds() {
+      console.log('fetchUserWorlds called, authUser?.id:', authUser?.id)
       if (!authUser?.id) return
-      const { data } = await supabase
+      const client = createClient()
+      const { data, error } = await client
         .from('world_members')
         .select('world:worlds(*)')
         .eq('user_id', authUser.id)
-        .order('created_at', { ascending: false })
+
+      console.log('world_members data:', data, 'error:', error)
 
       if (data) {
         const worlds = data
           .map((item) => item.world)
           .filter((w): w is World => w !== null)
 
+        console.log('filtered worlds:', worlds)
+
         // Fetch member counts for each world
         const worldsWithCounts = await Promise.all(
           worlds.map(async (world) => {
-            const { count } = await supabase
+            const { count } = await client
               .from('world_members')
               .select('id', { count: 'exact', head: true })
               .eq('world_id', world.id)
             return { ...world, memberCount: count || 0 }
           })
         )
+        console.log('worldsWithCounts:', worldsWithCounts)
         setUserWorlds(worldsWithCounts)
       }
     }
     fetchUserWorlds()
-  }, [authUser?.id, supabase])
+  }, [authUser?.id])
 
   // Fetch unread notification count
   useEffect(() => {
+    if (!authUser?.id) return
+
+    const client = createClient()
+
     async function fetchUnreadCount() {
-      if (!authUser?.id) return
-      const { count } = await supabase
+      const { count } = await client
         .from('notifications')
         .select('id', { count: 'exact', head: true })
-        .eq('user_id', authUser.id)
+        .eq('user_id', authUser!.id)
         .eq('is_read', false)
       setUnreadCount(count || 0)
     }
     fetchUnreadCount()
 
-    const channel = supabase
+    const channel = client
       .channel('sidebar-notifications')
       .on(
         'postgres_changes',
@@ -120,7 +129,7 @@ export default function Sidebar() {
           event: '*',
           schema: 'public',
           table: 'notifications',
-          filter: `user_id=eq.${authUser?.id}`,
+          filter: `user_id=eq.${authUser.id}`,
         },
         () => {
           fetchUnreadCount()
@@ -129,9 +138,9 @@ export default function Sidebar() {
       .subscribe()
 
     return () => {
-      supabase.removeChannel(channel)
+      client.removeChannel(channel)
     }
-  }, [authUser?.id, supabase])
+  }, [authUser?.id])
 
   const displayedWorlds = showAllWorlds ? userWorlds : userWorlds.slice(0, 4)
 
