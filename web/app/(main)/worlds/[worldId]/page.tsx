@@ -120,7 +120,7 @@ export default async function WorldPage({ params }: WorldPageProps) {
               </div>
             </div>
             {world.description && (
-              <p className="mt-3 text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+              <p className="mt-3 text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">
                 {world.description}
               </p>
             )}
@@ -136,7 +136,7 @@ export default async function WorldPage({ params }: WorldPageProps) {
         {world.how_to_join && (
           <div className="mt-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-700/50">
             <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">参加方法</h3>
-            <p className="mt-1 text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap break-words">
               {world.how_to_join}
             </p>
           </div>
