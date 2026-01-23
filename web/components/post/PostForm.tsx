@@ -222,7 +222,7 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
             }
           }
         }}
-        placeholder="今日は何を建てた？"
+        placeholder="今日はどんなことがあった？"
         rows={4}
         maxLength={1000}
         hint={`${content.length}/1000`}
