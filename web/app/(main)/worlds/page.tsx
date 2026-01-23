@@ -1,11 +1,11 @@
 import Link from 'next/link'
-import { unstable_noStore as noStore } from 'next/cache'
+import { connection } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { WorldCard } from '@/components/world'
 import { Button, EmptyState } from '@/components/ui'
 
 export default async function WorldsPage() {
-  noStore()
+  await connection()
   const supabase = await createClient()
 
   const {

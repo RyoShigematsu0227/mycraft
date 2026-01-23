@@ -28,20 +28,17 @@ export function useWorldMembership({
   const supabase = createClient()
 
   const worldStats = useWorldStatsStore((state) => state.stats[worldId])
-  const initWorld = useWorldStatsStore((state) => state.initWorld)
   const setIsMember = useWorldStatsStore((state) => state.setIsMember)
   const toggleMembershipStore = useWorldStatsStore((state) => state.toggleMembership)
   const rollbackMembership = useWorldStatsStore((state) => state.rollbackMembership)
 
-  // Initialize store with initial values if not already set
+  // Only update isMember if store exists, don't initialize with memberCount: 0
+  // WorldCard is responsible for initializing memberCount
   useEffect(() => {
-    if (!worldStats && initialIsMember !== undefined) {
-      initWorld(worldId, {
-        memberCount: 0,
-        isMember: initialIsMember,
-      })
+    if (worldStats && worldStats.isMember !== initialIsMember) {
+      setIsMember(worldId, initialIsMember)
     }
-  }, [worldId, initialIsMember, worldStats, initWorld])
+  }, [worldId, initialIsMember, worldStats, setIsMember])
 
   // Check if already a member
   useEffect(() => {
@@ -59,22 +56,12 @@ export function useWorldMembership({
         .single()
 
       const isMember = !!data
-
-      // Initialize or update store
-      if (!worldStats) {
-        initWorld(worldId, {
-          memberCount: 0,
-          isMember,
-        })
-      } else {
-        setIsMember(worldId, isMember)
-      }
-
+      setIsMember(worldId, isMember)
       setIsLoading(false)
     }
 
     checkMembership()
-  }, [currentUserId, worldId, initialIsMember, supabase, worldStats, initWorld, setIsMember])
+  }, [currentUserId, worldId, initialIsMember, supabase, setIsMember])
 
   const isMember = worldStats?.isMember ?? initialIsMember
 
