@@ -1,5 +1,5 @@
 import { EmptyState, Button } from '@/components/ui'
-import { HomeFeed } from '@/components/post'
+import { HomeFeed, NewPostButton } from '@/components/post'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
@@ -59,9 +59,7 @@ export default async function Home() {
       <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3.5 backdrop-blur-md dark:border-border dark:bg-background/80">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">ホーム</h1>
-          <Link href="/posts/new">
-            <Button size="sm">投稿する</Button>
-          </Link>
+          <NewPostButton />
         </div>
       </div>
 
