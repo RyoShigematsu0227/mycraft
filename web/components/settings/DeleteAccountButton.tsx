@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, ConfirmDialog } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
+import { deleteAccount } from '@/actions'
 
 export default function DeleteAccountButton() {
   const router = useRouter()
@@ -23,15 +24,10 @@ export default function DeleteAccountButton() {
         throw new Error('ログインしていません')
       }
 
-      // Delete user from users table (cascades to related data)
-      const { error: deleteError } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', user.id)
+      // Delete account (both public.users and auth.users)
+      await deleteAccount(user.id)
 
-      if (deleteError) throw deleteError
-
-      // Sign out
+      // Sign out locally
       await supabase.auth.signOut()
 
       // Redirect to home
