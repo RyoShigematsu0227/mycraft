@@ -16,11 +16,12 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://mycraft.jp'),
   title: {
     default: 'MyCraft',
     template: '%s | MyCraft',
   },
-  description: 'Minecraftワールドの住人になりきって投稿し、スクリーンショットや建築を共有するSNS',
+  description: 'Minecraftワールドの住人になりきって投稿し、出来事・風景・建築を共有するSNS',
   keywords: ['Minecraft', 'マイクラ', 'SNS', 'ワールド', '建築', 'スクリーンショット'],
   authors: [{ name: 'MyCraft' }],
   openGraph: {
@@ -28,12 +29,21 @@ export const metadata: Metadata = {
     locale: 'ja_JP',
     siteName: 'MyCraft',
     title: 'MyCraft',
-    description: 'Minecraftワールドの住人になりきって投稿し、スクリーンショットや建築を共有するSNS',
+    description: 'Minecraftワールドの住人になりきって投稿し、出来事・風景・建築を共有するSNS',
+    images: [
+      {
+        url: '/defaults/default-world-icon.png',
+        width: 512,
+        height: 512,
+        alt: 'MyCraft',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'MyCraft',
-    description: 'Minecraftワールドの住人になりきって投稿し、スクリーンショットや建築を共有するSNS',
+    description: 'Minecraftワールドの住人になりきって投稿し、出来事・風景・建築を共有するSNS',
+    images: ['/defaults/default-world-icon.png'],
   },
   robots: {
     index: true,
