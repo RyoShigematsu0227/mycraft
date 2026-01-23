@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { useUserStatsStore } from '@/lib/stores'
 
@@ -81,6 +82,7 @@ export function useFollow({
   }, [currentUserId, targetUserId, initialFollowing, targetStats, initUser, setIsFollowing])
 
   const isFollowing = targetStats?.isFollowing ?? initialFollowing ?? false
+  const queryClient = useQueryClient()
 
   const toggleFollow = useCallback(async () => {
     if (!currentUserId) {
@@ -116,6 +118,9 @@ export function useFollow({
 
         if (error) throw error
       }
+
+      // Invalidate following feed cache
+      queryClient.invalidateQueries({ queryKey: ['feed', 'following'] })
     } catch (error) {
       // Revert optimistic update on error
       console.error('Follow toggle error:', error)
@@ -123,7 +128,7 @@ export function useFollow({
     } finally {
       setIsToggling(false)
     }
-  }, [currentUserId, targetUserId, isToggling, router, toggleFollowStore, rollbackFollow])
+  }, [currentUserId, targetUserId, isToggling, router, toggleFollowStore, rollbackFollow, queryClient])
 
   return { isFollowing, isLoading: isLoading || isToggling, toggleFollow }
 }

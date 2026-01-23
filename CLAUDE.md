@@ -32,7 +32,8 @@ mycraft/
 │   ├── requirements.md      # 要件定義
 │   ├── design.md            # 設計書
 │   ├── tasks.md             # タスク管理
-│   └── decisions.md         # 意思決定記録
+│   ├── decisions.md         # 意思決定記録
+│   └── nextjs-best-practices.md  # Next.js App Router ベストプラクティス
 ├── web/                     # Next.js
 │   ├── app/                 # App Router pages
 │   ├── components/          # UIコンポーネント
@@ -114,3 +115,14 @@ chore: ビルド、設定など
 - MVP開発フェーズでは、まずWebを完成させてからMobileに着手
 - 通報・モデレーション機能はMVP後に実装
 - ワールドの承認制参加機能はMVP後に実装
+
+## References
+
+実装時は以下のドキュメントを参照:
+
+- **`docs/nextjs-best-practices.md`**: Next.js App RouterでのSNSアプリ開発ベストプラクティス
+  - Server/Client Componentsの使い分け
+  - データフェッチング（Server Actions vs Route Handlers）
+  - キャッシュ戦略
+  - 無限スクロール、楽観的更新、リアルタイム通知の実装パターン
+  - Supabase認証のセキュリティ

@@ -519,7 +519,7 @@ export type Database = {
         }[]
       }
       get_feed_latest: {
-        Args: { p_cursor?: string; p_limit?: number }
+        Args: { p_cursor?: string; p_limit?: number; p_viewer_id?: string }
         Returns: {
           comments_count: number
           content: string
@@ -543,7 +543,7 @@ export type Database = {
         }[]
       }
       get_feed_recommended: {
-        Args: { p_limit?: number; p_offset?: number }
+        Args: { p_limit?: number; p_offset?: number; p_viewer_id?: string }
         Returns: {
           comments_count: number
           content: string
@@ -552,7 +552,6 @@ export type Database = {
           images: Json
           likes_count: number
           reposts_count: number
-          score: number
           user_avatar_url: string
           user_display_name: string
           user_id: string
@@ -564,14 +563,23 @@ export type Database = {
         }[]
       }
       get_feed_user: {
-        Args: { p_cursor?: string; p_limit?: number; p_user_id: string }
+        Args: {
+          p_cursor?: string
+          p_limit?: number
+          p_user_id: string
+          p_viewer_id?: string
+        }
         Returns: {
           comments_count: number
           content: string
           created_at: string
           id: string
           images: Json
+          is_repost: boolean
           likes_count: number
+          repost_created_at: string
+          reposted_by_display_name: string
+          reposted_by_user_id: string
           reposts_count: number
           user_avatar_url: string
           user_display_name: string
@@ -584,7 +592,12 @@ export type Database = {
         }[]
       }
       get_feed_world: {
-        Args: { p_cursor?: string; p_limit?: number; p_world_id: string }
+        Args: {
+          p_cursor?: string
+          p_limit?: number
+          p_viewer_id?: string
+          p_world_id: string
+        }
         Returns: {
           comments_count: number
           content: string

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
@@ -34,7 +34,36 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
 
   const selectedWorld = worlds.find((w) => w.id === selectedWorldId)
 
+  // Reset form when restored from bfcache (browser back)
+  useEffect(() => {
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        // Page was restored from bfcache
+        setContent('')
+        setImages([])
+        setImagePreviews([])
+        setLoading(false)
+        setError('')
+      }
+    }
+
+    window.addEventListener('pageshow', handlePageShow)
+    return () => window.removeEventListener('pageshow', handlePageShow)
+  }, [])
+
+  const resetForm = () => {
+    setContent('')
+    setImages([])
+    imagePreviews.forEach((url) => URL.revokeObjectURL(url))
+    setImagePreviews([])
+    setLoading(false)
+    setError('')
+  }
+
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Prevent any form submission that might be triggered
+    e.stopPropagation()
+
     const files = Array.from(e.target.files || [])
     const remainingSlots = 4 - images.length
     const newFiles = files.slice(0, remainingSlots)
@@ -61,6 +90,9 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Prevent double submission
+    if (loading) return
     if (!content.trim() || !selectedWorldId) return
 
     setLoading(true)
@@ -111,9 +143,13 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
         if (imagesError) throw imagesError
       }
 
+      // Reset form before navigation to prevent stale state on browser back
+      resetForm()
+
       router.push(`/posts/${post.id}`)
       router.refresh()
     } catch (err) {
+      console.error('Post creation error:', err)
       setError(err instanceof Error ? translateError(err.message) : '投稿に失敗しました')
       setLoading(false)
     }

@@ -92,7 +92,7 @@ export default function PostCard({
           </Link>
         </div>
       )}
-      <div className="flex gap-3">
+      <div className="flex items-start gap-3">
         <UserAvatar
           userId={post.user.user_id}
           avatarUrl={post.user.avatar_url}

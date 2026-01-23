@@ -29,15 +29,14 @@ export default function WorldCard({
   const stats = useWorldStatsStore((state) => state.stats[world.id])
   const initWorld = useWorldStatsStore((state) => state.initWorld)
 
-  // Initialize store with initial values
+  // Initialize/update store with server values
   useEffect(() => {
-    if (!stats) {
-      initWorld(world.id, {
-        memberCount,
-        isMember,
-      })
-    }
-  }, [world.id, memberCount, isMember, stats, initWorld])
+    // Always update with server values on mount
+    initWorld(world.id, {
+      memberCount,
+      isMember,
+    })
+  }, [world.id, memberCount, isMember, initWorld])
 
   // Use store value if available, fallback to prop
   const displayMemberCount = stats?.memberCount ?? memberCount
