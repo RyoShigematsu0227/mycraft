@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { useWorldStatsStore } from '@/lib/stores'
 
@@ -23,6 +24,7 @@ export function useWorldMembership({
   initialIsMember = false,
 }: UseWorldMembershipOptions): UseWorldMembershipReturn {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const [isLoading, setIsLoading] = useState(!initialIsMember && !!currentUserId)
   const [isToggling, setIsToggling] = useState(false)
   const supabase = createClient()
@@ -101,6 +103,9 @@ export function useWorldMembership({
 
         if (error) throw error
       }
+
+      // サイドバーのワールド一覧を更新
+      queryClient.invalidateQueries({ queryKey: ['userWorlds'] })
     } catch (error) {
       // Revert optimistic update on error
       const err = error as { message?: string; code?: string }
@@ -109,7 +114,7 @@ export function useWorldMembership({
     } finally {
       setIsToggling(false)
     }
-  }, [currentUserId, worldId, isToggling, isLoading, router, supabase, toggleMembershipStore, rollbackMembership])
+  }, [currentUserId, worldId, isToggling, isLoading, router, supabase, queryClient, toggleMembershipStore, rollbackMembership])
 
   return { isMember, isLoading: isLoading || isToggling, toggleMembership }
 }

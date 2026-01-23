@@ -192,7 +192,7 @@ export default async function UserPage({ params }: UserPageProps) {
               <div className="mt-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="flex items-center gap-1 text-xs text-muted">
-                    <svg className="h-3.5 w-3.5 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-3.5 w-3.5 text-accent" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5z" />
                     </svg>
                     オーナー
@@ -201,7 +201,7 @@ export default async function UserPage({ params }: UserPageProps) {
                     <Link
                       key={world.id}
                       href={`/worlds/${world.id}`}
-                      className="group flex items-center gap-1.5 rounded-full bg-amber-500/10 py-1 pl-1 pr-2.5 ring-1 ring-amber-500/20 transition-all hover:bg-amber-500/20 hover:ring-amber-500/40"
+                      className="group flex items-center gap-1.5 rounded-full bg-accent/10 py-1 pl-1 pr-2.5 ring-1 ring-accent/20 transition-all hover:bg-accent/20 hover:ring-accent/40"
                     >
                       <Image
                         src={world.icon_url || '/defaults/default-world-icon.png'}
@@ -211,7 +211,7 @@ export default async function UserPage({ params }: UserPageProps) {
                         className="h-5 w-5 rounded-full object-cover"
                         unoptimized={world.icon_url?.startsWith('http') ?? false}
                       />
-                      <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                      <span className="text-sm font-medium text-accent">
                         {world.name}
                       </span>
                     </Link>
