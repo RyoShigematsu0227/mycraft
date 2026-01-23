@@ -93,9 +93,9 @@ export default function WorldList({ worlds, currentUserId }: WorldListProps) {
     <div>
       {/* Filter Tabs */}
       {currentUserId && (
-        <div className="sticky top-[52px] z-10 border-b border-border bg-background/95 px-4 py-4 backdrop-blur-sm">
+        <div className="sticky top-[52px] z-10 overflow-hidden border-b border-border bg-background/95 px-4 py-4 backdrop-blur-sm">
           {/* Tabs Container */}
-          <div ref={tabsRef} className="relative flex gap-2 overflow-x-auto">
+          <div ref={tabsRef} className="relative flex gap-2">
             {/* Animated Background Indicator */}
             <div
               className="absolute top-0 h-full rounded-xl bg-gradient-to-r from-accent to-accent-secondary transition-all duration-300 ease-out"
