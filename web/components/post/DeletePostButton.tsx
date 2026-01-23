@@ -3,13 +3,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, ConfirmDialog } from '@/components/ui'
-import { createClient } from '@/lib/supabase/client'
+import { deletePost } from '@/actions'
 
 interface DeletePostButtonProps {
   postId: string
+  userId?: string
 }
 
-export default function DeletePostButton({ postId }: DeletePostButtonProps) {
+export default function DeletePostButton({ postId, userId }: DeletePostButtonProps) {
   const router = useRouter()
   const [showConfirm, setShowConfirm] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -17,8 +18,7 @@ export default function DeletePostButton({ postId }: DeletePostButtonProps) {
   const handleDelete = async () => {
     setLoading(true)
     try {
-      const supabase = createClient()
-      await supabase.from('posts').delete().eq('id', postId)
+      await deletePost(postId, userId)
       router.push('/')
       router.refresh()
     } catch (error) {

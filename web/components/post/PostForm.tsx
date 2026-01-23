@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { translateError } from '@/lib/utils/errorMessages'
+import { invalidateUserPostsCache } from '@/actions'
 import { Button, Textarea } from '@/components/ui'
 import { WorldIcon } from '@/components/world'
 import type { Database } from '@/types/database'
@@ -146,6 +147,9 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
       // Reset form before navigation to prevent stale state on browser back
       resetForm()
 
+      // キャッシュ無効化
+      await invalidateUserPostsCache(userId)
+
       router.push(`/posts/${post.id}`)
       router.refresh()
     } catch (err) {
@@ -169,7 +173,7 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
         <select
           value={selectedWorldId}
           onChange={(e) => setSelectedWorldId(e.target.value)}
-          className="rounded-md border border-border bg-background px-3 py-1.5 text-sm dark:border-border dark:bg-surface"
+          className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm"
         >
           {worlds.map((world) => (
             <option key={world.id} value={world.id}>
@@ -194,7 +198,7 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
         <select
           value={visibility}
           onChange={(e) => setVisibility(e.target.value as Visibility)}
-          className="rounded-md border border-border bg-background px-3 py-1.5 text-sm dark:border-border dark:bg-surface"
+          className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm"
         >
           <option value="public">全体公開</option>
           <option value="world_only">ワールド限定</option>

@@ -59,7 +59,7 @@ export default async function NewPostPage({ searchParams }: NewPostPageProps) {
       <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
         新しい投稿
       </h1>
-      <div className="rounded-lg bg-background p-6 shadow dark:bg-surface">
+      <div className="rounded-xl border border-border bg-surface p-6">
         <PostForm
           userId={authUser.id}
           worlds={worlds}

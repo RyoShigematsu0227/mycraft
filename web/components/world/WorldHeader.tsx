@@ -47,7 +47,7 @@ export default function WorldHeader({
     <>
       {/* Compact Fixed Header */}
       <div
-        className={`fixed left-0 right-0 top-0 z-30 border-b border-border bg-background/95 backdrop-blur-sm transition-all duration-200 dark:bg-surface/95 lg:left-72 ${
+        className={`fixed left-0 right-0 top-0 z-30 border-b border-border bg-surface/95 backdrop-blur-sm transition-all duration-200 lg:left-72 ${
           isCompact ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
         }`}
       >

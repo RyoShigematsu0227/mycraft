@@ -4,6 +4,14 @@ import { updateTag } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 
 /**
+ * ユーザーの投稿数キャッシュを無効化
+ */
+export async function invalidateUserPostsCache(userId: string) {
+  updateTag(`user-stats-${userId}`)
+  updateTag('posts')
+}
+
+/**
  * いいねをトグル
  */
 export async function toggleLike(postId: string, userId: string) {
@@ -82,8 +90,19 @@ export async function toggleRepost(postId: string, userId: string) {
 /**
  * 投稿を削除
  */
-export async function deletePost(postId: string) {
+export async function deletePost(postId: string, userId?: string) {
   const supabase = await createClient()
+
+  // userIdが指定されていない場合は投稿から取得
+  let authorId = userId
+  if (!authorId) {
+    const { data: post } = await supabase
+      .from('posts')
+      .select('user_id')
+      .eq('id', postId)
+      .single()
+    authorId = post?.user_id
+  }
 
   const { error } = await supabase
     .from('posts')
@@ -95,6 +114,9 @@ export async function deletePost(postId: string) {
   // Revalidate caches (即時反映)
   updateTag(`post-${postId}`)
   updateTag('posts')
+  if (authorId) {
+    updateTag(`user-stats-${authorId}`)
+  }
 
   return { success: true }
 }
@@ -125,6 +147,7 @@ export async function createPost(data: {
 
   // Revalidate caches (即時反映)
   updateTag('posts')
+  updateTag(`user-stats-${data.userId}`)
   if (data.worldId) {
     updateTag(`world-${data.worldId}`)
   }

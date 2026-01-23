@@ -53,7 +53,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' }:
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
     >
       <div
-        className={`w-full ${sizes[size]} rounded-xl bg-background shadow-xl dark:bg-surface`}
+        className={`w-full ${sizes[size]} rounded-xl bg-surface shadow-xl ring-1 ring-border`}
         role="dialog"
         aria-modal="true"
       >

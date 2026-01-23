@@ -94,7 +94,7 @@ export default async function PostPage({ params }: PostPageProps) {
             <BackButton />
             <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">投稿</h1>
           </div>
-          {isOwner && <DeletePostButton postId={postId} />}
+          {isOwner && <DeletePostButton postId={postId} userId={authUser?.id} />}
         </div>
       </div>
 
