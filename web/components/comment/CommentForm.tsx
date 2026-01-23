@@ -53,6 +53,14 @@ export default function CommentForm({
       <Textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
+        onKeyDown={(e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault()
+            if (content.trim() && !loading) {
+              handleSubmit(e)
+            }
+          }
+        }}
         placeholder={placeholder}
         rows={2}
         maxLength={500}
