@@ -117,7 +117,7 @@ export default function SearchResults({
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 px-4 py-3 text-center text-sm font-medium transition ${
               activeTab === tab.id
-                ? 'border-b-2 border-blue-500 text-blue-500'
+                ? 'border-b-2 border-orange-500 text-orange-600 dark:text-orange-400'
                 : 'text-muted hover:bg-surface hover:text-foreground dark:text-muted dark:hover:bg-surface dark:hover:text-foreground'
             }`}
           >

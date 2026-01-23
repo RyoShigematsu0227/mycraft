@@ -13,7 +13,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary:
-        'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 hover:from-blue-600 hover:to-blue-700 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5 focus-visible:ring-blue-500 dark:shadow-blue-500/20',
+        'bg-gradient-to-r from-amber-600 to-orange-700 text-white shadow-lg shadow-orange-600/25 hover:from-amber-700 hover:to-orange-800 hover:shadow-xl hover:shadow-orange-600/30 hover:-translate-y-0.5 focus-visible:ring-orange-500 dark:shadow-orange-600/20',
       secondary:
         'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 shadow-md hover:from-gray-200 hover:to-gray-300 hover:shadow-lg hover:-translate-y-0.5 focus-visible:ring-gray-500 dark:from-gray-700 dark:to-gray-800 dark:text-gray-100 dark:hover:from-gray-600 dark:hover:to-gray-700',
       outline:
@@ -25,9 +25,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     const sizes = {
-      sm: 'h-8 px-3.5 text-sm rounded-lg gap-1.5',
-      md: 'h-10 px-5 text-sm rounded-xl gap-2',
-      lg: 'h-12 px-7 text-base rounded-xl gap-2.5',
+      sm: 'h-7 px-3 text-xs rounded-lg gap-1.5',
+      md: 'h-9 px-4 text-sm rounded-xl gap-2',
+      lg: 'h-11 px-6 text-sm rounded-xl gap-2.5',
     }
 
     return (

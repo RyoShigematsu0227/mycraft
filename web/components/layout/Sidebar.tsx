@@ -171,7 +171,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="flex h-16 items-center px-5">
         <Link href="/" className="group flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 transition-transform duration-200 group-hover:scale-105">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 text-white shadow-lg shadow-orange-600/25 transition-transform duration-200 group-hover:scale-105">
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path
                 strokeLinecap="round"
@@ -202,7 +202,7 @@ export default function Sidebar() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="検索"
-              className="w-full rounded-xl border-0 bg-surface py-2.5 pl-10 pr-4 text-sm text-foreground ring-1 ring-transparent transition-all duration-200 placeholder:text-muted focus:bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-surface dark:text-foreground dark:placeholder:text-muted dark:focus:bg-surface"
+              className="w-full rounded-xl border-0 bg-surface py-2.5 pl-10 pr-4 text-sm text-foreground ring-1 ring-transparent transition-all duration-200 placeholder:text-muted focus:bg-background focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-surface dark:text-foreground dark:placeholder:text-muted dark:focus:bg-surface"
             />
           </div>
         </form>
@@ -220,7 +220,7 @@ export default function Sidebar() {
                 href={item.href}
                 className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-r from-blue-500/10 to-blue-600/10 text-blue-600 dark:from-blue-500/20 dark:to-blue-600/20 dark:text-blue-400'
+                    ? 'bg-gradient-to-r from-amber-500/10 to-orange-600/10 text-orange-700 dark:from-amber-500/20 dark:to-orange-600/20 dark:text-orange-400'
                     : 'text-gray-600 hover:bg-surface hover:text-foreground dark:text-gray-400 dark:hover:bg-surface dark:hover:text-foreground'
                 }`}
               >
@@ -234,7 +234,7 @@ export default function Sidebar() {
                 </span>
                 <span className="font-medium">{item.label}</span>
                 {isActive && (
-                  <span className="ml-auto h-2 w-2 rounded-full bg-blue-500" />
+                  <span className="ml-auto h-2 w-2 rounded-full bg-orange-500" />
                 )}
               </Link>
             )
@@ -246,7 +246,7 @@ export default function Sidebar() {
           <div className="mt-5">
             <Link
               href="/posts/new"
-              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3.5 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/30"
+              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-orange-700 px-4 py-3.5 font-semibold text-white shadow-lg shadow-orange-600/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-orange-600/30"
             >
               <svg className="h-5 w-5 transition-transform duration-200 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path
@@ -275,7 +275,7 @@ export default function Sidebar() {
                     href={`/worlds/${world.id}`}
                     className={`group flex items-center gap-3 rounded-xl px-3.5 py-2 transition-all duration-200 ${
                       isActive
-                        ? 'bg-gradient-to-r from-blue-500/10 to-blue-600/10 text-blue-600 dark:from-blue-500/20 dark:to-blue-600/20 dark:text-blue-400'
+                        ? 'bg-gradient-to-r from-amber-500/10 to-orange-600/10 text-orange-700 dark:from-amber-500/20 dark:to-orange-600/20 dark:text-orange-400'
                         : 'text-gray-600 hover:bg-surface hover:text-foreground dark:text-gray-400 dark:hover:bg-surface dark:hover:text-foreground'
                     }`}
                   >
@@ -416,7 +416,7 @@ export default function Sidebar() {
             </Link>
             <Link
               href="/signup"
-              className="block w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/30"
+              className="block w-full rounded-xl bg-gradient-to-r from-amber-600 to-orange-700 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-lg shadow-orange-600/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-orange-600/30"
             >
               新規登録
             </Link>

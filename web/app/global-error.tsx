@@ -42,7 +42,7 @@ export default function GlobalError({
             <div className="mt-8">
               <button
                 onClick={reset}
-                className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
+                className="rounded-lg bg-gradient-to-r from-amber-600 to-orange-700 px-6 py-3 font-medium text-white transition hover:from-amber-700 hover:to-orange-800"
               >
                 もう一度試す
               </button>

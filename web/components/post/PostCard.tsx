@@ -96,7 +96,7 @@ export default function PostCard({
       className="group relative cursor-pointer border-b border-border bg-surface px-4 py-4 transition-colors duration-200 hover:bg-surface-hover dark:border-border dark:bg-surface dark:hover:bg-surface-hover"
     >
       {/* Subtle left accent on hover */}
-      <div className="absolute left-0 top-0 h-full w-1 scale-y-0 bg-gradient-to-b from-blue-400 to-blue-600 transition-transform duration-200 group-hover:scale-y-100" />
+      <div className="absolute left-0 top-0 h-full w-1 scale-y-0 bg-gradient-to-b from-amber-500 to-orange-600 transition-transform duration-200 group-hover:scale-y-100" />
 
       {/* Repost indicator */}
       {repostedBy && (
@@ -104,14 +104,14 @@ export default function PostCard({
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          <Link href={`/users/${repostedBy.userId}`} className="font-medium hover:text-blue-500 hover:underline">
+          <Link href={`/users/${repostedBy.userId}`} className="font-medium hover:text-orange-600 hover:underline dark:hover:text-orange-400">
             {repostedBy.displayName}がリポスト
           </Link>
         </div>
       )}
       <div className="flex items-start gap-3">
         <div className="relative">
-          <div className="rounded-full ring-2 ring-transparent transition-all duration-200 group-hover:ring-blue-100 dark:group-hover:ring-blue-900/50">
+          <div className="rounded-full ring-2 ring-transparent transition-all duration-200 group-hover:ring-orange-100 dark:group-hover:ring-orange-900/50">
             <UserAvatar
               userId={post.user.user_id}
               avatarUrl={post.user.avatar_url}
@@ -125,7 +125,7 @@ export default function PostCard({
           <div className="flex items-center gap-2 text-sm">
             <Link
               href={`/users/${post.user.user_id}`}
-              className="truncate font-bold text-gray-900 transition-colors hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+              className="truncate font-bold text-gray-900 transition-colors hover:text-orange-600 dark:text-gray-100 dark:hover:text-orange-400"
             >
               {post.user.display_name}
             </Link>
@@ -186,7 +186,7 @@ export default function PostCard({
                 e.stopPropagation()
                 router.push(`/posts/${post.id}`)
               }}
-              className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-gray-500 transition-all duration-200 hover:bg-blue-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-blue-900/20 dark:hover:text-blue-400"
+              className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-gray-500 transition-all duration-200 hover:bg-orange-50 hover:text-orange-600 dark:text-gray-400 dark:hover:bg-orange-900/20 dark:hover:text-orange-400"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path

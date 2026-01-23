@@ -324,9 +324,9 @@ export default function BottomNav() {
                 href={item.href}
                 className={`flex flex-col items-center gap-1 px-3 py-2 ${
                   highlight
-                    ? 'text-blue-600 dark:text-blue-400'
+                    ? 'text-orange-600 dark:text-orange-400'
                     : isActive
-                      ? 'text-blue-600 dark:text-blue-400'
+                      ? 'text-orange-600 dark:text-orange-400'
                       : 'text-gray-500 dark:text-gray-400'
                 }`}
               >
@@ -348,7 +348,7 @@ export default function BottomNav() {
             <button
               onClick={() => setShowMenu(!showMenu)}
               className={`flex flex-col items-center gap-1 px-3 py-2 ${
-                showMenu ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'
+                showMenu ? 'text-orange-600 dark:text-orange-400' : 'text-gray-500 dark:text-gray-400'
               }`}
             >
               <div className="relative h-6 w-6 overflow-hidden rounded-full bg-gray-200 dark:bg-surface">

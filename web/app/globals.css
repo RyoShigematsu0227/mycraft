@@ -8,6 +8,8 @@
   --surface-hover: #f5f0e8;
   --border: #e0d5c8;
   --muted: #8a7f72;
+  --accent: #c4784a;
+  --accent-hover: #b36a3d;
 }
 
 @theme inline {
@@ -28,12 +30,15 @@
   --surface-hover: #26262e;
   --border: #2e2e38;
   --muted: #888899;
+  --accent: #d4885a;
+  --accent-hover: #c4784a;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
 }
 
 /* Custom animations */

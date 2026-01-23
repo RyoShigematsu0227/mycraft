@@ -47,7 +47,7 @@ export default function WorldCard({
       className="group relative block overflow-hidden rounded-2xl bg-surface p-5 shadow-sm ring-1 ring-border transition-all duration-300 hover:shadow-lg hover:ring-muted dark:bg-surface dark:ring-border dark:hover:ring-muted"
     >
       {/* Background gradient accent */}
-      <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-gradient-to-br from-blue-400/10 to-purple-400/10 blur-3xl transition-all duration-500 group-hover:scale-150" />
+      <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-gradient-to-br from-amber-400/10 to-orange-400/10 blur-3xl transition-all duration-500 group-hover:scale-150" />
 
       <div className="relative flex items-start gap-4">
         <div className="rounded-xl ring-2 ring-surface shadow-md transition-transform duration-300 group-hover:scale-105 dark:ring-border">
@@ -62,7 +62,7 @@ export default function WorldCard({
         <div className="min-w-0 flex-1">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
-              <span className="block text-lg font-bold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-gray-100 dark:group-hover:text-blue-400 sm:truncate">
+              <span className="block text-lg font-bold text-gray-900 transition-colors group-hover:text-orange-600 dark:text-gray-100 dark:group-hover:text-orange-400 sm:truncate">
                 {world.name}
               </span>
               <div className="mt-1 flex items-center gap-2">
