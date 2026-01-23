@@ -56,9 +56,9 @@ export default async function Home() {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 px-4 py-3 backdrop-blur dark:border-gray-700 dark:bg-gray-900/80">
+      <div className="sticky top-0 z-10 border-b border-gray-100 bg-white/80 px-4 py-3.5 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/80">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">ホーム</h1>
+          <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">ホーム</h1>
           <Link href="/posts/new">
             <Button size="sm">投稿する</Button>
           </Link>

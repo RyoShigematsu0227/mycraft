@@ -28,17 +28,22 @@ export function useWorldMembership({
   const supabase = createClient()
 
   const worldStats = useWorldStatsStore((state) => state.stats[worldId])
+  const initWorld = useWorldStatsStore((state) => state.initWorld)
   const setIsMember = useWorldStatsStore((state) => state.setIsMember)
   const toggleMembershipStore = useWorldStatsStore((state) => state.toggleMembership)
   const rollbackMembership = useWorldStatsStore((state) => state.rollbackMembership)
 
-  // Only update isMember if store exists, don't initialize with memberCount: 0
-  // WorldCard is responsible for initializing memberCount
+  // Initialize store only if not exists
+  // Once initialized, don't override with initialIsMember (user may have toggled)
   useEffect(() => {
-    if (worldStats && worldStats.isMember !== initialIsMember) {
-      setIsMember(worldId, initialIsMember)
+    if (!worldStats) {
+      initWorld(worldId, {
+        memberCount: 0,
+        isMember: initialIsMember,
+      })
     }
-  }, [worldId, initialIsMember, worldStats, setIsMember])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [worldId, initWorld])
 
   // Check if already a member
   useEffect(() => {
@@ -98,7 +103,8 @@ export function useWorldMembership({
       }
     } catch (error) {
       // Revert optimistic update on error
-      console.error('Membership toggle error:', error)
+      const err = error as { message?: string; code?: string }
+      console.error('Membership toggle error:', err?.message || err?.code || error)
       rollbackMembership(worldId, wasMember, prevCount)
     } finally {
       setIsToggling(false)

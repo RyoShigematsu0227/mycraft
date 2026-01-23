@@ -9,25 +9,25 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = '', variant = 'primary', size = 'md', loading, disabled, children, type = 'button', ...props }, ref) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+      'inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none active:scale-[0.98]'
 
     const variants = {
       primary:
-        'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+        'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 hover:from-blue-600 hover:to-blue-700 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5 focus-visible:ring-blue-500 dark:shadow-blue-500/20',
       secondary:
-        'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600',
+        'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 shadow-md hover:from-gray-200 hover:to-gray-300 hover:shadow-lg hover:-translate-y-0.5 focus-visible:ring-gray-500 dark:from-gray-700 dark:to-gray-800 dark:text-gray-100 dark:hover:from-gray-600 dark:hover:to-gray-700',
       outline:
-        'border border-gray-300 bg-transparent hover:bg-gray-100 focus:ring-gray-500 dark:border-gray-600 dark:hover:bg-gray-800',
+        'border-2 border-gray-200 bg-white/50 backdrop-blur-sm hover:border-gray-300 hover:bg-white hover:shadow-md hover:-translate-y-0.5 focus-visible:ring-gray-500 dark:border-gray-700 dark:bg-gray-800/50 dark:hover:border-gray-600 dark:hover:bg-gray-800',
       ghost:
-        'bg-transparent hover:bg-gray-100 focus:ring-gray-500 dark:hover:bg-gray-800',
+        'bg-transparent hover:bg-gray-100/80 hover:backdrop-blur-sm focus-visible:ring-gray-500 dark:hover:bg-gray-800/80',
       danger:
-        'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+        'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg shadow-red-500/25 hover:from-red-600 hover:to-red-700 hover:shadow-xl hover:shadow-red-500/30 hover:-translate-y-0.5 focus-visible:ring-red-500',
     }
 
     const sizes = {
-      sm: 'h-8 px-3 text-sm rounded-md gap-1.5',
-      md: 'h-10 px-4 text-sm rounded-lg gap-2',
-      lg: 'h-12 px-6 text-base rounded-lg gap-2',
+      sm: 'h-8 px-3.5 text-sm rounded-lg gap-1.5',
+      md: 'h-10 px-5 text-sm rounded-xl gap-2',
+      lg: 'h-12 px-7 text-base rounded-xl gap-2.5',
     }
 
     return (

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { UserAvatar } from '@/components/user'
 import { WorldIcon } from '@/components/world'
 import PostImages from './PostImages'
@@ -62,6 +63,7 @@ export default function PostCard({
   showWorldInfo = true,
   repostedBy = null,
 }: PostCardProps) {
+  const router = useRouter()
   const stats = usePostStatsStore((state) => state.stats[post.id])
   const initPost = usePostStatsStore((state) => state.initPost)
 
@@ -79,67 +81,86 @@ export default function PostCard({
   // Use store values if available, fallback to props
   const displayCommentCount = stats?.commentCount ?? commentCount
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on interactive elements
+    const target = e.target as HTMLElement
+    if (target.closest('a') || target.closest('button')) {
+      return
+    }
+    router.push(`/posts/${post.id}`)
+  }
+
   return (
-    <article className="border-b border-gray-200 bg-white px-4 py-4 dark:border-gray-700 dark:bg-gray-900">
+    <article
+      onClick={handleCardClick}
+      className="group relative cursor-pointer border-b border-gray-100 bg-white px-4 py-4 transition-colors duration-200 hover:bg-gray-50/50 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800/50"
+    >
+      {/* Subtle left accent on hover */}
+      <div className="absolute left-0 top-0 h-full w-1 scale-y-0 bg-gradient-to-b from-blue-400 to-blue-600 transition-transform duration-200 group-hover:scale-y-100" />
+
       {/* Repost indicator */}
       {repostedBy && (
-        <div className="mb-2 flex items-center gap-2 pl-12 text-sm text-gray-500 dark:text-gray-400">
+        <div className="mb-3 flex items-center gap-2 pl-12 text-sm text-gray-500 dark:text-gray-400">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          <Link href={`/users/${repostedBy.userId}`} className="hover:underline">
+          <Link href={`/users/${repostedBy.userId}`} className="font-medium hover:text-blue-500 hover:underline">
             {repostedBy.displayName}がリポスト
           </Link>
         </div>
       )}
       <div className="flex items-start gap-3">
-        <UserAvatar
-          userId={post.user.user_id}
-          avatarUrl={post.user.avatar_url}
-          displayName={post.user.display_name}
-          size="md"
-        />
+        <div className="relative">
+          <div className="rounded-full ring-2 ring-transparent transition-all duration-200 group-hover:ring-blue-100 dark:group-hover:ring-blue-900/50">
+            <UserAvatar
+              userId={post.user.user_id}
+              avatarUrl={post.user.avatar_url}
+              displayName={post.user.display_name}
+              size="md"
+            />
+          </div>
+        </div>
         <div className="min-w-0 flex-1">
           {/* Header */}
           <div className="flex items-center gap-2 text-sm">
             <Link
               href={`/users/${post.user.user_id}`}
-              className="truncate font-bold text-gray-900 hover:underline dark:text-gray-100"
+              className="truncate font-bold text-gray-900 transition-colors hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
             >
               {post.user.display_name}
             </Link>
             <Link
               href={`/users/${post.user.user_id}`}
-              className="truncate text-gray-500 dark:text-gray-400"
+              className="truncate text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
             >
               @{post.user.user_id}
             </Link>
-            <span className="text-gray-400 dark:text-gray-500">·</span>
-            <Link
-              href={`/posts/${post.id}`}
-              className="text-gray-500 hover:underline dark:text-gray-400"
-            >
+            <span className="text-gray-300 dark:text-gray-600">·</span>
+            <span className="whitespace-nowrap text-gray-500 dark:text-gray-400">
               {formatDate(post.created_at)}
-            </Link>
+            </span>
           </div>
 
           {/* World info */}
           {showWorldInfo && post.world && (
-            <div className="mt-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <WorldIcon
-                worldId={post.world.id}
-                iconUrl={post.world.icon_url}
-                name={post.world.name}
-                size="sm"
-              />
+            <div className="mt-1.5 flex items-center gap-2">
               <Link
                 href={`/worlds/${post.world.id}`}
-                className="hover:underline"
+                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-gray-50 to-gray-100 px-2.5 py-1 text-sm transition-colors hover:from-gray-100 hover:to-gray-150 dark:from-gray-800 dark:to-gray-750 dark:hover:from-gray-750 dark:hover:to-gray-700"
               >
-                {post.world.name}
+                <WorldIcon
+                  worldId={post.world.id}
+                  iconUrl={post.world.icon_url}
+                  name={post.world.name}
+                  size="sm"
+                  showLink={false}
+                />
+                <span className="font-medium text-gray-600 dark:text-gray-300">
+                  {post.world.name}
+                </span>
               </Link>
               {post.visibility === 'world_only' && (
-                <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs dark:bg-gray-800">
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
                   ワールド限定
                 </span>
               )}
@@ -147,32 +168,35 @@ export default function PostCard({
           )}
 
           {/* Content */}
-          <Link href={`/posts/${post.id}`} className="block">
-            <p className="mt-2 whitespace-pre-wrap text-gray-900 dark:text-gray-100">
-              {post.content}
-            </p>
-          </Link>
+          <p className="mt-2.5 whitespace-pre-wrap leading-relaxed text-gray-800 dark:text-gray-200">
+            {post.content}
+          </p>
 
           {/* Images */}
           {post.images && post.images.length > 0 && (
-            <PostImages images={post.images} />
+            <div className="mt-3">
+              <PostImages images={post.images} />
+            </div>
           )}
 
           {/* Actions */}
-          <div className="mt-3 flex items-center gap-2">
-            <Link
-              href={`/posts/${post.id}`}
-              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-gray-800"
+          <div className="-ml-2 mt-3 flex items-center gap-1">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                router.push(`/posts/${post.id}`)
+              }}
+              className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-gray-500 transition-all duration-200 hover:bg-blue-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-blue-900/20 dark:hover:text-blue-400"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                 />
               </svg>
-              {displayCommentCount > 0 && <span>{displayCommentCount}</span>}
-            </Link>
+              {displayCommentCount > 0 && <span className="font-medium">{displayCommentCount}</span>}
+            </button>
             <RepostButton
               postId={post.id}
               currentUserId={currentUserId}
