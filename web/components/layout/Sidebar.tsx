@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useTheme } from '@/hooks/useTheme'
 import { createClient } from '@/lib/supabase/client'
-import { useProfileStore } from '@/lib/stores'
+import { useProfileStore, usePostModalStore } from '@/lib/stores'
 import type { Database } from '@/types/database'
 
 type World = Database['public']['Tables']['worlds']['Row']
@@ -22,6 +22,7 @@ export default function Sidebar() {
   const { user: authUser, isAuthenticated, signOut } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const { profile, setProfile } = useProfileStore()
+  const openPostModal = usePostModalStore((state) => state.openModal)
   const [searchQuery, setSearchQuery] = useState('')
   const [userWorlds, setUserWorlds] = useState<WorldWithMemberCount[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
@@ -288,15 +289,15 @@ export default function Sidebar() {
         {/* Quick Actions */}
         {isAuthenticated && (
           <div className="mb-4">
-            <Link
-              href="/posts/new"
-              className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-4 py-3 font-semibold text-white shadow-lg shadow-accent/20 transition-all duration-300 hover:shadow-xl hover:shadow-accent/30 hover:-translate-y-0.5"
+            <button
+              onClick={() => openPostModal()}
+              className="group relative flex w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-4 py-3 font-semibold text-white shadow-lg shadow-accent/20 transition-all duration-300 hover:shadow-xl hover:shadow-accent/30 hover:-translate-y-0.5"
             >
               <svg className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
               </svg>
               投稿する
-            </Link>
+            </button>
           </div>
         )}
 

@@ -1,6 +1,7 @@
 export { default as PostCard } from './PostCard'
 export { default as PostImages } from './PostImages'
 export { default as PostForm } from './PostForm'
+export { default as PostModal } from './PostModal'
 export { default as LikeButton } from './LikeButton'
 export { default as RepostButton } from './RepostButton'
 export { default as Feed } from './Feed'

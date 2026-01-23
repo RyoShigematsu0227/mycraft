@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useTheme } from '@/hooks/useTheme'
 import { createClient } from '@/lib/supabase/client'
-import { useProfileStore } from '@/lib/stores'
+import { useProfileStore, usePostModalStore } from '@/lib/stores'
 import type { Database } from '@/types/database'
 
 export default function BottomNav() {
@@ -15,6 +15,7 @@ export default function BottomNav() {
   const { user: authUser, isAuthenticated, signOut } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const { profile, setProfile } = useProfileStore()
+  const openPostModal = usePostModalStore((state) => state.openModal)
   const [showMenu, setShowMenu] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -114,7 +115,6 @@ export default function BottomNav() {
     ...(isAuthenticated
       ? [
           {
-            href: '/posts/new',
             label: '投稿',
             icon: (
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -127,6 +127,7 @@ export default function BottomNav() {
               </svg>
             ),
             highlight: true,
+            isPostButton: true,
           },
         ]
       : []),
@@ -316,14 +317,30 @@ export default function BottomNav() {
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background dark:border-border dark:bg-background lg:hidden">
         <div className="flex h-16 items-center justify-around">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href
+          {navItems.map((item, index) => {
+            const isActive = 'href' in item && pathname === item.href
             const highlight = 'highlight' in item && item.highlight
             const showBadge = 'showBadge' in item && item.showBadge
+            const isPostButton = 'isPostButton' in item && item.isPostButton
+
+            if (isPostButton) {
+              return (
+                <button
+                  key={`post-${index}`}
+                  onClick={() => openPostModal()}
+                  className="flex cursor-pointer flex-col items-center gap-1 px-3 py-2 text-accent"
+                >
+                  <span className="relative">{item.icon}</span>
+                  <span className="text-xs">{item.label}</span>
+                </button>
+              )
+            }
+
+            const href = 'href' in item && item.href ? item.href : '/'
             return (
               <Link
-                key={item.href}
-                href={item.href}
+                key={href}
+                href={href as string}
                 className={`flex flex-col items-center gap-1 px-3 py-2 ${
                   highlight
                     ? 'text-accent'

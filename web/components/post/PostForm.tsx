@@ -16,11 +16,12 @@ interface PostFormProps {
   userId: string
   worlds: World[]
   defaultWorldId?: string
+  onSuccess?: () => void
 }
 
 type Visibility = 'public' | 'world_only'
 
-export default function PostForm({ userId, worlds, defaultWorldId }: PostFormProps) {
+export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: PostFormProps) {
   const router = useRouter()
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -150,8 +151,12 @@ export default function PostForm({ userId, worlds, defaultWorldId }: PostFormPro
       // キャッシュ無効化
       await invalidateUserPostsCache(userId)
 
-      router.push(`/posts/${post.id}`)
-      router.refresh()
+      if (onSuccess) {
+        onSuccess()
+      } else {
+        router.push(`/posts/${post.id}`)
+        router.refresh()
+      }
     } catch (err) {
       console.error('Post creation error:', err)
       setError(err instanceof Error ? translateError(err.message) : '投稿に失敗しました')
