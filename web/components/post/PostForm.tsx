@@ -214,7 +214,15 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
       <Textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="今日は何を建てた？"
+        onKeyDown={(e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault()
+            if (content.trim() && selectedWorldId && !loading) {
+              handleSubmit(e)
+            }
+          }
+        }}
+        placeholder="今日はどんなことがあった？"
         rows={4}
         maxLength={1000}
         hint={`${content.length}/1000`}
