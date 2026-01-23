@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { createWorld, updateWorld } from '@/actions/world'
 import { translateError } from '@/lib/utils/errorMessages'
 import { Button, Input, Textarea, ImageUpload } from '@/components/ui'
 import type { Database } from '@/types/database'
@@ -16,6 +18,7 @@ interface WorldFormProps {
 
 export default function WorldForm({ world, userId }: WorldFormProps) {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const supabase = createClient()
   const isEditing = !!world
 
@@ -62,47 +65,33 @@ export default function WorldForm({ world, userId }: WorldFormProps) {
       }
 
       if (isEditing) {
-        // Update existing world
-        const { error: updateError } = await supabase
-          .from('worlds')
-          .update({
-            name: name.trim(),
-            description: description.trim() || null,
-            how_to_join: howToJoin.trim() || null,
-            icon_url: newIconUrl,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', world.id)
+        // Update existing world using server action
+        await updateWorld(world.id, {
+          name: name.trim(),
+          description: description.trim() || undefined,
+          howToJoin: howToJoin.trim() || undefined,
+          iconUrl: newIconUrl || undefined,
+        })
 
-        if (updateError) throw updateError
+        // サイドバーのワールド一覧を更新
+        queryClient.invalidateQueries({ queryKey: ['userWorlds'] })
 
         router.push(`/worlds/${world.id}`)
       } else {
-        // Create new world
-        const { data: newWorld, error: insertError } = await supabase
-          .from('worlds')
-          .insert({
-            name: name.trim(),
-            description: description.trim() || null,
-            how_to_join: howToJoin.trim() || null,
-            icon_url: newIconUrl,
-            owner_id: userId,
-          })
-          .select()
-          .single()
-
-        if (insertError) throw insertError
-
-        // Owner automatically becomes a member
-        await supabase.from('world_members').insert({
-          world_id: newWorld.id,
-          user_id: userId,
+        // Create new world using server action
+        const newWorld = await createWorld({
+          name: name.trim(),
+          description: description.trim() || undefined,
+          howToJoin: howToJoin.trim() || undefined,
+          iconUrl: newIconUrl || undefined,
+          ownerId: userId,
         })
+
+        // サイドバーのワールド一覧を更新
+        queryClient.invalidateQueries({ queryKey: ['userWorlds'] })
 
         router.push(`/worlds/${newWorld.id}`)
       }
-
-      router.refresh()
     } catch (err) {
       setError(err instanceof Error ? translateError(err.message) : '保存に失敗しました')
     } finally {

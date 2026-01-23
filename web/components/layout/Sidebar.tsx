@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
+import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/useAuth'
 import { useTheme } from '@/hooks/useTheme'
 import { createClient } from '@/lib/supabase/client'
@@ -30,11 +31,42 @@ export default function Sidebar() {
     : undefined
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [userWorlds, setUserWorlds] = useState<WorldWithMemberCount[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showAllWorlds, setShowAllWorlds] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+
+  // Fetch user's worlds with TanStack Query
+  const { data: userWorlds = [] } = useQuery({
+    queryKey: ['userWorlds', authUser?.id],
+    queryFn: async () => {
+      if (!authUser?.id) return []
+      const client = createClient()
+      const { data } = await client
+        .from('world_members')
+        .select('world:worlds(*)')
+        .eq('user_id', authUser.id)
+
+      if (!data) return []
+
+      const worlds = data
+        .map((item) => item.world)
+        .filter((w): w is World => w !== null)
+
+      // Fetch member counts for each world
+      const worldsWithCounts = await Promise.all(
+        worlds.map(async (world) => {
+          const { count } = await client
+            .from('world_members')
+            .select('id', { count: 'exact', head: true })
+            .eq('world_id', world.id)
+          return { ...world, memberCount: count || 0 }
+        })
+      )
+      return worldsWithCounts
+    },
+    enabled: !!authUser?.id,
+  })
 
   // Handle search
   const handleSearch = (e: React.FormEvent) => {
@@ -73,37 +105,6 @@ export default function Sidebar() {
     }
     fetchProfile()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authUser?.id])
-
-  // Fetch user's worlds with member counts
-  useEffect(() => {
-    async function fetchUserWorlds() {
-      if (!authUser?.id) return
-      const client = createClient()
-      const { data } = await client
-        .from('world_members')
-        .select('world:worlds(*)')
-        .eq('user_id', authUser.id)
-
-      if (data) {
-        const worlds = data
-          .map((item) => item.world)
-          .filter((w): w is World => w !== null)
-
-        // Fetch member counts for each world
-        const worldsWithCounts = await Promise.all(
-          worlds.map(async (world) => {
-            const { count } = await client
-              .from('world_members')
-              .select('id', { count: 'exact', head: true })
-              .eq('world_id', world.id)
-            return { ...world, memberCount: count || 0 }
-          })
-        )
-        setUserWorlds(worldsWithCounts)
-      }
-    }
-    fetchUserWorlds()
   }, [authUser?.id])
 
   // Fetch unread notification count

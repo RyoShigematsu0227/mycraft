@@ -1,6 +1,6 @@
 'use server'
 
-import { updateTag } from 'next/cache'
+import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 
 /**
@@ -38,8 +38,9 @@ export async function toggleWorldMembership(worldId: string, userId: string) {
     if (error) throw error
   }
 
-  // Revalidate world stats cache (即時反映)
-  updateTag(`world-stats-${worldId}`)
+  // Revalidate caches (即時反映)
+  revalidatePath('/worlds')
+  revalidatePath(`/worlds/${worldId}`)
 
   return { isMember: !existingMembership }
 }
@@ -78,7 +79,8 @@ export async function createWorld(data: {
       user_id: data.ownerId,
     })
 
-  updateTag('worlds')
+  // Revalidate worlds list (即時反映)
+  revalidatePath('/worlds')
 
   return world
 }
@@ -111,8 +113,9 @@ export async function updateWorld(
 
   if (error) throw error
 
-  // Revalidate world cache (即時反映)
-  updateTag(`world-${worldId}`)
+  // Revalidate caches (即時反映)
+  revalidatePath('/worlds')
+  revalidatePath(`/worlds/${worldId}`)
 
   return { success: true }
 }
