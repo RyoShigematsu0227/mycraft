@@ -90,8 +90,8 @@ export default async function WorldPage({ params }: WorldPageProps) {
           />
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
-              <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              <div className="min-w-0">
+                <h1 className="truncate text-xl font-bold text-gray-900 dark:text-gray-100">
                   {world.name}
                 </h1>
                 {owner && (
@@ -103,19 +103,21 @@ export default async function WorldPage({ params }: WorldPageProps) {
                   </Link>
                 )}
               </div>
-              {isOwner ? (
-                <Link href={`/worlds/${world.id}/edit`}>
-                  <Button variant="outline" size="sm">
-                    編集
-                  </Button>
-                </Link>
-              ) : authUser ? (
-                <JoinButton
-                  worldId={world.id}
-                  currentUserId={authUser.id}
-                  initialIsMember={isMember}
-                />
-              ) : null}
+              <div className="shrink-0">
+                {isOwner ? (
+                  <Link href={`/worlds/${world.id}/edit`}>
+                    <Button variant="outline" size="sm">
+                      編集
+                    </Button>
+                  </Link>
+                ) : authUser ? (
+                  <JoinButton
+                    worldId={world.id}
+                    currentUserId={authUser.id}
+                    initialIsMember={isMember}
+                  />
+                ) : null}
+              </div>
             </div>
             {world.description && (
               <p className="mt-3 text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
