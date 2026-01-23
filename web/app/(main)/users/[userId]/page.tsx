@@ -95,7 +95,7 @@ export default async function UserPage({ params }: UserPageProps) {
       >
         <div className="relative overflow-hidden border-b border-border bg-surface">
           {/* Background decoration */}
-          <div className="absolute inset-0">
+          <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-accent/20 to-accent-secondary/20 blur-3xl" />
             <div className="absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-gradient-to-tr from-accent-secondary/20 to-accent/20 blur-3xl" />
           </div>

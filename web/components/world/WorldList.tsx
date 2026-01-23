@@ -139,7 +139,7 @@ export default function WorldList({ worlds, currentUserId }: WorldListProps) {
       )}
 
       {/* World Grid */}
-      <div className="p-4">
+      <div className="overflow-x-hidden p-4">
         {filteredWorlds.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-surface">

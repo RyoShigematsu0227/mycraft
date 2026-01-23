@@ -137,10 +137,10 @@ export default function PostCard({
 
       {/* Subtle animated glow on hover */}
       {interactive && (
-        <>
-          <div className="pointer-events-none absolute -right-32 -top-32 h-64 w-64 rounded-full bg-accent/5 opacity-0 blur-3xl transition-all duration-700 group-hover:opacity-100" />
-          <div className="pointer-events-none absolute -bottom-32 -left-32 h-64 w-64 rounded-full bg-accent-secondary/5 opacity-0 blur-3xl transition-all duration-700 group-hover:opacity-100" />
-        </>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -right-32 -top-32 h-64 w-64 rounded-full bg-accent/5 opacity-0 blur-3xl transition-all duration-700 group-hover:opacity-100" />
+          <div className="absolute -bottom-32 -left-32 h-64 w-64 rounded-full bg-accent-secondary/5 opacity-0 blur-3xl transition-all duration-700 group-hover:opacity-100" />
+        </div>
       )}
 
       {/* Content wrapper */}
