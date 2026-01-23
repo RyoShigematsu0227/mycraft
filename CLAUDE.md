@@ -32,7 +32,8 @@ mycraft/
 │   ├── requirements.md      # 要件定義
 │   ├── design.md            # 設計書
 │   ├── tasks.md             # タスク管理
-│   └── decisions.md         # 意思決定記録
+│   ├── decisions.md         # 意思決定記録
+│   └── nextjs-best-practices.md  # Next.js App Router ベストプラクティス
 ├── web/                     # Next.js
 │   ├── app/                 # App Router pages
 │   ├── components/          # UIコンポーネント
@@ -82,6 +83,7 @@ supabase gen types typescript --local > web/types/database.ts
 ### After Coding
 - **A-1 (MUST)**: 新しいパターンや決定事項は `docs/decisions.md` に記録
 - **A-2 (SHOULD)**: 実装完了したタスクは `docs/tasks.md` でチェックを入れる
+- **A-3 (MUST)**: 明確な指示が無い中で独断でコミットはしない
 
 ## Component Naming
 
@@ -113,3 +115,14 @@ chore: ビルド、設定など
 - MVP開発フェーズでは、まずWebを完成させてからMobileに着手
 - 通報・モデレーション機能はMVP後に実装
 - ワールドの承認制参加機能はMVP後に実装
+
+## References
+
+実装時は以下のドキュメントを参照:
+
+- **`docs/nextjs-best-practices.md`**: Next.js App RouterでのSNSアプリ開発ベストプラクティス
+  - Server/Client Componentsの使い分け
+  - データフェッチング（Server Actions vs Route Handlers）
+  - キャッシュ戦略
+  - 無限スクロール、楽観的更新、リアルタイム通知の実装パターン
+  - Supabase認証のセキュリティ
