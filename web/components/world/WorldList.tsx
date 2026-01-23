@@ -93,7 +93,7 @@ export default function WorldList({ worlds, currentUserId }: WorldListProps) {
     <div>
       {/* Filter Tabs */}
       {currentUserId && (
-        <div className="relative border-b border-border px-4 py-4">
+        <div className="sticky top-[52px] z-10 border-b border-border bg-background/95 px-4 py-4 backdrop-blur-sm">
           {/* Tabs Container */}
           <div ref={tabsRef} className="relative flex gap-2 overflow-x-auto">
             {/* Animated Background Indicator */}

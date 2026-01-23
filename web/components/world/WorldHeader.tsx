@@ -87,7 +87,7 @@ export default function WorldHeader({
       {/* Full Header */}
       <div
         ref={headerRef}
-        className="border-b border-gray-200 bg-background px-4 py-6 dark:border-gray-700 dark:bg-surface"
+        className="border-b border-border bg-surface px-4 py-6"
       >
         <div className="flex items-start gap-4">
           <WorldIcon
