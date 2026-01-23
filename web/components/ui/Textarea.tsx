@@ -23,10 +23,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           id={textareaId}
-          className={`w-full rounded-lg border px-3 py-2 transition focus:outline-none focus:ring-2 focus:ring-offset-0 ${
+          className={`w-full rounded-lg border px-3 py-2 text-foreground placeholder:text-muted transition focus:outline-none focus:ring-2 focus:ring-offset-0 ${
             error
               ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              : 'border-border bg-background focus:border-accent focus:ring-accent dark:border-border dark:bg-surface'
+              : 'border-border bg-surface focus:border-accent focus:ring-accent'
           } ${className}`}
           {...props}
         />

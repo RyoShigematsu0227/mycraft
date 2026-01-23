@@ -142,12 +142,43 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
   }, [])
 
   if (loading) {
-    return <Loading />
+    return (
+      <div className="border-t border-border bg-surface p-4">
+        <div className="space-y-4">
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="flex gap-3 animate-pulse">
+              <div className="h-8 w-8 rounded-full bg-surface-hover" />
+              <div className="flex-1 space-y-2">
+                <div className="flex gap-2">
+                  <div className="h-4 w-20 rounded bg-surface-hover" />
+                  <div className="h-4 w-12 rounded bg-surface-hover" />
+                </div>
+                <div className="h-4 w-3/4 rounded bg-surface-hover" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700">
-      <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+    <div className="border-t border-border bg-surface">
+      {/* Header */}
+      <div className="flex items-center gap-2 border-b border-border px-4 py-3">
+        <svg className="h-5 w-5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <span className="text-sm font-semibold text-foreground">
+          コメント
+          {comments.length > 0 && (
+            <span className="ml-1.5 text-muted">({comments.length})</span>
+          )}
+        </span>
+      </div>
+
+      {/* Comment form */}
+      <div className="border-b border-border p-4">
         <CommentForm
           postId={postId}
           currentUserId={currentUserId}
@@ -155,26 +186,23 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
         />
       </div>
 
-      <div className="divide-y divide-gray-100 dark:divide-gray-800">
+      {/* Comments list */}
+      <div>
         {comments.length === 0 ? (
-          <div className="p-8">
-            <EmptyState
-              icon={
-                <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="relative mb-4">
+              <div className="absolute -inset-3 rounded-full bg-gradient-to-br from-accent/10 to-accent-secondary/10 blur-lg" />
+              <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-surface-hover">
+                <svg className="h-8 w-8 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
-              }
-              title="コメントはまだありません"
-              description="最初のコメントを投稿してみましょう"
-            />
+              </div>
+            </div>
+            <p className="font-medium text-foreground">コメントはまだありません</p>
+            <p className="mt-1 text-sm text-muted">最初のコメントを投稿してみましょう</p>
           </div>
         ) : (
-          <div className="px-4">
+          <div className="px-4 pb-2">
             {comments.map((comment) => (
               <CommentCard
                 key={comment.id}

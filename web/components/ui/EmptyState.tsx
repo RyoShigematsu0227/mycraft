@@ -14,17 +14,25 @@ export default function EmptyState({
   className = '',
 }: EmptyStateProps) {
   return (
-    <div className={`flex flex-col items-center justify-center py-12 text-center ${className}`}>
+    <div className={`flex flex-col items-center justify-center py-16 text-center ${className}`}>
       {icon && (
-        <div className="mb-4 text-gray-400 dark:text-gray-500">
-          {icon}
+        <div className="relative mb-6">
+          {/* Animated background glow */}
+          <div className="absolute -inset-4 animate-pulse rounded-full bg-gradient-to-br from-accent/10 to-accent-secondary/10 blur-xl" />
+
+          {/* Icon container */}
+          <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-surface to-surface-hover ring-1 ring-border">
+            <div className="text-muted">
+              {icon}
+            </div>
+          </div>
         </div>
       )}
-      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{title}</h3>
+      <h3 className="text-lg font-bold text-foreground">{title}</h3>
       {description && (
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>
+        <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">{description}</p>
       )}
-      {action && <div className="mt-4">{action}</div>}
+      {action && <div className="mt-6">{action}</div>}
     </div>
   )
 }

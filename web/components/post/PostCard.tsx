@@ -2,9 +2,8 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { UserAvatar } from '@/components/user'
-import { WorldIcon } from '@/components/world'
 import PostImages from './PostImages'
 import LikeButton from './LikeButton'
 import RepostButton from './RepostButton'
@@ -45,9 +44,9 @@ function formatDate(dateString: string): string {
   const days = Math.floor(hours / 24)
 
   if (seconds < 60) return '今'
-  if (minutes < 60) return `${minutes}分前`
-  if (hours < 24) return `${hours}時間前`
-  if (days < 7) return `${days}日前`
+  if (minutes < 60) return `${minutes}分`
+  if (hours < 24) return `${hours}時間`
+  if (days < 7) return `${days}日`
 
   return date.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' })
 }
@@ -67,7 +66,6 @@ export default function PostCard({
   const stats = usePostStatsStore((state) => state.stats[post.id])
   const initPost = usePostStatsStore((state) => state.initPost)
 
-  // Initialize store with all counts (merges with existing)
   useEffect(() => {
     initPost(post.id, {
       likeCount,
@@ -78,11 +76,9 @@ export default function PostCard({
     })
   }, [post.id, likeCount, repostCount, commentCount, isLiked, isReposted, initPost])
 
-  // Use store values if available, fallback to props
   const displayCommentCount = stats?.commentCount ?? commentCount
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't navigate if clicking on interactive elements
     const target = e.target as HTMLElement
     if (target.closest('a') || target.closest('button')) {
       return
@@ -93,125 +89,175 @@ export default function PostCard({
   return (
     <article
       onClick={handleCardClick}
-      className="group relative cursor-pointer border-b border-border bg-surface px-4 py-4 transition-colors duration-200 hover:bg-surface-hover dark:border-border dark:bg-surface dark:hover:bg-surface-hover"
+      className="group relative cursor-pointer overflow-hidden bg-surface transition-all duration-300 hover:bg-surface-hover"
     >
-      {/* Subtle left accent on hover */}
-      <div className="absolute left-0 top-0 h-full w-1 scale-y-0 bg-accent transition-transform duration-200 group-hover:scale-y-100" />
+      {/* Animated gradient border on left */}
+      <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-accent via-accent-secondary to-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      {/* Repost indicator */}
-      {repostedBy && (
-        <div className="mb-3 flex items-center gap-2 pl-12 text-sm text-gray-500 dark:text-gray-400">
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          <Link href={`/users/${repostedBy.userId}`} className="font-medium hover:text-accent hover:underline">
-            {repostedBy.displayName}がリポスト
-          </Link>
-        </div>
-      )}
-      <div className="flex items-start gap-3">
-        <div className="relative">
-          <div className="rounded-full ring-2 ring-transparent transition-all duration-200 group-hover:ring-accent-light">
-            <UserAvatar
-              userId={post.user.user_id}
-              avatarUrl={post.user.avatar_url}
-              displayName={post.user.display_name}
-              size="md"
-            />
-          </div>
-        </div>
-        <div className="min-w-0 flex-1">
-          {/* Header */}
-          <div className="flex items-center gap-2 text-sm">
-            <Link
-              href={`/users/${post.user.user_id}`}
-              className="truncate font-bold text-gray-900 transition-colors hover:text-accent dark:text-gray-100"
-            >
-              {post.user.display_name}
-            </Link>
-            <Link
-              href={`/users/${post.user.user_id}`}
-              className="truncate text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-            >
-              @{post.user.user_id}
-            </Link>
-            <span className="text-gray-300 dark:text-gray-600">·</span>
-            <span className="whitespace-nowrap text-gray-500 dark:text-gray-400">
-              {formatDate(post.created_at)}
-            </span>
-          </div>
+      {/* Subtle animated glow on hover */}
+      <div className="pointer-events-none absolute -right-32 -top-32 h-64 w-64 rounded-full bg-accent/5 opacity-0 blur-3xl transition-all duration-700 group-hover:opacity-100" />
+      <div className="pointer-events-none absolute -bottom-32 -left-32 h-64 w-64 rounded-full bg-accent-secondary/5 opacity-0 blur-3xl transition-all duration-700 group-hover:opacity-100" />
 
-          {/* World info */}
-          {showWorldInfo && post.world && (
-            <div className="mt-1.5 flex items-center gap-2">
-              <Link
-                href={`/worlds/${post.world.id}`}
-                className="flex items-center gap-2 rounded-full bg-surface px-2.5 py-1 text-sm transition-colors hover:bg-surface-hover dark:bg-surface dark:hover:bg-surface-hover"
-              >
-                <WorldIcon
-                  worldId={post.world.id}
-                  iconUrl={post.world.icon_url}
-                  name={post.world.name}
-                  size="sm"
-                  showLink={false}
+      {/* Content wrapper */}
+      <div className="relative px-4 py-4">
+        {/* Repost indicator */}
+        {repostedBy && (
+          <div className="mb-3 flex items-center gap-2 pl-14">
+            <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <Link href={`/users/${repostedBy.userId}`} className="hover:underline">
+                {repostedBy.displayName}
+              </Link>
+              <span className="text-emerald-500/60">がリポスト</span>
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-start gap-3">
+          {/* Avatar with glow effect */}
+          <div className="relative shrink-0">
+            <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-accent/40 to-accent-secondary/40 opacity-0 blur transition-opacity duration-300 group-hover:opacity-100" />
+            <Link href={`/users/${post.user.user_id}`} className="relative block">
+              <div className="relative h-11 w-11 overflow-hidden rounded-full bg-gray-200 ring-2 ring-surface transition-all duration-300 group-hover:ring-accent/30 dark:bg-gray-700">
+                <Image
+                  src={post.user.avatar_url || '/defaults/default-avatar.svg'}
+                  alt={post.user.display_name}
+                  width={44}
+                  height={44}
+                  className="h-full w-full object-cover"
+                  unoptimized={post.user.avatar_url?.startsWith('http') ?? false}
                 />
-                <span className="font-medium text-gray-700 dark:text-gray-200">
-                  {post.world.name}
+              </div>
+            </Link>
+          </div>
+
+          <div className="min-w-0 flex-1">
+            {/* Header with improved layout */}
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/users/${post.user.user_id}`}
+                className="group/name flex items-center gap-1.5"
+              >
+                <span className="truncate font-bold text-gray-900 transition-colors group-hover/name:text-accent dark:text-gray-100">
+                  {post.user.display_name}
+                </span>
+                <span className="truncate text-sm text-gray-500 transition-colors group-hover/name:text-gray-600 dark:text-gray-400 dark:group-hover/name:text-gray-300">
+                  @{post.user.user_id}
                 </span>
               </Link>
-              {post.visibility === 'world_only' && (
-                <span className="rounded-full bg-accent-light px-2 py-0.5 text-xs font-medium text-accent">
-                  ワールド限定
-                </span>
-              )}
+              <span className="text-gray-300 dark:text-gray-600">·</span>
+              <time className="shrink-0 text-sm text-gray-500 dark:text-gray-400">
+                {formatDate(post.created_at)}
+              </time>
             </div>
-          )}
 
-          {/* Content */}
-          <p className="mt-2.5 whitespace-pre-wrap leading-relaxed text-gray-800 dark:text-gray-200">
-            {post.content}
-          </p>
+            {/* World badge with enhanced design */}
+            {showWorldInfo && post.world && (
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <Link
+                  href={`/worlds/${post.world.id}`}
+                  className="group/world inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-surface to-surface-hover px-3 py-1.5 ring-1 ring-border transition-all duration-300 hover:ring-accent/50 hover:shadow-md dark:from-surface dark:to-surface-hover"
+                >
+                  <div className="relative h-5 w-5 overflow-hidden rounded-md bg-gray-200 ring-1 ring-white/50 dark:bg-gray-700">
+                    <Image
+                      src={post.world.icon_url || '/defaults/default-world-icon.png'}
+                      alt={post.world.name}
+                      width={20}
+                      height={20}
+                      className="h-full w-full object-cover"
+                      unoptimized={post.world.icon_url?.startsWith('http') ?? false}
+                    />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 transition-colors group-hover/world:text-accent dark:text-gray-200">
+                    {post.world.name}
+                  </span>
+                </Link>
+                {post.visibility === 'world_only' && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-accent/10 to-accent-secondary/10 px-2.5 py-1 text-xs font-semibold text-accent ring-1 ring-accent/20">
+                    <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                    </svg>
+                    限定
+                  </span>
+                )}
+              </div>
+            )}
 
-          {/* Images */}
-          {post.images && post.images.length > 0 && (
+            {/* Content with better typography */}
             <div className="mt-3">
-              <PostImages images={post.images} />
+              <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-gray-800 dark:text-gray-200">
+                {post.content}
+              </p>
             </div>
-          )}
 
-          {/* Actions */}
-          <div className="-ml-2 mt-3 flex items-center gap-1">
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                router.push(`/posts/${post.id}`)
-              }}
-              className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-gray-500 transition-all duration-200 hover:bg-accent-light hover:text-accent dark:text-gray-400"
-            >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            {/* Images with enhanced container */}
+            {post.images && post.images.length > 0 && (
+              <div className="mt-3 overflow-hidden rounded-2xl ring-1 ring-border">
+                <PostImages images={post.images} />
+              </div>
+            )}
+
+            {/* Action bar with modern design */}
+            <div className="-ml-2 mt-3 flex items-center justify-between">
+              <div className="flex items-center gap-0.5">
+                {/* Comment button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    router.push(`/posts/${post.id}`)
+                  }}
+                  className="group/action flex items-center gap-1.5 rounded-full px-3 py-2 text-gray-500 transition-all duration-200 hover:bg-sky-500/10 hover:text-sky-500 dark:text-gray-400 dark:hover:text-sky-400"
+                >
+                  <div className="relative">
+                    <svg className="h-5 w-5 transition-transform duration-200 group-hover/action:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                      />
+                    </svg>
+                  </div>
+                  {displayCommentCount > 0 && (
+                    <span className="text-sm font-medium tabular-nums">{displayCommentCount}</span>
+                  )}
+                </button>
+
+                {/* Repost button */}
+                <RepostButton
+                  postId={post.id}
+                  currentUserId={currentUserId}
+                  initialReposted={isReposted}
+                  initialCount={repostCount}
                 />
-              </svg>
-              {displayCommentCount > 0 && <span className="font-medium">{displayCommentCount}</span>}
-            </button>
-            <RepostButton
-              postId={post.id}
-              currentUserId={currentUserId}
-              initialReposted={isReposted}
-              initialCount={repostCount}
-            />
-            <LikeButton
-              postId={post.id}
-              currentUserId={currentUserId}
-              initialLiked={isLiked}
-              initialCount={likeCount}
-            />
+
+                {/* Like button */}
+                <LikeButton
+                  postId={post.id}
+                  currentUserId={currentUserId}
+                  initialLiked={isLiked}
+                  initialCount={likeCount}
+                />
+              </div>
+
+              {/* Share/More actions */}
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className="rounded-full p-2 text-gray-400 transition-colors hover:bg-accent/10 hover:text-accent"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Bottom border with gradient on hover */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
     </article>
   )
 }

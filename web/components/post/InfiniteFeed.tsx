@@ -59,29 +59,57 @@ export default function InfiniteFeed({
   }, [handleObserver])
 
   if (loading && posts.length === 0) {
-    return <Loading />
+    return (
+      <div className="flex flex-col gap-4 p-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="animate-pulse">
+            <div className="flex gap-3">
+              <div className="h-11 w-11 rounded-full bg-surface-hover" />
+              <div className="flex-1 space-y-3">
+                <div className="flex gap-2">
+                  <div className="h-4 w-24 rounded bg-surface-hover" />
+                  <div className="h-4 w-16 rounded bg-surface-hover" />
+                </div>
+                <div className="space-y-2">
+                  <div className="h-4 w-full rounded bg-surface-hover" />
+                  <div className="h-4 w-3/4 rounded bg-surface-hover" />
+                </div>
+                <div className="flex gap-4 pt-2">
+                  <div className="h-8 w-16 rounded-full bg-surface-hover" />
+                  <div className="h-8 w-16 rounded-full bg-surface-hover" />
+                  <div className="h-8 w-16 rounded-full bg-surface-hover" />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )
   }
 
   if (posts.length === 0) {
     return (
-      <EmptyState
-        icon={
-          <svg className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
-            />
-          </svg>
-        }
-        title="投稿がありません"
-        description={
-          type === 'following'
+      <div className="flex flex-col items-center justify-center px-4 py-20">
+        <div className="relative mb-6">
+          {/* Animated background circles */}
+          <div className="absolute -inset-4 animate-pulse rounded-full bg-gradient-to-br from-accent/20 to-accent-secondary/20 blur-xl" />
+          <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-surface to-surface-hover ring-1 ring-border">
+            <svg className="h-12 w-12 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+              />
+            </svg>
+          </div>
+        </div>
+        <h3 className="text-lg font-bold text-foreground">投稿がありません</h3>
+        <p className="mt-2 max-w-xs text-center text-sm text-muted">
+          {type === 'following'
             ? 'フォロー中のユーザーの投稿がここに表示されます'
-            : 'ワールドに参加して、最初の投稿をしてみましょう'
-        }
-      />
+            : 'ワールドに参加して、最初の投稿をしてみましょう'}
+        </p>
+      </div>
     )
   }
 
@@ -95,7 +123,6 @@ export default function InfiniteFeed({
           display_order: img.display_order,
         }))
 
-        // Use unique key for reposts (same post can appear multiple times)
         const uniqueKey = post.is_repost
           ? `${post.id}-repost-${post.reposted_by_user_id}-${index}`
           : post.id
@@ -156,12 +183,28 @@ export default function InfiniteFeed({
       })}
 
       {/* Load more trigger */}
-      <div ref={loadMoreRef} className="py-4">
-        {loading && <Loading />}
+      <div ref={loadMoreRef} className="py-6">
+        {loading && (
+          <div className="flex justify-center">
+            <div className="flex items-center gap-2 text-muted">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+              <span className="text-sm">読み込み中...</span>
+            </div>
+          </div>
+        )}
         {!hasMore && posts.length > 0 && (
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-            すべての投稿を読み込みました
-          </p>
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center gap-3">
+              <div className="h-px w-16 bg-gradient-to-r from-transparent to-border" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface ring-1 ring-border">
+                <svg className="h-4 w-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div className="h-px w-16 bg-gradient-to-l from-transparent to-border" />
+            </div>
+            <p className="text-sm text-muted">すべての投稿を読み込みました</p>
+          </div>
         )}
       </div>
     </div>

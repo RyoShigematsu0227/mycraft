@@ -35,9 +35,9 @@ function formatDate(dateString: string): string {
   const days = Math.floor(hours / 24)
 
   if (seconds < 60) return '今'
-  if (minutes < 60) return `${minutes}分前`
-  if (hours < 24) return `${hours}時間前`
-  if (days < 7) return `${days}日前`
+  if (minutes < 60) return `${minutes}分`
+  if (hours < 24) return `${hours}時間`
+  if (days < 7) return `${days}日`
 
   return date.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' })
 }
@@ -58,52 +58,67 @@ export default function CommentCard({
   }
 
   return (
-    <div className={depth > 0 ? 'ml-8 border-l-2 border-border pl-4 dark:border-border' : ''}>
-      <div className="py-3">
-        <div className="flex gap-3">
+    <div className={depth > 0 ? 'relative ml-6 pl-4' : ''}>
+      {/* Thread line for replies */}
+      {depth > 0 && (
+        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accent/30 via-border to-transparent" />
+      )}
+
+      <div className="group/comment relative py-3">
+        {/* Hover highlight */}
+        <div className="pointer-events-none absolute -inset-x-2 -inset-y-1 rounded-xl bg-accent/5 opacity-0 transition-opacity group-hover/comment:opacity-100" />
+
+        <div className="relative flex gap-3">
           <UserAvatar
             userId={comment.user.user_id}
             avatarUrl={comment.user.avatar_url}
             displayName={comment.user.display_name}
             size="sm"
+            showGlow
           />
           <div className="min-w-0 flex-1">
+            {/* Header */}
             <div className="flex items-center gap-2 text-sm">
               <Link
                 href={`/users/${comment.user.user_id}`}
-                className="truncate font-bold text-gray-900 hover:underline dark:text-gray-100"
+                className="group/name flex items-center gap-1.5"
               >
-                {comment.user.display_name}
+                <span className="truncate font-bold text-foreground transition-colors group-hover/name:text-accent">
+                  {comment.user.display_name}
+                </span>
+                <span className="truncate text-muted">
+                  @{comment.user.user_id}
+                </span>
               </Link>
-              <Link
-                href={`/users/${comment.user.user_id}`}
-                className="truncate text-gray-500 dark:text-gray-400"
-              >
-                @{comment.user.user_id}
-              </Link>
-              <span className="text-gray-400 dark:text-gray-500">·</span>
-              <span className="text-gray-500 dark:text-gray-400">
+              <span className="text-border">·</span>
+              <time className="text-muted">
                 {formatDate(comment.created_at)}
-              </span>
+              </time>
             </div>
 
-            <p className="mt-1 whitespace-pre-wrap text-sm text-gray-900 dark:text-gray-100">
+            {/* Content */}
+            <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-foreground">
               {comment.content}
             </p>
 
-            <div className="mt-2 flex items-center gap-2">
+            {/* Actions */}
+            <div className="-ml-2 mt-2 flex items-center gap-1">
               <CommentLikeButton
                 commentId={comment.id}
                 currentUserId={currentUserId}
                 initialLiked={comment.is_liked}
                 initialCount={comment.likes_count}
               />
-              {depth < maxDepth && (
+              {depth < maxDepth && currentUserId && (
                 <button
                   onClick={() => setShowReplyForm(!showReplyForm)}
-                  className="flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted hover:bg-surface hover:text-accent dark:text-muted dark:hover:bg-surface"
+                  className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+                    showReplyForm
+                      ? 'bg-accent/10 text-accent'
+                      : 'text-muted hover:bg-accent/10 hover:text-accent'
+                  }`}
                 >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                   </svg>
                   返信
@@ -111,8 +126,9 @@ export default function CommentCard({
               )}
             </div>
 
+            {/* Reply form */}
             {showReplyForm && (
-              <div className="mt-3">
+              <div className="mt-3 rounded-xl bg-surface-hover p-3">
                 <CommentForm
                   postId={postId}
                   currentUserId={currentUserId}
@@ -127,6 +143,7 @@ export default function CommentCard({
         </div>
       </div>
 
+      {/* Replies */}
       {comment.replies && comment.replies.length > 0 && (
         <div>
           {comment.replies.map((reply) => (
