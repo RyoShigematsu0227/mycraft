@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getPost, getPostStats, getPostMetadata } from '@/lib/data'
-import { deletePost } from '@/actions'
-import { PostCard } from '@/components/post'
+import { PostCard, DeletePostButton } from '@/components/post'
 import { CommentSection } from '@/components/comment'
-import { Button, BackButton } from '@/components/ui'
+import { BackButton } from '@/components/ui'
 
 interface PostPageProps {
   params: Promise<{ postId: string }>
@@ -86,13 +85,6 @@ export default async function PostPage({ params }: PostPageProps) {
 
   const isOwner = authUser?.id === post.user_id
 
-  // Server Action for delete
-  const handleDelete = async () => {
-    'use server'
-    await deletePost(postId)
-    redirect('/')
-  }
-
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
@@ -102,13 +94,7 @@ export default async function PostPage({ params }: PostPageProps) {
             <BackButton />
             <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">投稿</h1>
           </div>
-          {isOwner && (
-            <form action={handleDelete}>
-              <Button type="submit" variant="danger" size="sm">
-                削除
-              </Button>
-            </form>
-          )}
+          {isOwner && <DeletePostButton postId={postId} />}
         </div>
       </div>
 

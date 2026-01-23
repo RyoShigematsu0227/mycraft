@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { UserAvatar } from '@/components/user'
+import { ConfirmDialog } from '@/components/ui'
+import { createClient } from '@/lib/supabase/client'
 import CommentLikeButton from './CommentLikeButton'
 import CommentForm from './CommentForm'
 import type { Database } from '@/types/database'
@@ -23,6 +25,7 @@ interface CommentCardProps {
   currentUserId?: string
   depth?: number
   onReplySuccess?: () => void
+  onDeleteSuccess?: () => void
 }
 
 function formatDate(dateString: string): string {
@@ -48,13 +51,32 @@ export default function CommentCard({
   currentUserId,
   depth = 0,
   onReplySuccess,
+  onDeleteSuccess,
 }: CommentCardProps) {
   const [showReplyForm, setShowReplyForm] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const maxDepth = 5
+
+  const isOwner = currentUserId === comment.user_id
 
   const handleReplySuccess = () => {
     setShowReplyForm(false)
     onReplySuccess?.()
+  }
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    try {
+      const supabase = createClient()
+      await supabase.from('comments').delete().eq('id', comment.id)
+      setShowDeleteConfirm(false)
+      onDeleteSuccess?.()
+    } catch (error) {
+      console.error('Failed to delete comment:', error)
+    } finally {
+      setDeleting(false)
+    }
   }
 
   return (
@@ -124,7 +146,28 @@ export default function CommentCard({
                   返信
                 </button>
               )}
+              {isOwner && (
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-muted transition-all duration-200 hover:bg-red-500/10 hover:text-red-500"
+                >
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  削除
+                </button>
+              )}
             </div>
+
+            <ConfirmDialog
+              isOpen={showDeleteConfirm}
+              onClose={() => setShowDeleteConfirm(false)}
+              onConfirm={handleDelete}
+              title="コメントを削除しますか？"
+              description="この操作は取り消せません。"
+              confirmText="削除する"
+              loading={deleting}
+            />
 
             {/* Reply form */}
             {showReplyForm && (
@@ -154,6 +197,7 @@ export default function CommentCard({
               currentUserId={currentUserId}
               depth={depth + 1}
               onReplySuccess={onReplySuccess}
+              onDeleteSuccess={onDeleteSuccess}
             />
           ))}
         </div>

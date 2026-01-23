@@ -37,7 +37,7 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
         user:users!comments_user_id_fkey(*)
       `)
       .eq('post_id', postId)
-      .order('created_at', { ascending: true })
+      .order('created_at', { ascending: false })
 
     if (error) {
       console.error('Error fetching comments:', error)
@@ -210,6 +210,7 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
                 postId={postId}
                 currentUserId={currentUserId}
                 onReplySuccess={handleCommentSuccess}
+                onDeleteSuccess={handleCommentSuccess}
               />
             ))}
           </div>
