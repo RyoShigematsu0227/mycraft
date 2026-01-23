@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { getUserProfile, getUserStats, getUserMetadata } from '@/lib/data'
 import { UserAvatar, FollowButton, UserProfileStats, UserProfileHeader } from '@/components/user'
@@ -58,6 +59,13 @@ export default async function UserPage({ params }: UserPageProps) {
 
   // Get user stats (キャッシュ付き)
   const stats = await getUserStats(user.id)
+
+  // Get worlds owned by this user
+  const { data: ownedWorlds } = await supabase
+    .from('worlds')
+    .select('id, name, icon_url, description')
+    .eq('owner_id', user.id)
+    .order('created_at', { ascending: false })
 
   // Check follow status (動的 - キャッシュしない)
   let isFollowing = false
@@ -176,6 +184,39 @@ export default async function UserPage({ params }: UserPageProps) {
                     </span>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Owned Worlds */}
+            {ownedWorlds && ownedWorlds.length > 0 && (
+              <div className="mt-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="flex items-center gap-1 text-xs text-muted">
+                    <svg className="h-3.5 w-3.5 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5z" />
+                    </svg>
+                    オーナー
+                  </span>
+                  {ownedWorlds.map((world) => (
+                    <Link
+                      key={world.id}
+                      href={`/worlds/${world.id}`}
+                      className="group flex items-center gap-1.5 rounded-full bg-amber-500/10 py-1 pl-1 pr-2.5 ring-1 ring-amber-500/20 transition-all hover:bg-amber-500/20 hover:ring-amber-500/40"
+                    >
+                      <Image
+                        src={world.icon_url || '/defaults/default-world-icon.png'}
+                        alt={world.name}
+                        width={20}
+                        height={20}
+                        className="h-5 w-5 rounded-full object-cover"
+                        unoptimized={world.icon_url?.startsWith('http') ?? false}
+                      />
+                      <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                        {world.name}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
           </div>
