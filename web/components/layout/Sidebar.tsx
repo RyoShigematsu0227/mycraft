@@ -145,16 +145,15 @@ export default function Sidebar() {
 
       {/* Logo */}
       <div className="relative flex h-14 items-center justify-between px-4">
-        <Link href="/" className="group flex items-center gap-2.5">
-          <div className="relative">
-            <div className="absolute -inset-1 rounded-lg bg-gradient-to-br from-accent to-accent-secondary opacity-60 blur transition-all duration-300 group-hover:opacity-100" />
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-secondary text-white">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              </svg>
-            </div>
-          </div>
-          <span className="text-lg font-bold text-foreground">MyCraft</span>
+        <Link href="/" className="group relative">
+          <Image
+            src="/mycraft-logo.png"
+            alt="MyCraft"
+            width={140}
+            height={32}
+            className="h-8 w-auto transition-opacity duration-200 group-hover:opacity-80"
+            priority
+          />
         </Link>
 
         {/* Theme toggle */}
