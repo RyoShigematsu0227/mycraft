@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/useAuth'
 import { useTheme } from '@/hooks/useTheme'
 import { createClient } from '@/lib/supabase/client'
@@ -12,6 +12,7 @@ import { useProfileStore, usePostModalStore } from '@/lib/stores'
 import type { Database } from '@/types/database'
 
 type World = Database['public']['Tables']['worlds']['Row']
+type User = Database['public']['Tables']['users']['Row']
 
 interface WorldWithMemberCount extends World {
   memberCount: number
@@ -20,6 +21,7 @@ interface WorldWithMemberCount extends World {
 export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const queryClient = useQueryClient()
   const { user: authUser, isAuthenticated, signOut } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const { profile, setProfile } = useProfileStore()
@@ -31,7 +33,6 @@ export default function Sidebar() {
     : undefined
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [unreadCount, setUnreadCount] = useState(0)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showAllWorlds, setShowAllWorlds] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -90,39 +91,49 @@ export default function Sidebar() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Fetch user profile
-  useEffect(() => {
-    async function fetchProfile() {
-      if (!authUser?.id) return
-      if (profile?.id === authUser.id) return
+  // Fetch user profile with TanStack Query
+  const { data: profileData } = useQuery({
+    queryKey: ['profile', authUser?.id],
+    queryFn: async () => {
       const client = createClient()
       const { data } = await client
         .from('users')
         .select('*')
-        .eq('id', authUser.id)
+        .eq('id', authUser!.id)
         .single()
-      if (data) setProfile(data)
-    }
-    fetchProfile()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authUser?.id])
+      return data as User | null
+    },
+    enabled: !!authUser?.id,
+  })
 
-  // Fetch unread notification count
+  // Sync profile to store
   useEffect(() => {
-    if (!authUser?.id) return
+    if (profileData && profileData.id !== profile?.id) {
+      setProfile(profileData)
+    }
+  }, [profileData, profile?.id, setProfile])
 
-    const client = createClient()
-
-    async function fetchUnreadCount() {
+  // Fetch unread notification count with TanStack Query
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ['unreadNotifications', authUser?.id],
+    queryFn: async () => {
+      const client = createClient()
       const { count } = await client
         .from('notifications')
         .select('id', { count: 'exact', head: true })
         .eq('user_id', authUser!.id)
         .eq('is_read', false)
-      setUnreadCount(count || 0)
-    }
-    fetchUnreadCount()
+      return count || 0
+    },
+    enabled: !!authUser?.id,
+    refetchInterval: 30000, // 30秒ごとにリフェッチ
+  })
 
+  // Realtime subscription for notifications
+  useEffect(() => {
+    if (!authUser?.id) return
+
+    const client = createClient()
     const channel = client
       .channel('sidebar-notifications')
       .on(
@@ -134,7 +145,7 @@ export default function Sidebar() {
           filter: `user_id=eq.${authUser.id}`,
         },
         () => {
-          fetchUnreadCount()
+          queryClient.invalidateQueries({ queryKey: ['unreadNotifications', authUser.id] })
         }
       )
       .subscribe()
@@ -142,7 +153,7 @@ export default function Sidebar() {
     return () => {
       client.removeChannel(channel)
     }
-  }, [authUser?.id])
+  }, [authUser?.id, queryClient])
 
   const displayedWorlds = showAllWorlds ? userWorlds : userWorlds.slice(0, 4)
 
