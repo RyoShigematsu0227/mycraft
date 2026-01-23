@@ -24,7 +24,6 @@ export default function BottomNav() {
   const [showMenu, setShowMenu] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const menuRef = useRef<HTMLDivElement>(null)
-  const supabase = createClient()
 
   // Fetch user profile
   useEffect(() => {
@@ -32,6 +31,7 @@ export default function BottomNav() {
       if (!authUser?.id) return
       // Skip if profile is already loaded for this user
       if (profile?.id === authUser.id) return
+      const supabase = createClient()
       const { data } = await supabase
         .from('users')
         .select('*')
@@ -45,12 +45,15 @@ export default function BottomNav() {
 
   // Fetch unread notification count
   useEffect(() => {
+    if (!authUser?.id) return
+
+    const supabase = createClient()
+
     async function fetchUnreadCount() {
-      if (!authUser?.id) return
       const { count } = await supabase
         .from('notifications')
         .select('id', { count: 'exact', head: true })
-        .eq('user_id', authUser.id)
+        .eq('user_id', authUser!.id)
         .eq('is_read', false)
       setUnreadCount(count || 0)
     }
@@ -64,7 +67,7 @@ export default function BottomNav() {
           event: '*',
           schema: 'public',
           table: 'notifications',
-          filter: `user_id=eq.${authUser?.id}`,
+          filter: `user_id=eq.${authUser.id}`,
         },
         () => {
           fetchUnreadCount()
@@ -75,7 +78,7 @@ export default function BottomNav() {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [authUser?.id, supabase])
+  }, [authUser?.id])
 
   // Close menu on outside click
   useEffect(() => {
