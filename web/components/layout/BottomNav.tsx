@@ -8,7 +8,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { useTheme } from '@/hooks/useTheme'
 import { createClient } from '@/lib/supabase/client'
 import { useProfileStore, usePostModalStore } from '@/lib/stores'
-import type { Database } from '@/types/database'
 
 export default function BottomNav() {
   const pathname = usePathname()
@@ -16,6 +15,12 @@ export default function BottomNav() {
   const { theme, toggleTheme } = useTheme()
   const { profile, setProfile } = useProfileStore()
   const openPostModal = usePostModalStore((state) => state.openModal)
+
+  // Extract worldId from pathname if on a world page
+  const worldIdFromPath = pathname?.startsWith('/worlds/') && pathname.split('/')[2]
+    ? pathname.split('/')[2]
+    : undefined
+
   const [showMenu, setShowMenu] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -327,7 +332,7 @@ export default function BottomNav() {
               return (
                 <button
                   key={`post-${index}`}
-                  onClick={() => openPostModal()}
+                  onClick={() => openPostModal(worldIdFromPath)}
                   className="flex cursor-pointer flex-col items-center gap-1 px-3 py-2 text-accent"
                 >
                   <span className="relative">{item.icon}</span>

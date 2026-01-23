@@ -23,6 +23,12 @@ export default function Sidebar() {
   const { theme, toggleTheme } = useTheme()
   const { profile, setProfile } = useProfileStore()
   const openPostModal = usePostModalStore((state) => state.openModal)
+
+  // Extract worldId from pathname if on a world page
+  const worldIdFromPath = pathname?.startsWith('/worlds/') && pathname.split('/')[2]
+    ? pathname.split('/')[2]
+    : undefined
+
   const [searchQuery, setSearchQuery] = useState('')
   const [userWorlds, setUserWorlds] = useState<WorldWithMemberCount[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
@@ -290,7 +296,7 @@ export default function Sidebar() {
         {isAuthenticated && (
           <div className="mb-4">
             <button
-              onClick={() => openPostModal()}
+              onClick={() => openPostModal(worldIdFromPath)}
               className="group relative flex w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-4 py-3 font-semibold text-white shadow-lg shadow-accent/20 transition-all duration-300 hover:shadow-xl hover:shadow-accent/30 hover:-translate-y-0.5"
             >
               <svg className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

@@ -11,6 +11,14 @@ export default function PostImages({ images }: PostImagesProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [isClosing, setIsClosing] = useState(false)
 
+  const handleClose = () => {
+    setIsClosing(true)
+    setTimeout(() => {
+      setSelectedIndex(null)
+      setIsClosing(false)
+    }, 200)
+  }
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (selectedIndex === null) return
@@ -33,14 +41,6 @@ export default function PostImages({ images }: PostImagesProps) {
     3: 'grid-cols-2',
     4: 'grid-cols-2',
   }[Math.min(images.length, 4)]
-
-  const handleClose = () => {
-    setIsClosing(true)
-    setTimeout(() => {
-      setSelectedIndex(null)
-      setIsClosing(false)
-    }, 200)
-  }
 
   return (
     <>
