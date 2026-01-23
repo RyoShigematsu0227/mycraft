@@ -146,7 +146,7 @@ export default function PostCard({
             <div className="mt-1.5 flex items-center gap-2">
               <Link
                 href={`/worlds/${post.world.id}`}
-                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-gray-50 to-gray-100 px-2.5 py-1 text-sm transition-colors hover:from-gray-100 hover:to-gray-150 dark:from-gray-800 dark:to-gray-750 dark:hover:from-gray-750 dark:hover:to-gray-700"
+                className="flex items-center gap-2 rounded-full bg-gray-100 px-2.5 py-1 text-sm transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
               >
                 <WorldIcon
                   worldId={post.world.id}
@@ -155,7 +155,7 @@ export default function PostCard({
                   size="sm"
                   showLink={false}
                 />
-                <span className="font-medium text-gray-600 dark:text-gray-300">
+                <span className="font-medium text-gray-700 dark:text-gray-200">
                   {post.world.name}
                 </span>
               </Link>
