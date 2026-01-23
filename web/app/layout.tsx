@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css'
 import ThemeProvider from '@/theme/theme-provider'
 import { QueryProvider } from '@/lib/query/provider'
@@ -59,6 +60,7 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <GoogleAnalytics gaId="G-VNQ7TR54WL" />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
