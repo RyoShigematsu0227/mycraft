@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { usePostModalStore } from '@/lib/stores'
 import { useAuth } from '@/hooks/useAuth'
@@ -12,6 +13,7 @@ type World = Database['public']['Tables']['worlds']['Row']
 
 export default function PostModal() {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const { user: authUser } = useAuth()
   const { isOpen, defaultWorldId, closeModal } = usePostModalStore()
   const [worlds, setWorlds] = useState<World[]>([])
@@ -76,7 +78,8 @@ export default function PostModal() {
   // Handle successful post
   const handleSuccess = () => {
     closeModal()
-    router.refresh()
+    // フィード関連のクエリを全て無効化して再取得
+    queryClient.invalidateQueries({ queryKey: ['feed'] })
   }
 
   if (!isOpen || !authUser) return null
