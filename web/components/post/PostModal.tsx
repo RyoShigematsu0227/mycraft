@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { usePostModalStore } from '@/lib/stores'
 import { useAuth } from '@/hooks/useAuth'
@@ -11,33 +11,29 @@ import type { Database } from '@/types/database'
 
 type World = Database['public']['Tables']['worlds']['Row']
 
+async function fetchUserWorlds(userId: string): Promise<World[]> {
+  const supabase = createClient()
+  const { data: memberships } = await supabase
+    .from('world_members')
+    .select('world:worlds!world_members_world_id_fkey(*)')
+    .eq('user_id', userId)
+
+  return memberships?.map((m) => m.world).filter((w): w is World => w !== null) || []
+}
+
 export default function PostModal() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const { user: authUser } = useAuth()
   const { isOpen, defaultWorldId, closeModal } = usePostModalStore()
-  const [worlds, setWorlds] = useState<World[]>([])
-  const [loading, setLoading] = useState(true)
   const modalRef = useRef<HTMLDivElement>(null)
 
-  // Fetch user's worlds
-  useEffect(() => {
-    async function fetchWorlds() {
-      if (!authUser?.id || !isOpen) return
-      setLoading(true)
-
-      const supabase = createClient()
-      const { data: memberships } = await supabase
-        .from('world_members')
-        .select('world:worlds!world_members_world_id_fkey(*)')
-        .eq('user_id', authUser.id)
-
-      const userWorlds = memberships?.map((m) => m.world).filter((w): w is World => w !== null) || []
-      setWorlds(userWorlds)
-      setLoading(false)
-    }
-    fetchWorlds()
-  }, [authUser?.id, isOpen])
+  // Fetch user's worlds with TanStack Query
+  const { data: worlds = [], isLoading } = useQuery({
+    queryKey: ['userWorlds', authUser?.id],
+    queryFn: () => fetchUserWorlds(authUser!.id),
+    enabled: !!authUser?.id && isOpen,
+  })
 
   // Close on escape key
   useEffect(() => {
@@ -111,7 +107,7 @@ export default function PostModal() {
 
           {/* Content */}
           <div className="p-4">
-            {loading ? (
+            {isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
               </div>

@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import CommentCard from './CommentCard'
 import CommentForm from './CommentForm'
-import { Loading, EmptyState } from '@/components/ui'
 import type { Database } from '@/types/database'
 
 type Comment = Database['public']['Tables']['comments']['Row']
@@ -22,95 +22,91 @@ interface CommentSectionProps {
   currentUserId?: string
 }
 
-export default function CommentSection({ postId, currentUserId }: CommentSectionProps) {
-  const [comments, setComments] = useState<CommentWithUser[]>([])
-  const [loading, setLoading] = useState(true)
-  const [refreshKey, setRefreshKey] = useState(0)
+async function fetchComments(postId: string, currentUserId?: string): Promise<CommentWithUser[]> {
+  const supabase = createClient()
 
-  const fetchComments = useCallback(async () => {
-    const supabase = createClient()
+  const { data: commentsData, error } = await supabase
+    .from('comments')
+    .select(`
+      *,
+      user:users!comments_user_id_fkey(*)
+    `)
+    .eq('post_id', postId)
+    .order('created_at', { ascending: false })
 
-    const { data: commentsData, error } = await supabase
-      .from('comments')
-      .select(`
-        *,
-        user:users!comments_user_id_fkey(*)
-      `)
-      .eq('post_id', postId)
-      .order('created_at', { ascending: false })
+  if (error) {
+    console.error('Error fetching comments:', error)
+    return []
+  }
 
-    if (error) {
-      console.error('Error fetching comments:', error)
-      setLoading(false)
-      return
-    }
+  const commentIds = commentsData.map((c) => c.id)
 
-    const commentIds = commentsData.map((c) => c.id)
+  let likesData: { comment_id: string }[] = []
+  let userLikesData: { comment_id: string }[] = []
 
-    let likesData: { comment_id: string }[] = []
-    let userLikesData: { comment_id: string }[] = []
+  if (commentIds.length > 0) {
+    const [likesResult, userLikesResult] = await Promise.all([
+      supabase
+        .from('comment_likes')
+        .select('comment_id')
+        .in('comment_id', commentIds),
+      currentUserId
+        ? supabase
+            .from('comment_likes')
+            .select('comment_id')
+            .eq('user_id', currentUserId)
+            .in('comment_id', commentIds)
+        : Promise.resolve({ data: [] }),
+    ])
 
-    if (commentIds.length > 0) {
-      const [likesResult, userLikesResult] = await Promise.all([
-        supabase
-          .from('comment_likes')
-          .select('comment_id')
-          .in('comment_id', commentIds),
-        currentUserId
-          ? supabase
-              .from('comment_likes')
-              .select('comment_id')
-              .eq('user_id', currentUserId)
-              .in('comment_id', commentIds)
-          : Promise.resolve({ data: [] }),
-      ])
+    likesData = likesResult.data || []
+    userLikesData = (userLikesResult as { data: { comment_id: string }[] | null }).data || []
+  }
 
-      likesData = likesResult.data || []
-      userLikesData = (userLikesResult as { data: { comment_id: string }[] | null }).data || []
-    }
+  const likesCount = new Map<string, number>()
+  likesData.forEach((like) => {
+    likesCount.set(like.comment_id, (likesCount.get(like.comment_id) || 0) + 1)
+  })
 
-    const likesCount = new Map<string, number>()
-    likesData.forEach((like) => {
-      likesCount.set(like.comment_id, (likesCount.get(like.comment_id) || 0) + 1)
-    })
+  const userLikedSet = new Set(userLikesData.map((l) => l.comment_id))
 
-    const userLikedSet = new Set(userLikesData.map((l) => l.comment_id))
+  const commentsWithUser: CommentWithUser[] = commentsData.map((c) => ({
+    ...c,
+    user: c.user as User,
+    likes_count: likesCount.get(c.id) || 0,
+    is_liked: userLikedSet.has(c.id),
+    replies: [],
+  }))
 
-    const commentsWithUser: CommentWithUser[] = commentsData.map((c) => ({
-      ...c,
-      user: c.user as User,
-      likes_count: likesCount.get(c.id) || 0,
-      is_liked: userLikedSet.has(c.id),
-      replies: [],
-    }))
+  const commentMap = new Map<string, CommentWithUser>()
+  const rootComments: CommentWithUser[] = []
 
-    const commentMap = new Map<string, CommentWithUser>()
-    const rootComments: CommentWithUser[] = []
+  commentsWithUser.forEach((comment) => {
+    commentMap.set(comment.id, comment)
+  })
 
-    commentsWithUser.forEach((comment) => {
-      commentMap.set(comment.id, comment)
-    })
-
-    commentsWithUser.forEach((comment) => {
-      if (comment.parent_comment_id) {
-        const parent = commentMap.get(comment.parent_comment_id)
-        if (parent) {
-          parent.replies = parent.replies || []
-          parent.replies.push(comment)
-        }
-      } else {
-        rootComments.push(comment)
+  commentsWithUser.forEach((comment) => {
+    if (comment.parent_comment_id) {
+      const parent = commentMap.get(comment.parent_comment_id)
+      if (parent) {
+        parent.replies = parent.replies || []
+        parent.replies.push(comment)
       }
-    })
+    } else {
+      rootComments.push(comment)
+    }
+  })
 
-    setComments(rootComments)
-    setLoading(false)
-  }, [postId, currentUserId])
+  return rootComments
+}
 
-  // Initial fetch and refresh on key change
-  useEffect(() => {
-    void fetchComments()
-  }, [fetchComments, refreshKey])
+export default function CommentSection({ postId, currentUserId }: CommentSectionProps) {
+  const queryClient = useQueryClient()
+
+  const { data: comments = [], isLoading } = useQuery({
+    queryKey: ['comments', postId, currentUserId],
+    queryFn: () => fetchComments(postId, currentUserId),
+  })
 
   // Realtime subscription for new comments
   useEffect(() => {
@@ -127,7 +123,7 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
           filter: `post_id=eq.${postId}`,
         },
         () => {
-          fetchComments()
+          queryClient.invalidateQueries({ queryKey: ['comments', postId] })
         }
       )
       .subscribe()
@@ -135,13 +131,13 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [postId, fetchComments])
+  }, [postId, queryClient])
 
-  const handleCommentSuccess = useCallback(() => {
-    setRefreshKey((k) => k + 1)
-  }, [])
+  const handleCommentSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ['comments', postId] })
+  }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="border-t border-border bg-surface p-4">
         <div className="space-y-4">
