@@ -95,7 +95,7 @@ export default function WorldList({ worlds, currentUserId }: WorldListProps) {
       {currentUserId && (
         <div className="relative border-b border-border px-4 py-4">
           {/* Tabs Container */}
-          <div ref={tabsRef} className="relative flex gap-2">
+          <div ref={tabsRef} className="relative flex gap-2 overflow-x-auto">
             {/* Animated Background Indicator */}
             <div
               className="absolute top-0 h-full rounded-xl bg-gradient-to-r from-accent to-accent-secondary transition-all duration-300 ease-out"
@@ -112,7 +112,7 @@ export default function WorldList({ worlds, currentUserId }: WorldListProps) {
                   key={f.key}
                   ref={isActive ? activeTabRef : null}
                   onClick={() => setFilter(f.key)}
-                  className={`relative z-10 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-300 ${
+                  className={`relative z-10 flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-300 ${
                     isActive
                       ? 'text-white'
                       : 'text-muted hover:bg-surface-hover hover:text-foreground'
