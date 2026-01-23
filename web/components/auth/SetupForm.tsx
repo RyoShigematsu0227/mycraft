@@ -127,7 +127,7 @@ export default function SetupForm() {
               minLength={3}
               maxLength={30}
               pattern="[a-zA-Z0-9_]+"
-              className="w-full rounded-md border border-border bg-background py-2 pl-8 pr-3 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-border dark:bg-surface"
+              className="w-full rounded-md border border-border bg-background py-2 pl-8 pr-3 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent dark:border-border dark:bg-surface"
               placeholder="your_username"
             />
           </div>
@@ -162,7 +162,7 @@ export default function SetupForm() {
             onChange={(e) => setDisplayName(e.target.value)}
             required
             maxLength={50}
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-border dark:bg-surface"
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent dark:border-border dark:bg-surface"
             placeholder="Your Name"
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">最大50文字</p>
@@ -171,7 +171,7 @@ export default function SetupForm() {
         <button
           type="submit"
           disabled={loading || userIdAvailable === false}
-          className="w-full rounded-md bg-gradient-to-r from-amber-600 to-orange-700 px-4 py-2 text-white hover:from-amber-700 hover:to-orange-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-glow w-full rounded-md bg-gradient-to-r from-accent to-accent-secondary px-4 py-2 text-white hover:from-accent-hover hover:to-accent-secondary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? '設定中...' : '設定を完了'}
         </button>

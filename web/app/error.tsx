@@ -41,7 +41,7 @@ export default function Error({
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <button
             onClick={reset}
-            className="rounded-lg bg-gradient-to-r from-amber-600 to-orange-700 px-6 py-3 font-medium text-white transition hover:from-amber-700 hover:to-orange-800"
+            className="btn-glow rounded-lg bg-gradient-to-r from-accent to-accent-secondary px-6 py-3 font-medium text-white transition hover:from-accent-hover hover:to-accent-secondary-hover"
           >
             もう一度試す
           </button>

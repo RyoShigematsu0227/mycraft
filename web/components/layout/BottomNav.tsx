@@ -7,15 +7,14 @@ import { usePathname } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useTheme } from '@/hooks/useTheme'
 import { createClient } from '@/lib/supabase/client'
+import { useProfileStore } from '@/lib/stores'
 import type { Database } from '@/types/database'
-
-type User = Database['public']['Tables']['users']['Row']
 
 export default function BottomNav() {
   const pathname = usePathname()
   const { user: authUser, isAuthenticated, signOut } = useAuth()
   const { theme, toggleTheme } = useTheme()
-  const [profile, setProfile] = useState<User | null>(null)
+  const { profile, setProfile } = useProfileStore()
   const [showMenu, setShowMenu] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -25,6 +24,8 @@ export default function BottomNav() {
   useEffect(() => {
     async function fetchProfile() {
       if (!authUser?.id) return
+      // Skip if profile is already loaded for this user
+      if (profile?.id === authUser.id) return
       const { data } = await supabase
         .from('users')
         .select('*')
@@ -33,7 +34,8 @@ export default function BottomNav() {
       if (data) setProfile(data)
     }
     fetchProfile()
-  }, [authUser?.id, supabase])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser?.id])
 
   // Fetch unread notification count
   useEffect(() => {
@@ -324,9 +326,9 @@ export default function BottomNav() {
                 href={item.href}
                 className={`flex flex-col items-center gap-1 px-3 py-2 ${
                   highlight
-                    ? 'text-orange-600 dark:text-orange-400'
+                    ? 'text-accent'
                     : isActive
-                      ? 'text-orange-600 dark:text-orange-400'
+                      ? 'text-accent'
                       : 'text-gray-500 dark:text-gray-400'
                 }`}
               >
@@ -348,7 +350,7 @@ export default function BottomNav() {
             <button
               onClick={() => setShowMenu(!showMenu)}
               className={`flex flex-col items-center gap-1 px-3 py-2 ${
-                showMenu ? 'text-orange-600 dark:text-orange-400' : 'text-gray-500 dark:text-gray-400'
+                showMenu ? 'text-accent' : 'text-gray-500 dark:text-gray-400'
               }`}
             >
               <div className="relative h-6 w-6 overflow-hidden rounded-full bg-gray-200 dark:bg-surface">

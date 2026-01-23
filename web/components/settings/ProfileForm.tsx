@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { translateError } from '@/lib/utils/errorMessages'
+import { useProfileStore } from '@/lib/stores'
 import { Button, Input, Textarea, ImageUpload } from '@/components/ui'
 import type { Database } from '@/types/database'
 
@@ -16,6 +17,7 @@ interface ProfileFormProps {
 export default function ProfileForm({ user }: ProfileFormProps) {
   const router = useRouter()
   const supabase = createClient()
+  const { updateProfile } = useProfileStore()
 
   const [displayName, setDisplayName] = useState(user.display_name)
   const [bio, setBio] = useState(user.bio || '')
@@ -89,7 +91,8 @@ export default function ProfileForm({ user }: ProfileFormProps) {
           .from('avatars')
           .getPublicUrl(filePath)
 
-        newAvatarUrl = urlData.publicUrl
+        // Add cache-busting parameter to force refresh
+        newAvatarUrl = `${urlData.publicUrl}?t=${Date.now()}`
       }
 
       // Update profile
@@ -106,6 +109,15 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         .eq('id', user.id)
 
       if (updateError) throw updateError
+
+      // Update the global profile store
+      updateProfile({
+        display_name: displayName.trim(),
+        bio: bio.trim() || null,
+        minecraft_java_username: minecraftJavaUsername.trim() || null,
+        minecraft_bedrock_gamertag: minecraftBedrockGamertag.trim() || null,
+        avatar_url: newAvatarUrl,
+      })
 
       setSuccess(true)
       setAvatarFile(null)

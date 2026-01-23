@@ -68,7 +68,7 @@ export default function LoginForm() {
         <h1 className="text-2xl font-bold">MyCraftにログイン</h1>
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           アカウントをお持ちでない方は{' '}
-          <Link href="/signup" className="text-orange-600 hover:underline dark:text-orange-400">
+          <Link href="/signup" className="text-accent hover:underline">
             新規登録
           </Link>
         </p>
@@ -91,7 +91,7 @@ export default function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-border dark:bg-surface"
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent dark:border-border dark:bg-surface"
           />
         </div>
 
@@ -105,14 +105,14 @@ export default function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-border dark:bg-surface"
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent dark:border-border dark:bg-surface"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-gradient-to-r from-amber-600 to-orange-700 px-4 py-2 text-white hover:from-amber-700 hover:to-orange-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-glow w-full rounded-md bg-gradient-to-r from-accent to-accent-secondary px-4 py-2 text-white hover:from-accent-hover hover:to-accent-secondary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? 'ログイン中...' : 'ログイン'}
         </button>

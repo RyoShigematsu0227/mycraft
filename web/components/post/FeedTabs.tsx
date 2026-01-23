@@ -23,13 +23,13 @@ export default function FeedTabs({ activeTab, onTabChange, showFollowing = true 
           onClick={() => onTabChange(tab.id)}
           className={`relative flex-1 px-4 py-3.5 text-center text-sm font-semibold transition-colors duration-200 ${
             activeTab === tab.id
-              ? 'text-orange-600 dark:text-orange-400'
+              ? 'text-accent'
               : 'text-muted hover:bg-surface hover:text-foreground dark:text-muted dark:hover:bg-surface/50 dark:hover:text-foreground'
           }`}
         >
           {tab.label}
           {activeTab === tab.id && (
-            <span className="absolute bottom-0 left-1/2 h-1 w-12 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-500 to-orange-600" />
+            <span className="absolute bottom-0 left-1/2 h-1 w-12 -translate-x-1/2 rounded-full bg-accent" />
           )}
         </button>
       ))}

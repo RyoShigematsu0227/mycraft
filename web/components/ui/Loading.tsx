@@ -13,7 +13,7 @@ export default function Loading({ size = 'md', className = '', fullScreen = fals
 
   const spinner = (
     <div
-      className={`animate-spin rounded-full border-orange-600 border-t-transparent ${sizes[size]} ${className}`}
+      className={`animate-spin rounded-full border-accent border-t-transparent ${sizes[size]} ${className}`}
     />
   )
 

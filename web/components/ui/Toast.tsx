@@ -38,7 +38,7 @@ const iconMap: Record<ToastType, React.ReactNode> = {
 const colorMap: Record<ToastType, string> = {
   success: 'bg-green-500 text-white',
   error: 'bg-red-500 text-white',
-  info: 'bg-orange-500 text-white',
+  info: 'bg-accent text-white',
   warning: 'bg-yellow-500 text-white',
 }
 

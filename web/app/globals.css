@@ -8,8 +8,11 @@
   --surface-hover: #f5f0e8;
   --border: #e0d5c8;
   --muted: #8a7f72;
-  --accent: #c4784a;
-  --accent-hover: #b36a3d;
+  --accent: #c96a50;
+  --accent-hover: #b85c42;
+  --accent-secondary: #8b3d4a;
+  --accent-secondary-hover: #7a3040;
+  --accent-light: rgba(201, 106, 80, 0.12);
 }
 
 @theme inline {
@@ -19,6 +22,11 @@
   --color-surface-hover: var(--surface-hover);
   --color-border: var(--border);
   --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-secondary-hover: var(--accent-secondary-hover);
+  --color-accent-light: var(--accent-light);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -30,8 +38,11 @@
   --surface-hover: #26262e;
   --border: #2e2e38;
   --muted: #888899;
-  --accent: #d4885a;
-  --accent-hover: #c4784a;
+  --accent: #d97860;
+  --accent-hover: #c96a50;
+  --accent-secondary: #a34a55;
+  --accent-secondary-hover: #8b3d4a;
+  --accent-light: rgba(217, 120, 96, 0.15);
 }
 
 body {
@@ -126,4 +137,21 @@ body {
 
 .dark .glass {
   background: rgba(28, 28, 34, 0.85);
+}
+
+/* Glow effect for buttons */
+.btn-glow {
+  transition: all 0.2s ease;
+}
+
+.btn-glow:hover {
+  box-shadow:
+    0 3px 10px -3px rgba(201, 106, 80, 0.4),
+    0 6px 16px -4px rgba(139, 61, 74, 0.28);
+}
+
+.dark .btn-glow:hover {
+  box-shadow:
+    0 3px 10px -3px rgba(217, 120, 96, 0.45),
+    0 6px 16px -4px rgba(163, 74, 85, 0.32);
 }

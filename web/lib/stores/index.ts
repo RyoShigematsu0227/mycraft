@@ -1,4 +1,5 @@
 export { useAuthStore } from './auth'
+export { useProfileStore } from './profile'
 export { usePostStatsStore } from './postStats'
 export { useUserStatsStore } from './userStats'
 export { useWorldStatsStore } from './worldStats'

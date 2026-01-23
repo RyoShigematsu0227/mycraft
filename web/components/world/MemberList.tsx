@@ -45,7 +45,7 @@ export default function MemberList({ members, ownerId, currentUserId }: MemberLi
               />
             </div>
             {member.id === ownerId && (
-              <span className="rounded bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-400">
+              <span className="rounded bg-accent-light px-2 py-1 text-xs font-medium text-accent">
                 オーナー
               </span>
             )}

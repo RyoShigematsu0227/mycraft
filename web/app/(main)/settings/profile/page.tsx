@@ -28,7 +28,7 @@ export default async function ProfileSettingsPage() {
       <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
         プロフィール設定
       </h1>
-      <div className="rounded-lg bg-background p-6 shadow dark:bg-surface">
+      <div className="rounded-lg bg-surface p-6 shadow-sm border border-border dark:bg-surface dark:border-border">
         <ProfileForm user={user} />
       </div>
     </div>

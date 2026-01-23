@@ -75,15 +75,15 @@ export default function SignupForm() {
   if (success) {
     return (
       <div className="w-full max-w-md space-y-6 text-center">
-        <div className="rounded-md bg-orange-50 p-4 dark:bg-orange-900/20">
-          <h2 className="text-lg font-semibold text-orange-800 dark:text-orange-200">
+        <div className="rounded-md bg-accent-light p-4">
+          <h2 className="text-lg font-semibold text-accent">
             確認メールを送信しました
           </h2>
-          <p className="mt-2 text-sm text-orange-700 dark:text-orange-300">
+          <p className="mt-2 text-sm text-accent">
             メールアドレスに送信された確認リンクをクリックして、登録を完了してください。
           </p>
         </div>
-        <Link href="/login" className="text-orange-600 hover:underline dark:text-orange-400">
+        <Link href="/login" className="text-accent hover:underline">
           ログインページに戻る
         </Link>
       </div>
@@ -96,7 +96,7 @@ export default function SignupForm() {
         <h1 className="text-2xl font-bold">MyCraftに新規登録</h1>
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           すでにアカウントをお持ちの方は{' '}
-          <Link href="/login" className="text-orange-600 hover:underline dark:text-orange-400">
+          <Link href="/login" className="text-accent hover:underline">
             ログイン
           </Link>
         </p>
@@ -119,7 +119,7 @@ export default function SignupForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-border dark:bg-surface"
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent dark:border-border dark:bg-surface"
           />
         </div>
 
@@ -134,7 +134,7 @@ export default function SignupForm() {
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={6}
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-border dark:bg-surface"
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent dark:border-border dark:bg-surface"
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">6文字以上</p>
         </div>
@@ -149,14 +149,14 @@ export default function SignupForm() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:border-border dark:bg-surface"
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent dark:border-border dark:bg-surface"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-gradient-to-r from-amber-600 to-orange-700 px-4 py-2 text-white hover:from-amber-700 hover:to-orange-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-glow w-full rounded-md bg-gradient-to-r from-accent to-accent-secondary px-4 py-2 text-white hover:from-accent-hover hover:to-accent-secondary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? '登録中...' : '新規登録'}
         </button>
