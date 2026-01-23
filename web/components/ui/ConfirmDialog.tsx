@@ -67,14 +67,14 @@ export default function ConfirmDialog({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
 
       {/* Dialog */}
       <div
         ref={dialogRef}
-        className="relative w-full max-w-md animate-fade-in rounded-2xl bg-surface p-6 shadow-2xl ring-1 ring-border"
+        className="relative my-8 w-full max-w-md animate-fade-in rounded-2xl bg-surface p-6 shadow-2xl ring-1 ring-border"
       >
         {/* Icon */}
         <div className="mb-4 flex justify-center">

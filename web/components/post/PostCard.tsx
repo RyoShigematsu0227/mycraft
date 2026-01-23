@@ -1,12 +1,14 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import PostImages from './PostImages'
 import LikeButton from './LikeButton'
 import RepostButton from './RepostButton'
+import { ConfirmDialog } from '@/components/ui'
+import { deletePost } from '@/actions'
 import { usePostStatsStore } from '@/lib/stores'
 import type { Database } from '@/types/database'
 
@@ -67,6 +69,12 @@ export default function PostCard({
   const router = useRouter()
   const stats = usePostStatsStore((state) => state.stats[post.id])
   const initPost = usePostStatsStore((state) => state.initPost)
+  const [showMenu, setShowMenu] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  const isOwner = currentUserId === post.user_id
 
   useEffect(() => {
     initPost(post.id, {
@@ -78,6 +86,19 @@ export default function PostCard({
     })
   }, [post.id, likeCount, repostCount, commentCount, isLiked, isReposted, initPost])
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMenu(false)
+      }
+    }
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showMenu])
+
   const displayCommentCount = stats?.commentCount ?? commentCount
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -87,6 +108,19 @@ export default function PostCard({
       return
     }
     router.push(`/posts/${post.id}`)
+  }
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    try {
+      await deletePost(post.id, currentUserId)
+      setShowDeleteConfirm(false)
+      router.refresh()
+    } catch (error) {
+      console.error('Failed to delete post:', error)
+    } finally {
+      setDeleting(false)
+    }
   }
 
   return (
@@ -254,33 +288,80 @@ export default function PostCard({
                 />
               </div>
 
-              {/* Share button */}
-              <button
-                onClick={async (e) => {
-                  e.stopPropagation()
-                  const url = `${window.location.origin}/posts/${post.id}`
-                  if (navigator.share) {
-                    try {
-                      await navigator.share({
-                        title: `${post.user.display_name}さんの投稿`,
-                        text: post.content.slice(0, 100),
-                        url,
-                      })
-                    } catch {
-                      // User cancelled or share failed
+              <div className="flex items-center">
+                {/* Share button */}
+                <button
+                  onClick={async (e) => {
+                    e.stopPropagation()
+                    const url = `${window.location.origin}/posts/${post.id}`
+                    if (navigator.share) {
+                      try {
+                        await navigator.share({
+                          title: `${post.user.display_name}さんの投稿`,
+                          text: post.content.slice(0, 100),
+                          url,
+                        })
+                      } catch {
+                        // User cancelled or share failed
+                      }
+                    } else {
+                      await navigator.clipboard.writeText(url)
+                      alert('リンクをコピーしました')
                     }
-                  } else {
-                    await navigator.clipboard.writeText(url)
-                    alert('リンクをコピーしました')
-                  }
-                }}
-                className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-accent/10 hover:text-accent"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                </svg>
-              </button>
+                  }}
+                  className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-accent/10 hover:text-accent"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  </svg>
+                </button>
+
+                {/* More menu (for owner) */}
+                {isOwner && (
+                  <div ref={menuRef} className="relative">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setShowMenu(!showMenu)
+                      }}
+                      className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-surface-hover hover:text-foreground"
+                    >
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                      </svg>
+                    </button>
+
+                    {showMenu && (
+                      <div className="absolute bottom-full right-0 z-20 mb-1 w-36 rounded-xl bg-surface py-1 shadow-lg ring-1 ring-border">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setShowMenu(false)
+                            setShowDeleteConfirm(true)
+                          }}
+                          className="flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-500/10"
+                        >
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          削除する
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
+
+            <ConfirmDialog
+              isOpen={showDeleteConfirm}
+              onClose={() => setShowDeleteConfirm(false)}
+              onConfirm={handleDelete}
+              title="投稿を削除しますか？"
+              description="この操作は取り消せません。投稿に関連するコメントやいいねも削除されます。"
+              confirmText="削除する"
+              loading={deleting}
+            />
           </div>
         </div>
       </div>
