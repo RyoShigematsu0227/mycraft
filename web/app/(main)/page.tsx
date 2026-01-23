@@ -30,7 +30,7 @@ export default async function Home() {
             </svg>
           }
           title="MyCraftへようこそ"
-          description="Minecraftワールドの住人になりきって、スクリーンショットや建築を共有しよう"
+          description="Minecraftワールドの住人になりきって、出来事・景色・建築を共有しよう"
           action={
             <div className="flex gap-3">
               <Link href="/login">
