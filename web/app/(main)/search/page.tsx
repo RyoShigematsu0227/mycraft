@@ -13,6 +13,7 @@ export default function SearchPage() {
   const { user } = useAuth()
   const { users, worlds, posts, loading, search } = useSearch()
   const [hasSearched, setHasSearched] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
 
   // Search with initial query from URL
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function SearchPage() {
         <div className="flex items-center gap-4">
           <BackButton />
           <div className="flex-1">
-            <SearchBar initialQuery={initialQuery} onSearch={handleSearch} autoFocus />
+            <SearchBar initialQuery={initialQuery} onSearch={handleSearch} onTyping={setIsTyping} autoFocus />
           </div>
         </div>
       </div>
@@ -46,7 +47,7 @@ export default function SearchPage() {
         users={users}
         worlds={worlds}
         posts={posts}
-        loading={loading}
+        loading={loading || isTyping}
         hasSearched={hasSearched}
         currentUserId={user?.id}
       />

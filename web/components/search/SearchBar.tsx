@@ -5,10 +5,11 @@ import { useState, useEffect, useCallback } from 'react'
 interface SearchBarProps {
   initialQuery?: string
   onSearch: (query: string) => void
+  onTyping?: (isTyping: boolean) => void
   autoFocus?: boolean
 }
 
-export default function SearchBar({ initialQuery = '', onSearch, autoFocus = false }: SearchBarProps) {
+export default function SearchBar({ initialQuery = '', onSearch, onTyping, autoFocus = false }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -27,12 +28,16 @@ export default function SearchBar({ initialQuery = '', onSearch, autoFocus = fal
 
   // Debounce search
   useEffect(() => {
+    if (query.trim()) {
+      onTyping?.(true)
+    }
     const timer = setTimeout(() => {
       onSearch(query)
+      onTyping?.(false)
     }, 300)
 
     return () => clearTimeout(timer)
-  }, [query, onSearch])
+  }, [query, onSearch, onTyping])
 
   const handleClear = useCallback(() => {
     setQuery('')
