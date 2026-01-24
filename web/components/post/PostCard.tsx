@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useQueryClient } from '@tanstack/react-query'
+import { useSWRConfig } from 'swr'
 import PostImages from './PostImages'
 import LikeButton from './LikeButton'
 import RepostButton from './RepostButton'
@@ -68,7 +68,7 @@ export default function PostCard({
   interactive = true,
 }: PostCardProps) {
   const router = useRouter()
-  const queryClient = useQueryClient()
+  const { mutate } = useSWRConfig()
   const stats = usePostStatsStore((state) => state.stats[post.id])
   const initPost = usePostStatsStore((state) => state.initPost)
   const [showMenu, setShowMenu] = useState(false)
@@ -118,7 +118,11 @@ export default function PostCard({
       await deletePost(post.id, currentUserId)
       setShowDeleteConfirm(false)
       // フィードのキャッシュを無効化して即時反映
-      queryClient.invalidateQueries({ queryKey: ['feed'] })
+      mutate(
+        (key) => Array.isArray(key) && key[0] === 'feed',
+        undefined,
+        { revalidate: true }
+      )
     } catch (error) {
       console.error('Failed to delete post:', error)
     } finally {

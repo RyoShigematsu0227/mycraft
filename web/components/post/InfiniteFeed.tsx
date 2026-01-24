@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useCallback } from 'react'
 import { PostCard } from '@/components/post'
-import { Loading, EmptyState } from '@/components/ui'
 import useFeed, { FeedType } from '@/hooks/useFeed'
 
 interface InfiniteFeedProps {
@@ -20,7 +19,7 @@ export default function InfiniteFeed({
   profileUserId,
   showWorldInfo = true,
 }: InfiniteFeedProps) {
-  const { posts, loading, hasMore, likedPosts, repostedPosts, loadMore } = useFeed({
+  const { posts, loading, loadingMore, hasMore, likedPosts, repostedPosts, loadMore } = useFeed({
     type,
     currentUserId,
     worldId,
@@ -33,11 +32,11 @@ export default function InfiniteFeed({
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       const [entry] = entries
-      if (entry.isIntersecting && hasMore && !loading) {
+      if (entry.isIntersecting && hasMore && !loading && !loadingMore) {
         loadMore()
       }
     },
-    [hasMore, loading, loadMore]
+    [hasMore, loading, loadingMore, loadMore]
   )
 
   useEffect(() => {
@@ -58,6 +57,7 @@ export default function InfiniteFeed({
     }
   }, [handleObserver])
 
+  // 初回ローディング中（キャッシュなし）
   if (loading && posts.length === 0) {
     return (
       <div className="flex flex-col gap-4 p-4">
@@ -87,11 +87,11 @@ export default function InfiniteFeed({
     )
   }
 
+  // 投稿がない場合
   if (posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center px-4 py-20">
         <div className="relative mb-6">
-          {/* Animated background circles */}
           <div className="absolute -inset-4 animate-pulse rounded-full bg-gradient-to-br from-accent/20 to-accent-secondary/20 blur-xl" />
           <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-surface to-surface-hover ring-1 ring-border">
             <svg className="h-12 w-12 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
@@ -184,7 +184,7 @@ export default function InfiniteFeed({
 
       {/* Load more trigger */}
       <div ref={loadMoreRef} className="py-6">
-        {loading && (
+        {loadingMore && (
           <div className="flex justify-center">
             <div className="flex items-center gap-2 text-muted">
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />

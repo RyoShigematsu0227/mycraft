@@ -1,7 +1,8 @@
 'use client'
 
 import { useMemo } from 'react'
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import useSWR from 'swr'
+import useSWRInfinite from 'swr/infinite'
 import { createClient } from '@/lib/supabase/client'
 
 export type FeedType = 'latest' | 'recommended' | 'following'
@@ -128,64 +129,88 @@ async function fetchFeedPage(
   return { posts, nextCursor }
 }
 
+async function fetchUserInteractions(
+  currentUserId: string,
+  postIds: string[]
+): Promise<{ likedPostIds: string[]; repostedPostIds: string[] }> {
+  if (!currentUserId || postIds.length === 0) {
+    return { likedPostIds: [], repostedPostIds: [] }
+  }
+
+  const supabase = createClient()
+  const [likesResult, repostsResult] = await Promise.all([
+    supabase
+      .from('likes')
+      .select('post_id')
+      .eq('user_id', currentUserId)
+      .in('post_id', postIds),
+    supabase
+      .from('reposts')
+      .select('post_id')
+      .eq('user_id', currentUserId)
+      .in('post_id', postIds),
+  ])
+
+  return {
+    likedPostIds: likesResult.data?.map((l) => l.post_id) ?? [],
+    repostedPostIds: repostsResult.data?.map((r) => r.post_id) ?? [],
+  }
+}
+
 export default function useFeed({ type, currentUserId, worldId, profileUserId }: UseFeedProps) {
-  // Feed query with infinite loading
+  // SWRInfinite key function
+  const getKey = (pageIndex: number, previousPageData: FeedPage | null) => {
+    // 最初のページ
+    if (pageIndex === 0) {
+      return ['feed', type, currentUserId, worldId, profileUserId, null]
+    }
+    // 前のページにデータがない場合は終了
+    if (!previousPageData?.nextCursor) {
+      return null
+    }
+    // 次のページのカーソルを使用
+    return ['feed', type, currentUserId, worldId, profileUserId, previousPageData.nextCursor]
+  }
+
+  // Fetcher for SWRInfinite
+  const fetcher = async (key: (string | null | undefined)[]) => {
+    const [, feedType, userId, wId, pUserId, cursor] = key as [string, FeedType, string | undefined, string | undefined, string | undefined, string | null]
+    return fetchFeedPage(feedType, userId, wId, pUserId, cursor)
+  }
+
   const {
     data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    refetch,
-  } = useInfiniteQuery({
-    queryKey: ['feed', type, currentUserId, worldId, profileUserId],
-    queryFn: ({ pageParam }) =>
-      fetchFeedPage(type, currentUserId, worldId, profileUserId, pageParam),
-    initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-    staleTime: 1000 * 60, // 1分
-    gcTime: 1000 * 60 * 5, // 5分
-    maxPages: 10, // メモリ管理: 最大10ページ
+    isValidating,
+    size,
+    setSize,
+    mutate,
+  } = useSWRInfinite(getKey, fetcher, {
+    // 追加ページ読み込み時に最初のページを再取得しない
+    revalidateFirstPage: false,
   })
 
   // Flatten all posts from all pages
   const posts = useMemo(() => {
-    return data?.pages.flatMap((page) => page.posts) ?? []
+    return data?.flatMap((page) => page.posts) ?? []
+  }, [data])
+
+  // Check if there's more data to load
+  const hasMore = useMemo(() => {
+    if (!data || data.length === 0) return false
+    const lastPage = data[data.length - 1]
+    return lastPage.nextCursor !== null
   }, [data])
 
   // Get post IDs for likes/reposts query
   const postIds = useMemo(() => posts.map((p) => p.id), [posts])
 
   // Fetch user's likes and reposts
-  const { data: userInteractions } = useQuery({
-    queryKey: ['user-interactions', currentUserId, postIds],
-    queryFn: async () => {
-      if (!currentUserId || postIds.length === 0) {
-        return { likedPostIds: [], repostedPostIds: [] }
-      }
-
-      const supabase = createClient()
-      const [likesResult, repostsResult] = await Promise.all([
-        supabase
-          .from('likes')
-          .select('post_id')
-          .eq('user_id', currentUserId)
-          .in('post_id', postIds),
-        supabase
-          .from('reposts')
-          .select('post_id')
-          .eq('user_id', currentUserId)
-          .in('post_id', postIds),
-      ])
-
-      return {
-        likedPostIds: likesResult.data?.map((l) => l.post_id) ?? [],
-        repostedPostIds: repostsResult.data?.map((r) => r.post_id) ?? [],
-      }
-    },
-    enabled: !!currentUserId && postIds.length > 0,
-    staleTime: 1000 * 30, // 30秒
-  })
+  const { data: userInteractions } = useSWR(
+    currentUserId && postIds.length > 0
+      ? ['user-interactions', currentUserId, postIds.join(',')]
+      : null,
+    () => fetchUserInteractions(currentUserId!, postIds)
+  )
 
   // Convert to Sets for backward compatibility
   const likedPosts = useMemo(
@@ -197,13 +222,24 @@ export default function useFeed({ type, currentUserId, worldId, profileUserId }:
     [userInteractions]
   )
 
+  // Load more function
+  const loadMore = () => {
+    if (hasMore && !isValidating) {
+      setSize(size + 1)
+    }
+  }
+
   return {
     posts,
-    loading: isLoading || isFetchingNextPage,
-    hasMore: hasNextPage ?? false,
+    // data === undefined: まだ一度もデータを取得していない（キャッシュもない）
+    // キャッシュがあれば data は即座に設定されるので loading は false
+    loading: data === undefined,
+    // 追加ページ読み込み中かどうか
+    loadingMore: size > 1 && isValidating,
+    hasMore,
     likedPosts,
     repostedPosts,
-    loadMore: fetchNextPage,
-    refresh: refetch,
+    loadMore,
+    refresh: mutate,
   }
 }

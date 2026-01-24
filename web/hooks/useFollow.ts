@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { useQueryClient } from '@tanstack/react-query'
+import { useSWRConfig } from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { useUserStatsStore } from '@/lib/stores'
 
@@ -24,6 +24,7 @@ export function useFollow({
   initialFollowing,
 }: UseFollowOptions): UseFollowReturn {
   const router = useRouter()
+  const { mutate } = useSWRConfig()
   const [isLoading, setIsLoading] = useState(initialFollowing === undefined && !!currentUserId)
   const [isToggling, setIsToggling] = useState(false)
 
@@ -82,7 +83,6 @@ export function useFollow({
   }, [currentUserId, targetUserId, initialFollowing, targetStats, initUser, setIsFollowing])
 
   const isFollowing = targetStats?.isFollowing ?? initialFollowing ?? false
-  const queryClient = useQueryClient()
 
   const toggleFollow = useCallback(async () => {
     if (!currentUserId) {
@@ -119,8 +119,12 @@ export function useFollow({
         if (error) throw error
       }
 
-      // Invalidate following feed cache
-      queryClient.invalidateQueries({ queryKey: ['feed', 'following'] })
+      // Invalidate following feed cache using SWR mutate
+      mutate(
+        (key) => Array.isArray(key) && key[0] === 'feed' && key[1] === 'following',
+        undefined,
+        { revalidate: true }
+      )
     } catch (error) {
       // Revert optimistic update on error
       console.error('Follow toggle error:', error)
@@ -128,7 +132,7 @@ export function useFollow({
     } finally {
       setIsToggling(false)
     }
-  }, [currentUserId, targetUserId, isToggling, router, toggleFollowStore, rollbackFollow, queryClient])
+  }, [currentUserId, targetUserId, isToggling, router, toggleFollowStore, rollbackFollow, mutate])
 
   return { isFollowing, isLoading: isLoading || isToggling, toggleFollow }
 }

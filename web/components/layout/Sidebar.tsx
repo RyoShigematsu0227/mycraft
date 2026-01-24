@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import useSWR, { useSWRConfig } from 'swr'
 import { useAuth } from '@/hooks/useAuth'
 import { useTheme } from '@/hooks/useTheme'
 import { createClient } from '@/lib/supabase/client'
@@ -18,10 +18,56 @@ interface WorldWithMemberCount extends World {
   memberCount: number
 }
 
+async function fetchUserWorlds(userId: string): Promise<WorldWithMemberCount[]> {
+  const client = createClient()
+  const { data } = await client
+    .from('world_members')
+    .select('world:worlds(*)')
+    .eq('user_id', userId)
+
+  if (!data) return []
+
+  const worlds = data
+    .map((item) => item.world)
+    .filter((w): w is World => w !== null)
+
+  // Fetch member counts for each world
+  const worldsWithCounts = await Promise.all(
+    worlds.map(async (world) => {
+      const { count } = await client
+        .from('world_members')
+        .select('id', { count: 'exact', head: true })
+        .eq('world_id', world.id)
+      return { ...world, memberCount: count || 0 }
+    })
+  )
+  return worldsWithCounts
+}
+
+async function fetchProfile(userId: string): Promise<User | null> {
+  const client = createClient()
+  const { data } = await client
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single()
+  return data as User | null
+}
+
+async function fetchUnreadNotificationCount(userId: string): Promise<number> {
+  const client = createClient()
+  const { count } = await client
+    .from('notifications')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('is_read', false)
+  return count || 0
+}
+
 export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
-  const queryClient = useQueryClient()
+  const { mutate } = useSWRConfig()
   const { user: authUser, isAuthenticated, signOut } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const { profile, setProfile } = useProfileStore()
@@ -37,37 +83,11 @@ export default function Sidebar() {
   const [showAllWorlds, setShowAllWorlds] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  // Fetch user's worlds with TanStack Query
-  const { data: userWorlds = [] } = useQuery({
-    queryKey: ['userWorlds', authUser?.id],
-    queryFn: async () => {
-      if (!authUser?.id) return []
-      const client = createClient()
-      const { data } = await client
-        .from('world_members')
-        .select('world:worlds(*)')
-        .eq('user_id', authUser.id)
-
-      if (!data) return []
-
-      const worlds = data
-        .map((item) => item.world)
-        .filter((w): w is World => w !== null)
-
-      // Fetch member counts for each world
-      const worldsWithCounts = await Promise.all(
-        worlds.map(async (world) => {
-          const { count } = await client
-            .from('world_members')
-            .select('id', { count: 'exact', head: true })
-            .eq('world_id', world.id)
-          return { ...world, memberCount: count || 0 }
-        })
-      )
-      return worldsWithCounts
-    },
-    enabled: !!authUser?.id,
-  })
+  // Fetch user's worlds with SWR
+  const { data: userWorlds = [] } = useSWR(
+    authUser?.id ? ['userWorlds', authUser.id] : null,
+    () => fetchUserWorlds(authUser!.id)
+  )
 
   // Handle search
   const handleSearch = (e: React.FormEvent) => {
@@ -91,20 +111,11 @@ export default function Sidebar() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Fetch user profile with TanStack Query
-  const { data: profileData } = useQuery({
-    queryKey: ['profile', authUser?.id],
-    queryFn: async () => {
-      const client = createClient()
-      const { data } = await client
-        .from('users')
-        .select('*')
-        .eq('id', authUser!.id)
-        .single()
-      return data as User | null
-    },
-    enabled: !!authUser?.id,
-  })
+  // Fetch user profile with SWR
+  const { data: profileData } = useSWR(
+    authUser?.id ? ['profile', authUser.id] : null,
+    () => fetchProfile(authUser!.id)
+  )
 
   // Sync profile to store
   useEffect(() => {
@@ -113,21 +124,15 @@ export default function Sidebar() {
     }
   }, [profileData, profile?.id, setProfile])
 
-  // Fetch unread notification count with TanStack Query
-  const { data: unreadCount = 0 } = useQuery({
-    queryKey: ['unreadNotifications', authUser?.id],
-    queryFn: async () => {
-      const client = createClient()
-      const { count } = await client
-        .from('notifications')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', authUser!.id)
-        .eq('is_read', false)
-      return count || 0
-    },
-    enabled: !!authUser?.id,
-    refetchInterval: 30000, // 30秒ごとにリフェッチ
-  })
+  // Fetch unread notification count with SWR
+  const { data: unreadCount = 0 } = useSWR(
+    authUser?.id ? ['unreadNotifications', authUser.id] : null,
+    () => fetchUnreadNotificationCount(authUser!.id),
+    {
+      // 通知は定期的にポーリング
+      refreshInterval: 30000,
+    }
+  )
 
   // Realtime subscription for notifications
   useEffect(() => {
@@ -145,7 +150,7 @@ export default function Sidebar() {
           filter: `user_id=eq.${authUser.id}`,
         },
         () => {
-          queryClient.invalidateQueries({ queryKey: ['unreadNotifications', authUser.id] })
+          mutate(['unreadNotifications', authUser.id])
         }
       )
       .subscribe()
@@ -153,7 +158,7 @@ export default function Sidebar() {
     return () => {
       client.removeChannel(channel)
     }
-  }, [authUser?.id, queryClient])
+  }, [authUser?.id, mutate])
 
   const displayedWorlds = showAllWorlds ? userWorlds : userWorlds.slice(0, 4)
 
