@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { UserAvatar } from '@/components/user'
 import { WorldIcon } from '@/components/world'
 import { PostCard } from '@/components/post'
-import { Loading, EmptyState } from '@/components/ui'
+import { EmptyState } from '@/components/ui'
 import type { SearchTab } from '@/hooks/useSearch'
 
 interface SearchUser {
@@ -69,7 +69,30 @@ export default function SearchResults({
   const [activeTab, setActiveTab] = useState<SearchTab>('users')
 
   if (loading) {
-    return <Loading />
+    return (
+      <div>
+        {/* Tabs Skeleton */}
+        <div className="flex border-b border-border">
+          {['ユーザー', 'ワールド', '投稿'].map((label) => (
+            <div key={label} className="flex-1 px-4 py-3 text-center text-sm font-medium text-muted">
+              {label}
+            </div>
+          ))}
+        </div>
+        {/* Results Skeleton */}
+        <div className="divide-y divide-border">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex items-center gap-3 px-4 py-3">
+              <div className="h-10 w-10 animate-pulse rounded-full bg-surface-hover" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-32 animate-pulse rounded bg-surface-hover" />
+                <div className="h-3 w-20 animate-pulse rounded bg-surface-hover" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
   }
 
   if (!hasSearched) {
