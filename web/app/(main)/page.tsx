@@ -1,16 +1,20 @@
+'use client'
+
+import Link from 'next/link'
+import { useAuth } from '@/hooks/useAuth'
 import { EmptyState, Button } from '@/components/ui'
 import { HomeFeed, NewPostButton } from '@/components/post'
-import { createClient } from '@/lib/supabase/server'
-import Link from 'next/link'
 
-export default async function Home() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export default function Home() {
+  const { user, isLoading, isAuthenticated } = useAuth()
 
-  // If not logged in, show welcome page
-  if (!user) {
+  // 認証状態の読み込み中は何も表示しない（レイアウトは表示される）
+  if (isLoading) {
+    return null
+  }
+
+  // 未ログインの場合はウェルカムページ
+  if (!isAuthenticated) {
     return (
       <div className="px-4 py-6">
         <EmptyState
@@ -46,13 +50,6 @@ export default async function Home() {
     )
   }
 
-  // Get user profile
-  const { data: profile } = await supabase
-    .from('users')
-    .select('id')
-    .eq('id', user.id)
-    .single()
-
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
@@ -64,7 +61,7 @@ export default async function Home() {
       </div>
 
       {/* Feed with tabs */}
-      <HomeFeed currentUserId={profile?.id} />
+      <HomeFeed currentUserId={user?.id} />
     </div>
   )
 }

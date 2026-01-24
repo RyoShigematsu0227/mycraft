@@ -3,6 +3,7 @@
 import Sidebar from '@/components/layout/Sidebar'
 import BottomNav from '@/components/layout/BottomNav'
 import { PostModal } from '@/components/post'
+import { WorldModal } from '@/components/world'
 
 interface MainLayoutProps {
   children: React.ReactNode
@@ -17,6 +18,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       </div>
       <BottomNav />
       <PostModal />
+      <WorldModal />
     </div>
   )
 }

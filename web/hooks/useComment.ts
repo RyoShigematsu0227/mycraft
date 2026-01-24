@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSWRConfig } from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { usePostStatsStore } from '@/lib/stores'
 
@@ -12,6 +13,7 @@ interface UseCommentProps {
 
 export default function useComment({ postId, currentUserId }: UseCommentProps) {
   const router = useRouter()
+  const { mutate } = useSWRConfig()
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -45,6 +47,13 @@ export default function useComment({ postId, currentUserId }: UseCommentProps) {
       // Update comment count in store
       incrementCommentCount(postId)
 
+      // Invalidate comments cache
+      mutate(
+        (key) => Array.isArray(key) && key[0] === 'comments' && key[1] === postId,
+        undefined,
+        { revalidate: true }
+      )
+
       return data
     } catch (err) {
       setError(err instanceof Error ? err.message : 'コメントの投稿に失敗しました')
@@ -71,6 +80,13 @@ export default function useComment({ postId, currentUserId }: UseCommentProps) {
 
       // Update comment count in store
       decrementCommentCount(postId)
+
+      // Invalidate comments cache
+      mutate(
+        (key) => Array.isArray(key) && key[0] === 'comments' && key[1] === postId,
+        undefined,
+        { revalidate: true }
+      )
 
       return true
     } catch (err) {

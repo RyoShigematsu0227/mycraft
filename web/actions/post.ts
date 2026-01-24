@@ -104,6 +104,27 @@ export async function deletePost(postId: string, userId?: string) {
     authorId = post?.user_id
   }
 
+  // 投稿に紐づく画像を取得してStorageから削除
+  if (authorId) {
+    const { data: images } = await supabase
+      .from('post_images')
+      .select('image_url')
+      .eq('post_id', postId)
+
+    if (images && images.length > 0) {
+      const paths = images
+        .map((img) => {
+          const match = img.image_url.match(/post-images\/(.+)$/)
+          return match ? match[1] : null
+        })
+        .filter((p): p is string => p !== null)
+
+      if (paths.length > 0) {
+        await supabase.storage.from('post-images').remove(paths)
+      }
+    }
+  }
+
   const { error } = await supabase
     .from('posts')
     .delete()

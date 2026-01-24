@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { PostCard } from '@/components/post'
 import useFeed, { FeedType } from '@/hooks/useFeed'
+import { useFeedRefreshStore } from '@/lib/stores'
 
 interface InfiniteFeedProps {
   type: FeedType
@@ -19,12 +20,21 @@ export default function InfiniteFeed({
   profileUserId,
   showWorldInfo = true,
 }: InfiniteFeedProps) {
-  const { posts, loading, loadingMore, hasMore, likedPosts, repostedPosts, loadMore } = useFeed({
+  const { posts, loading, loadingMore, hasMore, likedPosts, repostedPosts, loadMore, refresh } = useFeed({
     type,
     currentUserId,
     worldId,
     profileUserId,
   })
+
+  const refreshTrigger = useFeedRefreshStore((state) => state.refreshTrigger)
+
+  // フィードリフレッシュトリガーを監視
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      refresh()
+    }
+  }, [refreshTrigger, refresh])
 
   const observerRef = useRef<IntersectionObserver | null>(null)
   const loadMoreRef = useRef<HTMLDivElement | null>(null)

@@ -14,9 +14,10 @@ type World = Database['public']['Tables']['worlds']['Row']
 interface WorldFormProps {
   world?: World
   userId: string
+  onSuccess?: (worldId: string) => void
 }
 
-export default function WorldForm({ world, userId }: WorldFormProps) {
+export default function WorldForm({ world, userId, onSuccess }: WorldFormProps) {
   const router = useRouter()
   const { mutate } = useSWRConfig()
   const supabase = createClient()
@@ -80,7 +81,11 @@ export default function WorldForm({ world, userId }: WorldFormProps) {
           { revalidate: true }
         )
 
-        router.push(`/worlds/${world.id}`)
+        if (onSuccess) {
+          onSuccess(world.id)
+        } else {
+          router.push(`/worlds/${world.id}`)
+        }
       } else {
         // Create new world using server action
         const newWorld = await createWorld({
@@ -98,7 +103,11 @@ export default function WorldForm({ world, userId }: WorldFormProps) {
           { revalidate: true }
         )
 
-        router.push(`/worlds/${newWorld.id}`)
+        if (onSuccess) {
+          onSuccess(newWorld.id)
+        } else {
+          router.push(`/worlds/${newWorld.id}`)
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? translateError(err.message) : '保存に失敗しました')
@@ -157,9 +166,11 @@ export default function WorldForm({ world, userId }: WorldFormProps) {
       />
 
       <div className="flex justify-end gap-3">
-        <Button type="button" variant="ghost" onClick={() => router.back()}>
-          キャンセル
-        </Button>
+        {!onSuccess && (
+          <Button type="button" variant="ghost" onClick={() => router.back()}>
+            キャンセル
+          </Button>
+        )}
         <Button type="submit" disabled={loading || !name.trim()}>
           {loading ? '保存中...' : isEditing ? '更新する' : '作成する'}
         </Button>

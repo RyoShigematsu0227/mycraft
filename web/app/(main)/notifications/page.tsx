@@ -1,16 +1,15 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useAuth } from '@/hooks/useAuth'
 import { NotificationList } from '@/components/notification'
 import { BackButton } from '@/components/ui'
 
-export default async function NotificationsPage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export default function NotificationsPage() {
+  const { user, isLoading } = useAuth()
 
-  if (!user) {
-    redirect('/login')
+  // ミドルウェアで認証チェック済みなので、ローディング中は何も表示しない
+  if (isLoading || !user) {
+    return null
   }
 
   return (

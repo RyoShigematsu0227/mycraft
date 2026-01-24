@@ -1,49 +1,17 @@
-import Link from 'next/link'
-import { connection } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useAuth } from '@/hooks/useAuth'
+import { useWorlds } from '@/hooks/useWorlds'
+import { useWorldModalStore } from '@/lib/stores'
 import { WorldList } from '@/components/world'
 import { Button, EmptyState } from '@/components/ui'
 
-export default async function WorldsPage() {
-  await connection()
-  const supabase = await createClient()
+export default function WorldsPage() {
+  const { user, isLoading: authLoading } = useAuth()
+  const { worlds, isLoading: worldsLoading } = useWorlds(user?.id)
+  const openWorldModal = useWorldModalStore((state) => state.openModal)
 
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser()
-
-  // Get all worlds with member counts
-  const { data: worlds } = await supabase
-    .from('worlds')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  // Get member counts for each world
-  const worldsWithCounts = await Promise.all(
-    (worlds || []).map(async (world) => {
-      const { count } = await supabase
-        .from('world_members')
-        .select('id', { count: 'exact', head: true })
-        .eq('world_id', world.id)
-
-      let isMember = false
-      if (authUser) {
-        const { data: membership } = await supabase
-          .from('world_members')
-          .select('id')
-          .eq('world_id', world.id)
-          .eq('user_id', authUser.id)
-          .single()
-        isMember = !!membership
-      }
-
-      return {
-        world,
-        memberCount: count || 0,
-        isMember,
-      }
-    })
-  )
+  const isLoading = authLoading || worldsLoading
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -51,16 +19,29 @@ export default async function WorldsPage() {
       <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur dark:border-border dark:bg-background/80">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">ワールド</h1>
-          {authUser && (
-            <Link href="/worlds/new">
-              <Button size="sm">新規作成</Button>
-            </Link>
+          {user && (
+            <Button size="sm" onClick={openWorldModal}>新規作成</Button>
           )}
         </div>
       </div>
 
-      {/* World List */}
-      {worldsWithCounts.length === 0 ? (
+      {/* Loading state */}
+      {isLoading ? (
+        <div className="flex flex-col gap-4 p-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="animate-pulse rounded-xl border border-border bg-surface p-4">
+              <div className="flex gap-4">
+                <div className="h-16 w-16 rounded-xl bg-surface-hover" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-5 w-32 rounded bg-surface-hover" />
+                  <div className="h-4 w-full rounded bg-surface-hover" />
+                  <div className="h-4 w-20 rounded bg-surface-hover" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : worlds.length === 0 ? (
         <EmptyState
           icon={
             <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,17 +54,15 @@ export default async function WorldsPage() {
             </svg>
           }
           title="まだワールドがありません"
-          description={authUser ? '最初のワールドを作成しましょう' : undefined}
+          description={user ? '最初のワールドを作成しましょう' : undefined}
           action={
-            authUser ? (
-              <Link href="/worlds/new">
-                <Button>ワールドを作成</Button>
-              </Link>
+            user ? (
+              <Button onClick={openWorldModal}>ワールドを作成</Button>
             ) : undefined
           }
         />
       ) : (
-        <WorldList worlds={worldsWithCounts} currentUserId={authUser?.id} />
+        <WorldList worlds={worlds} currentUserId={user?.id} />
       )}
     </div>
   )

@@ -1,31 +1,28 @@
-import { notFound } from 'next/navigation'
+'use client'
+
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import useSWR from 'swr'
+import { useAuth } from '@/hooks/useAuth'
+import { createClient } from '@/lib/supabase/client'
 import { UserCard } from '@/components/user'
 import { EmptyState } from '@/components/ui'
+import type { Database } from '@/types/database'
 
-interface FollowersPageProps {
-  params: Promise<{ userId: string }>
-}
+type User = Database['public']['Tables']['users']['Row']
 
-export default async function FollowersPage({ params }: FollowersPageProps) {
-  const { userId } = await params
-  const supabase = await createClient()
-
-  // Get current user
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser()
+async function fetchFollowers(userHandle: string): Promise<{ user: User | null; followers: User[] }> {
+  const supabase = createClient()
 
   // Get profile user
   const { data: user } = await supabase
     .from('users')
     .select('*')
-    .eq('user_id', userId)
+    .eq('user_id', userHandle)
     .single()
 
   if (!user) {
-    notFound()
+    return { user: null, followers: [] }
   }
 
   // Get followers
@@ -35,13 +32,64 @@ export default async function FollowersPage({ params }: FollowersPageProps) {
     .eq('following_id', user.id)
     .order('created_at', { ascending: false })
 
-  const followerUsers = followers?.map((f) => f.follower).filter(Boolean) || []
+  const followerUsers = (followers?.map((f) => f.follower).filter(Boolean) || []) as User[]
+
+  return { user, followers: followerUsers }
+}
+
+export default function FollowersPage() {
+  const params = useParams()
+  const userId = params.userId as string
+  const { user: authUser } = useAuth()
+
+  const { data, isLoading } = useSWR(
+    userId ? ['followers', userId] : null,
+    () => fetchFollowers(userId)
+  )
+
+  const user = data?.user
+  const followers = data?.followers ?? []
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-2xl">
+        <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur">
+          <div className="flex items-center gap-4">
+            <div className="h-9 w-9 animate-pulse rounded-full bg-surface-hover" />
+            <div className="space-y-1">
+              <div className="h-5 w-24 animate-pulse rounded bg-surface-hover" />
+              <div className="h-4 w-16 animate-pulse rounded bg-surface-hover" />
+            </div>
+          </div>
+        </div>
+        <div className="divide-y divide-border">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex items-center gap-3 p-4 animate-pulse">
+              <div className="h-12 w-12 rounded-full bg-surface-hover" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-24 rounded bg-surface-hover" />
+                <div className="h-3 w-16 rounded bg-surface-hover" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="mx-auto max-w-2xl p-8 text-center">
+        <p className="text-muted">ユーザーが見つかりません</p>
+      </div>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur dark:border-border dark:bg-background/80">
-        <div className="flex items-center gap-4">
+      <div className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur dark:border-border dark:bg-background/80">
+        <div className="flex items-center gap-4 px-4 py-3">
           <Link
             href={`/users/${userId}`}
             className="rounded-full p-2 hover:bg-surface dark:hover:bg-surface"
@@ -56,15 +104,30 @@ export default async function FollowersPage({ params }: FollowersPageProps) {
             </svg>
           </Link>
           <div>
-            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">フォロワー</h1>
+            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">{user.display_name || user.user_id}</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">@{userId}</p>
           </div>
+        </div>
+        {/* Tabs */}
+        <div className="flex">
+          <Link
+            href={`/users/${userId}/followers`}
+            className="flex-1 border-b-2 border-primary py-3 text-center text-sm font-bold text-foreground"
+          >
+            フォロワー
+          </Link>
+          <Link
+            href={`/users/${userId}/following`}
+            className="flex-1 border-b-2 border-transparent py-3 text-center text-sm font-medium text-muted hover:bg-surface-hover hover:text-foreground"
+          >
+            フォロー中
+          </Link>
         </div>
       </div>
 
       {/* Followers List */}
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
-        {followerUsers.length === 0 ? (
+        {followers.length === 0 ? (
           <EmptyState
             icon={
               <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -79,7 +142,7 @@ export default async function FollowersPage({ params }: FollowersPageProps) {
             title="まだフォロワーがいません"
           />
         ) : (
-          followerUsers.map((follower) => (
+          followers.map((follower) => (
             <div key={follower.id} className="p-4">
               <UserCard
                 user={follower}

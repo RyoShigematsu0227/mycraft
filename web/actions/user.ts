@@ -100,6 +100,68 @@ export async function deleteAccount(userId: string) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
+  // ユーザーの情報を取得（アバターURL）
+  const { data: user } = await supabaseAdmin
+    .from('users')
+    .select('avatar_url')
+    .eq('id', userId)
+    .single()
+
+  // ユーザーの投稿画像を取得して削除
+  const { data: posts } = await supabaseAdmin
+    .from('posts')
+    .select('id')
+    .eq('user_id', userId)
+
+  if (posts && posts.length > 0) {
+    const postIds = posts.map((p) => p.id)
+    const { data: images } = await supabaseAdmin
+      .from('post_images')
+      .select('image_url')
+      .in('post_id', postIds)
+
+    if (images && images.length > 0) {
+      const paths = images
+        .map((img) => {
+          const match = img.image_url.match(/post-images\/(.+)$/)
+          return match ? match[1] : null
+        })
+        .filter((p): p is string => p !== null)
+
+      if (paths.length > 0) {
+        await supabaseAdmin.storage.from('post-images').remove(paths)
+      }
+    }
+  }
+
+  // ユーザーが所有するワールドのアイコンを取得して削除
+  const { data: worlds } = await supabaseAdmin
+    .from('worlds')
+    .select('icon_url')
+    .eq('owner_id', userId)
+
+  if (worlds && worlds.length > 0) {
+    const iconPaths = worlds
+      .map((w) => {
+        if (!w.icon_url) return null
+        const match = w.icon_url.match(/world-icons\/(.+)$/)
+        return match ? match[1] : null
+      })
+      .filter((p): p is string => p !== null)
+
+    if (iconPaths.length > 0) {
+      await supabaseAdmin.storage.from('world-icons').remove(iconPaths)
+    }
+  }
+
+  // アバターをStorageから削除
+  if (user?.avatar_url) {
+    const match = user.avatar_url.match(/avatars\/(.+?)(\?|$)/)
+    if (match) {
+      await supabaseAdmin.storage.from('avatars').remove([match[1]])
+    }
+  }
+
   // public.usersから削除（カスケードで関連データも削除）
   const { error: deleteUserError } = await supabaseAdmin
     .from('users')

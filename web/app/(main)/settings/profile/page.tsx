@@ -1,26 +1,63 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import useSWR from 'swr'
+import { useAuth } from '@/hooks/useAuth'
+import { createClient } from '@/lib/supabase/client'
 import { ProfileForm, DeleteAccountButton } from '@/components/settings'
+import type { Database } from '@/types/database'
 
-export default async function ProfileSettingsPage() {
-  const supabase = await createClient()
+type User = Database['public']['Tables']['users']['Row']
 
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser()
-
-  if (!authUser) {
-    redirect('/login')
-  }
-
-  const { data: user } = await supabase
+async function fetchUserProfile(userId: string): Promise<User | null> {
+  const supabase = createClient()
+  const { data } = await supabase
     .from('users')
     .select('*')
-    .eq('id', authUser.id)
+    .eq('id', userId)
     .single()
+  return data
+}
 
-  if (!user) {
-    redirect('/setup')
+export default function ProfileSettingsPage() {
+  const router = useRouter()
+  const { user: authUser, isLoading: authLoading } = useAuth()
+
+  const { data: user, isLoading: profileLoading } = useSWR(
+    authUser?.id ? ['profile', authUser.id] : null,
+    () => fetchUserProfile(authUser!.id)
+  )
+
+  // 未認証の場合はログインページへ
+  useEffect(() => {
+    if (!authLoading && !authUser) {
+      router.push('/login')
+    }
+  }, [authLoading, authUser, router])
+
+  // プロフィール未設定の場合はセットアップへ
+  useEffect(() => {
+    if (!profileLoading && authUser && user === null) {
+      router.push('/setup')
+    }
+  }, [profileLoading, authUser, user, router])
+
+  const isLoading = authLoading || profileLoading
+
+  if (isLoading || !user) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-6">
+        <div className="h-8 w-48 animate-pulse rounded bg-surface-hover mb-6" />
+        <div className="rounded-lg bg-surface p-6 shadow-sm border border-border">
+          <div className="space-y-4">
+            <div className="h-10 w-full animate-pulse rounded bg-surface-hover" />
+            <div className="h-10 w-full animate-pulse rounded bg-surface-hover" />
+            <div className="h-24 w-full animate-pulse rounded bg-surface-hover" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

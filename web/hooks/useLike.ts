@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSWRConfig } from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { usePostStatsStore } from '@/lib/stores'
 
@@ -26,6 +27,7 @@ export function useLike({
   initialCount = 0,
 }: UseLikeOptions): UseLikeReturn {
   const router = useRouter()
+  const { mutate } = useSWRConfig()
   const [isLoading, setIsLoading] = useState(false)
 
   const stats = usePostStatsStore((state) => state.stats[postId])
@@ -75,6 +77,9 @@ export function useLike({
 
         if (error) throw error
       }
+
+      // Invalidate the post likes list cache
+      mutate(['postLikes', postId])
     } catch (error: unknown) {
       // Revert optimistic update on error
       const err = error as { message?: string; code?: string; details?: string }
@@ -83,7 +88,7 @@ export function useLike({
     } finally {
       setIsLoading(false)
     }
-  }, [postId, currentUserId, isLoading, router, toggleLikeStore, rollbackLike])
+  }, [postId, currentUserId, isLoading, router, toggleLikeStore, rollbackLike, mutate])
 
   return { isLiked, likeCount, isLoading, toggleLike }
 }
