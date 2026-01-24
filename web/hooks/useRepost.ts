@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSWRConfig } from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { usePostStatsStore } from '@/lib/stores'
 
@@ -26,6 +27,7 @@ export function useRepost({
   initialCount = 0,
 }: UseRepostOptions): UseRepostReturn {
   const router = useRouter()
+  const { mutate } = useSWRConfig()
   const [isLoading, setIsLoading] = useState(false)
 
   const stats = usePostStatsStore((state) => state.stats[postId])
@@ -75,6 +77,9 @@ export function useRepost({
 
         if (error) throw error
       }
+
+      // Invalidate the post reposts list cache
+      mutate(['postReposts', postId])
     } catch (error) {
       // Revert optimistic update on error
       console.error('Repost toggle error:', error)
@@ -82,7 +87,7 @@ export function useRepost({
     } finally {
       setIsLoading(false)
     }
-  }, [postId, currentUserId, isLoading, router, toggleRepostStore, rollbackRepost])
+  }, [postId, currentUserId, isLoading, router, toggleRepostStore, rollbackRepost, mutate])
 
   return { isReposted, repostCount, isLoading, toggleRepost }
 }

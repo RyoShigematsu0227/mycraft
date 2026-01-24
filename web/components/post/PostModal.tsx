@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import useSWR, { useSWRConfig } from 'swr'
+import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { usePostModalStore } from '@/lib/stores'
 import { useAuth } from '@/hooks/useAuth'
@@ -23,7 +23,6 @@ async function fetchUserWorlds(userId: string): Promise<World[]> {
 
 export default function PostModal() {
   const router = useRouter()
-  const { mutate } = useSWRConfig()
   const { user: authUser } = useAuth()
   const { isOpen, defaultWorldId, closeModal } = usePostModalStore()
   const modalRef = useRef<HTMLDivElement>(null)
@@ -73,12 +72,7 @@ export default function PostModal() {
   // Handle successful post
   const handleSuccess = () => {
     closeModal()
-    // フィード関連のキャッシュを全て無効化して再取得
-    mutate(
-      (key) => Array.isArray(key) && key[0] === 'feed',
-      undefined,
-      { revalidate: true }
-    )
+    // PostFormでtriggerRefresh()が呼ばれるのでここでは不要
   }
 
   if (!isOpen || !authUser) return null

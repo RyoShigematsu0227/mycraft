@@ -88,8 +88,8 @@ export default function FollowingPage() {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur dark:border-border dark:bg-background/80">
-        <div className="flex items-center gap-4">
+      <div className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur dark:border-border dark:bg-background/80">
+        <div className="flex items-center gap-4 px-4 py-3">
           <Link
             href={`/users/${userId}`}
             className="rounded-full p-2 hover:bg-surface dark:hover:bg-surface"
@@ -104,9 +104,24 @@ export default function FollowingPage() {
             </svg>
           </Link>
           <div>
-            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">フォロー中</h1>
+            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">{user.display_name || user.user_id}</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">@{userId}</p>
           </div>
+        </div>
+        {/* Tabs */}
+        <div className="flex">
+          <Link
+            href={`/users/${userId}/followers`}
+            className="flex-1 border-b-2 border-transparent py-3 text-center text-sm font-medium text-muted hover:bg-surface-hover hover:text-foreground"
+          >
+            フォロワー
+          </Link>
+          <Link
+            href={`/users/${userId}/following`}
+            className="flex-1 border-b-2 border-primary py-3 text-center text-sm font-bold text-foreground"
+          >
+            フォロー中
+          </Link>
         </div>
       </div>
 

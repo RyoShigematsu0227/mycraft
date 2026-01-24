@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useSWRConfig } from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { translateError } from '@/lib/utils/errorMessages'
 import { useProfileStore } from '@/lib/stores'
@@ -15,7 +15,7 @@ interface ProfileFormProps {
 }
 
 export default function ProfileForm({ user }: ProfileFormProps) {
-  const router = useRouter()
+  const { mutate } = useSWRConfig()
   const supabase = createClient()
   const { updateProfile } = useProfileStore()
 
@@ -122,7 +122,9 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       setSuccess(true)
       setAvatarFile(null)
       setAvatarRemoved(false)
-      router.refresh()
+
+      // Invalidate profile cache
+      mutate(['profile', user.id])
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000)

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { translateError } from '@/lib/utils/errorMessages'
 import { invalidateUserPostsCache } from '@/actions'
+import { useFeedRefreshStore } from '@/lib/stores'
 import { Button, Textarea } from '@/components/ui'
 import { WorldIcon } from '@/components/world'
 import type { Database } from '@/types/database'
@@ -23,6 +24,7 @@ type Visibility = 'public' | 'world_only'
 
 export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: PostFormProps) {
   const router = useRouter()
+  const triggerRefresh = useFeedRefreshStore((state) => state.triggerRefresh)
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -151,11 +153,13 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
       // キャッシュ無効化
       await invalidateUserPostsCache(userId)
 
+      // フィードをリフレッシュ
+      triggerRefresh()
+
       if (onSuccess) {
         onSuccess()
       } else {
         router.push(`/posts/${post.id}`)
-        router.refresh()
       }
     } catch (err) {
       console.error('Post creation error:', err)
