@@ -251,23 +251,24 @@ post-images/{user_id}/{post_id}/{display_order}_{timestamp}_{filename}
 
 | パス | ページ名 | 認証 | 説明 |
 |------|----------|------|------|
-| / | ホーム | 不要 | フィード（新着/おすすめ切り替え） |
+| / | ホーム | 不要 | フィード（新着/おすすめ/フォロー中切り替え） |
 | /login | ログイン | 不要 | |
 | /signup | 新規登録 | 不要 | |
 | /settings/profile | プロフィール設定 | 必要 | |
-| /@{user_id} | ユーザーページ | 不要 | プロフィール + 投稿一覧 |
-| /@{user_id}/followers | フォロワー一覧 | 不要 | |
-| /@{user_id}/following | フォロー中一覧 | 不要 | |
+| /users/{user_id} | ユーザーページ | 不要 | プロフィール + 投稿一覧 |
+| /users/{user_id}/followers | フォロワー一覧 | 不要 | |
+| /users/{user_id}/following | フォロー中一覧 | 不要 | |
 | /worlds | ワールド一覧 | 不要 | |
-| /worlds/new | ワールド作成 | 必要 | |
 | /worlds/{world_id} | ワールドページ | 不要 | 説明 + 投稿一覧 + メンバー |
 | /worlds/{world_id}/edit | ワールド編集 | 必要(owner) | |
 | /worlds/{world_id}/members | メンバー一覧 | 不要 | |
 | /posts/{post_id} | 投稿詳細 | 不要* | コメント表示 |
-| /posts/new | 新規投稿 | 必要 | |
-| /following | フォロー中フィード | 必要 | |
+| /posts/{post_id}/likes | いいね一覧 | 不要 | |
+| /posts/{post_id}/reposts | リポスト一覧 | 不要 | |
 | /notifications | 通知一覧 | 必要 | |
 | /search | 検索 | 不要 | ユーザー/ワールド/投稿 |
+
+※ワールド作成・投稿作成はモーダルで実装（専用ページなし）
 
 *ワールド限定投稿はメンバーのみ閲覧可
 

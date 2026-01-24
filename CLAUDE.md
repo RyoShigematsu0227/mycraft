@@ -8,9 +8,9 @@ MinecraftワールドのSNSアプリ。ユーザーはワールドの住人に�
 - Framework: Next.js (latest, App Router)
 - Language: TypeScript
 - Styling: Tailwind CSS
-- State Management: 
+- State Management:
   - Zustand（グローバル状態）
-  - Tanstack Query（サーバー状態）
+  - SWR（サーバー状態）
 
 ### Mobile Frontend（Web完成後）
 - Framework: Expo (React Native)

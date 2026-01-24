@@ -226,6 +226,9 @@ export async function getWorld(worldId: string) {
 
 ## 4. 無限スクロール
 
+> **Note**: 本プロジェクトではTanStack QueryではなくSWR（useSWRInfinite）を採用しています。
+> 以下はTanStack Queryでの参考実装です。SWRでも同様のパターンで実装可能です。
+
 ### TanStack Query + useInfiniteQuery
 
 SNSフィードには `useInfiniteQuery` が最適。
@@ -492,8 +495,8 @@ export function proxy(request: NextRequest) {
 | 項目 | 推奨 |
 |------|------|
 | レンダリング | Client Component（無限スクロール） |
-| データ取得 | TanStack Query `useInfiniteQuery` |
-| キャッシュ | staleTime: 1分、gcTime: 5分 |
+| データ取得 | SWR `useSWRInfinite` ※本プロジェクト採用 |
+| キャッシュ | dedupingInterval: 2秒 |
 | ページネーション | カーソルベース（timestamp） |
 
 ### 投稿詳細
