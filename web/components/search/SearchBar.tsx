@@ -10,6 +10,15 @@ interface SearchBarProps {
 
 export default function SearchBar({ initialQuery = '', onSearch, autoFocus = false }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Detect mobile size
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Sync query with initialQuery from URL
   useEffect(() => {
@@ -45,7 +54,7 @@ export default function SearchBar({ initialQuery = '', onSearch, autoFocus = fal
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="ユーザー、ワールド、投稿を検索..."
+        placeholder={isMobile ? '検索...' : 'ユーザー、ワールド、投稿を検索...'}
         autoFocus={autoFocus}
         className="w-full rounded-full border border-border bg-surface py-3 pl-12 pr-10 text-base placeholder-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
       />
