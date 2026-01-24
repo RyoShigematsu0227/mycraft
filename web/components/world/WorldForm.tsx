@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useQueryClient } from '@tanstack/react-query'
+import { useSWRConfig } from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { createWorld, updateWorld } from '@/actions/world'
 import { translateError } from '@/lib/utils/errorMessages'
@@ -18,7 +18,7 @@ interface WorldFormProps {
 
 export default function WorldForm({ world, userId }: WorldFormProps) {
   const router = useRouter()
-  const queryClient = useQueryClient()
+  const { mutate } = useSWRConfig()
   const supabase = createClient()
   const isEditing = !!world
 
@@ -74,7 +74,11 @@ export default function WorldForm({ world, userId }: WorldFormProps) {
         })
 
         // サイドバーのワールド一覧を更新
-        queryClient.invalidateQueries({ queryKey: ['userWorlds'] })
+        mutate(
+          (key) => Array.isArray(key) && key[0] === 'userWorlds',
+          undefined,
+          { revalidate: true }
+        )
 
         router.push(`/worlds/${world.id}`)
       } else {
@@ -88,7 +92,11 @@ export default function WorldForm({ world, userId }: WorldFormProps) {
         })
 
         // サイドバーのワールド一覧を更新
-        queryClient.invalidateQueries({ queryKey: ['userWorlds'] })
+        mutate(
+          (key) => Array.isArray(key) && key[0] === 'userWorlds',
+          undefined,
+          { revalidate: true }
+        )
 
         router.push(`/worlds/${newWorld.id}`)
       }

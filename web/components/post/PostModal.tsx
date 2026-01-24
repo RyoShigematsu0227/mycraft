@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import useSWR, { useSWRConfig } from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { usePostModalStore } from '@/lib/stores'
 import { useAuth } from '@/hooks/useAuth'
@@ -23,17 +23,16 @@ async function fetchUserWorlds(userId: string): Promise<World[]> {
 
 export default function PostModal() {
   const router = useRouter()
-  const queryClient = useQueryClient()
+  const { mutate } = useSWRConfig()
   const { user: authUser } = useAuth()
   const { isOpen, defaultWorldId, closeModal } = usePostModalStore()
   const modalRef = useRef<HTMLDivElement>(null)
 
-  // Fetch user's worlds with TanStack Query
-  const { data: worlds = [], isLoading } = useQuery({
-    queryKey: ['userWorlds', authUser?.id],
-    queryFn: () => fetchUserWorlds(authUser!.id),
-    enabled: !!authUser?.id && isOpen,
-  })
+  // Fetch user's worlds with SWR
+  const { data: worlds = [], isLoading } = useSWR(
+    authUser?.id && isOpen ? ['userWorlds', authUser.id] : null,
+    () => fetchUserWorlds(authUser!.id)
+  )
 
   // Close on escape key
   useEffect(() => {
@@ -74,8 +73,12 @@ export default function PostModal() {
   // Handle successful post
   const handleSuccess = () => {
     closeModal()
-    // フィード関連のクエリを全て無効化して再取得
-    queryClient.invalidateQueries({ queryKey: ['feed'] })
+    // フィード関連のキャッシュを全て無効化して再取得
+    mutate(
+      (key) => Array.isArray(key) && key[0] === 'feed',
+      undefined,
+      { revalidate: true }
+    )
   }
 
   if (!isOpen || !authUser) return null

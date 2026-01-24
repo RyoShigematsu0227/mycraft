@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import useSWR, { useSWRConfig } from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import CommentCard from './CommentCard'
 import CommentForm from './CommentForm'
@@ -101,12 +101,12 @@ async function fetchComments(postId: string, currentUserId?: string): Promise<Co
 }
 
 export default function CommentSection({ postId, currentUserId }: CommentSectionProps) {
-  const queryClient = useQueryClient()
+  const { mutate } = useSWRConfig()
 
-  const { data: comments = [], isLoading } = useQuery({
-    queryKey: ['comments', postId, currentUserId],
-    queryFn: () => fetchComments(postId, currentUserId),
-  })
+  const { data: comments = [], isLoading } = useSWR(
+    ['comments', postId, currentUserId],
+    () => fetchComments(postId, currentUserId)
+  )
 
   // Realtime subscription for new comments
   useEffect(() => {
@@ -123,7 +123,7 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
           filter: `post_id=eq.${postId}`,
         },
         () => {
-          queryClient.invalidateQueries({ queryKey: ['comments', postId] })
+          mutate(['comments', postId, currentUserId])
         }
       )
       .subscribe()
@@ -131,10 +131,10 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [postId, queryClient])
+  }, [postId, currentUserId, mutate])
 
   const handleCommentSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ['comments', postId] })
+    mutate(['comments', postId, currentUserId])
   }
 
   if (isLoading) {
