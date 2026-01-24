@@ -8,7 +8,7 @@ import useSWR, { useSWRConfig } from 'swr'
 import { useAuth } from '@/hooks/useAuth'
 import { useTheme } from '@/hooks/useTheme'
 import { createClient } from '@/lib/supabase/client'
-import { useProfileStore, usePostModalStore } from '@/lib/stores'
+import { useProfileStore, usePostModalStore, useWorldModalStore } from '@/lib/stores'
 import type { Database } from '@/types/database'
 
 type World = Database['public']['Tables']['worlds']['Row']
@@ -72,6 +72,7 @@ export default function Sidebar() {
   const { theme, toggleTheme } = useTheme()
   const { profile, setProfile } = useProfileStore()
   const openPostModal = usePostModalStore((state) => state.openModal)
+  const openWorldModal = useWorldModalStore((state) => state.openModal)
 
   // Extract worldId from pathname if on a world page
   const worldIdFromPath = pathname?.startsWith('/worlds/') && pathname.split('/')[2]
@@ -442,9 +443,9 @@ export default function Sidebar() {
         {/* Create World CTA */}
         {isAuthenticated && (
           <div className="mt-4">
-            <Link
-              href="/worlds/new"
-              className="group flex items-center gap-2.5 rounded-xl border border-dashed border-border px-3 py-2.5 text-sm text-muted transition-all duration-200 hover:border-accent hover:bg-accent/5 hover:text-accent"
+            <button
+              onClick={openWorldModal}
+              className="group flex w-full cursor-pointer items-center gap-2.5 rounded-xl border border-dashed border-border px-3 py-2.5 text-sm text-muted transition-all duration-200 hover:border-accent hover:bg-accent/5 hover:text-accent"
             >
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-hover transition-colors group-hover:bg-accent/10">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -452,7 +453,7 @@ export default function Sidebar() {
                 </svg>
               </div>
               <span className="font-medium">ワールドを作成</span>
-            </Link>
+            </button>
           </div>
         )}
       </nav>

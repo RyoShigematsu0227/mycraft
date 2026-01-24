@@ -1,14 +1,15 @@
 'use client'
 
-import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { useWorlds } from '@/hooks/useWorlds'
+import { useWorldModalStore } from '@/lib/stores'
 import { WorldList } from '@/components/world'
 import { Button, EmptyState } from '@/components/ui'
 
 export default function WorldsPage() {
   const { user, isLoading: authLoading } = useAuth()
   const { worlds, isLoading: worldsLoading } = useWorlds(user?.id)
+  const openWorldModal = useWorldModalStore((state) => state.openModal)
 
   const isLoading = authLoading || worldsLoading
 
@@ -19,9 +20,7 @@ export default function WorldsPage() {
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">ワールド</h1>
           {user && (
-            <Link href="/worlds/new">
-              <Button size="sm">新規作成</Button>
-            </Link>
+            <Button size="sm" onClick={openWorldModal}>新規作成</Button>
           )}
         </div>
       </div>
@@ -58,9 +57,7 @@ export default function WorldsPage() {
           description={user ? '最初のワールドを作成しましょう' : undefined}
           action={
             user ? (
-              <Link href="/worlds/new">
-                <Button>ワールドを作成</Button>
-              </Link>
+              <Button onClick={openWorldModal}>ワールドを作成</Button>
             ) : undefined
           }
         />
