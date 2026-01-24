@@ -1,31 +1,28 @@
-import { notFound } from 'next/navigation'
+'use client'
+
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import useSWR from 'swr'
+import { useAuth } from '@/hooks/useAuth'
+import { createClient } from '@/lib/supabase/client'
 import { UserCard } from '@/components/user'
 import { EmptyState } from '@/components/ui'
+import type { Database } from '@/types/database'
 
-interface FollowingPageProps {
-  params: Promise<{ userId: string }>
-}
+type User = Database['public']['Tables']['users']['Row']
 
-export default async function FollowingPage({ params }: FollowingPageProps) {
-  const { userId } = await params
-  const supabase = await createClient()
-
-  // Get current user
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser()
+async function fetchFollowing(userHandle: string): Promise<{ user: User | null; following: User[] }> {
+  const supabase = createClient()
 
   // Get profile user
   const { data: user } = await supabase
     .from('users')
     .select('*')
-    .eq('user_id', userId)
+    .eq('user_id', userHandle)
     .single()
 
   if (!user) {
-    notFound()
+    return { user: null, following: [] }
   }
 
   // Get following
@@ -35,7 +32,58 @@ export default async function FollowingPage({ params }: FollowingPageProps) {
     .eq('follower_id', user.id)
     .order('created_at', { ascending: false })
 
-  const followingUsers = following?.map((f) => f.following).filter(Boolean) || []
+  const followingUsers = (following?.map((f) => f.following).filter(Boolean) || []) as User[]
+
+  return { user, following: followingUsers }
+}
+
+export default function FollowingPage() {
+  const params = useParams()
+  const userId = params.userId as string
+  const { user: authUser } = useAuth()
+
+  const { data, isLoading } = useSWR(
+    userId ? ['following', userId] : null,
+    () => fetchFollowing(userId)
+  )
+
+  const user = data?.user
+  const following = data?.following ?? []
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-2xl">
+        <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur">
+          <div className="flex items-center gap-4">
+            <div className="h-9 w-9 animate-pulse rounded-full bg-surface-hover" />
+            <div className="space-y-1">
+              <div className="h-5 w-24 animate-pulse rounded bg-surface-hover" />
+              <div className="h-4 w-16 animate-pulse rounded bg-surface-hover" />
+            </div>
+          </div>
+        </div>
+        <div className="divide-y divide-border">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex items-center gap-3 p-4 animate-pulse">
+              <div className="h-12 w-12 rounded-full bg-surface-hover" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-24 rounded bg-surface-hover" />
+                <div className="h-3 w-16 rounded bg-surface-hover" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="mx-auto max-w-2xl p-8 text-center">
+        <p className="text-muted">ユーザーが見つかりません</p>
+      </div>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -64,7 +112,7 @@ export default async function FollowingPage({ params }: FollowingPageProps) {
 
       {/* Following List */}
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
-        {followingUsers.length === 0 ? (
+        {following.length === 0 ? (
           <EmptyState
             icon={
               <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -79,7 +127,7 @@ export default async function FollowingPage({ params }: FollowingPageProps) {
             title="まだ誰もフォローしていません"
           />
         ) : (
-          followingUsers.map((followingUser) => (
+          following.map((followingUser) => (
             <div key={followingUser.id} className="p-4">
               <UserCard
                 user={followingUser}

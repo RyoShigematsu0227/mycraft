@@ -1,37 +1,77 @@
-import { redirect, notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import useSWR from 'swr'
+import { useAuth } from '@/hooks/useAuth'
+import { createClient } from '@/lib/supabase/client'
 import { WorldForm, DeleteWorldButton } from '@/components/world'
+import type { Database } from '@/types/database'
 
-interface EditWorldPageProps {
-  params: Promise<{ worldId: string }>
-}
+type World = Database['public']['Tables']['worlds']['Row']
 
-export default async function EditWorldPage({ params }: EditWorldPageProps) {
-  const { worldId } = await params
-  const supabase = await createClient()
-
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser()
-
-  if (!authUser) {
-    redirect('/login')
-  }
-
-  // Get world
-  const { data: world } = await supabase
+async function fetchWorld(worldId: string): Promise<World | null> {
+  const supabase = createClient()
+  const { data } = await supabase
     .from('worlds')
     .select('*')
     .eq('id', worldId)
     .single()
+  return data
+}
 
-  if (!world) {
-    notFound()
+export default function EditWorldPage() {
+  const params = useParams()
+  const router = useRouter()
+  const worldId = params.worldId as string
+  const { user, isLoading: authLoading } = useAuth()
+
+  const { data: world, isLoading: worldLoading } = useSWR(
+    worldId ? ['world', worldId] : null,
+    () => fetchWorld(worldId)
+  )
+
+  // 未認証の場合はログインページへ
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login')
+    }
+  }, [authLoading, user, router])
+
+  // ワールドが見つからない場合は404
+  useEffect(() => {
+    if (!worldLoading && world === null) {
+      router.push('/404')
+    }
+  }, [worldLoading, world, router])
+
+  // オーナーでない場合はワールドページへリダイレクト
+  useEffect(() => {
+    if (world && user && world.owner_id !== user.id) {
+      router.push(`/worlds/${worldId}`)
+    }
+  }, [world, user, worldId, router])
+
+  const isLoading = authLoading || worldLoading
+
+  if (isLoading || !world || !user) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-6">
+        <div className="h-8 w-48 animate-pulse rounded bg-surface-hover mb-6" />
+        <div className="rounded-xl border border-border bg-surface p-6">
+          <div className="space-y-4">
+            <div className="h-10 w-full animate-pulse rounded bg-surface-hover" />
+            <div className="h-24 w-full animate-pulse rounded bg-surface-hover" />
+            <div className="h-10 w-32 animate-pulse rounded bg-surface-hover" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
-  // Check if user is the owner
-  if (world.owner_id !== authUser.id) {
-    redirect(`/worlds/${worldId}`)
+  // オーナーでない場合は表示しない
+  if (world.owner_id !== user.id) {
+    return null
   }
 
   return (
@@ -40,7 +80,7 @@ export default async function EditWorldPage({ params }: EditWorldPageProps) {
         ワールドを編集
       </h1>
       <div className="rounded-xl border border-border bg-surface p-6">
-        <WorldForm world={world} userId={authUser.id} />
+        <WorldForm world={world} userId={user.id} />
       </div>
 
       {/* Danger Zone */}

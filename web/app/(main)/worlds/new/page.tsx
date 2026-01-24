@@ -1,16 +1,34 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
 import { WorldForm } from '@/components/world'
 
-export default async function NewWorldPage() {
-  const supabase = await createClient()
+export default function NewWorldPage() {
+  const router = useRouter()
+  const { user, isLoading } = useAuth()
 
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser()
+  // 未認証の場合はログインページへ
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/login')
+    }
+  }, [isLoading, user, router])
 
-  if (!authUser) {
-    redirect('/login')
+  if (isLoading || !user) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-6">
+        <div className="h-8 w-48 animate-pulse rounded bg-surface-hover mb-6" />
+        <div className="rounded-xl border border-border bg-surface p-6">
+          <div className="space-y-4">
+            <div className="h-10 w-full animate-pulse rounded bg-surface-hover" />
+            <div className="h-24 w-full animate-pulse rounded bg-surface-hover" />
+            <div className="h-10 w-32 animate-pulse rounded bg-surface-hover" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -19,7 +37,7 @@ export default async function NewWorldPage() {
         新しいワールドを作成
       </h1>
       <div className="rounded-xl border border-border bg-surface p-6">
-        <WorldForm userId={authUser.id} />
+        <WorldForm userId={user.id} />
       </div>
     </div>
   )
