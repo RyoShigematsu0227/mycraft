@@ -75,3 +75,4 @@ export async function getPostMetadata(postId: string) {
 
   return data
 }
+
