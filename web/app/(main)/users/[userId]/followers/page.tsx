@@ -42,17 +42,17 @@ export default function FollowersPage() {
   const userId = params.userId as string
   const { user: authUser } = useAuth()
 
-  const { data, isLoading, isValidating } = useSWR(
+  const { data, isLoading } = useSWR(
     userId ? ['followers', userId] : null,
-    () => fetchFollowers(userId)
+    () => fetchFollowers(userId),
+    { revalidateOnFocus: false }
   )
 
   const user = data?.user
   const followers = data?.followers ?? []
 
-  // Show skeleton while loading, validating, or when data is not yet available
-  // Also show skeleton if we have stale null data while revalidating
-  if (isLoading || !data || (isValidating && !user)) {
+  // Show skeleton only on initial load
+  if (isLoading) {
     return (
       <div className="mx-auto max-w-2xl">
         <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur">
