@@ -1,11 +1,11 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import Link from 'next/link'
 import useSWR from 'swr'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
 import { MemberList } from '@/components/world'
+import { BackButton } from '@/components/ui'
 import type { Database } from '@/types/database'
 
 type World = Database['public']['Tables']['worlds']['Row']
@@ -84,19 +84,7 @@ export default function MembersPage() {
       {/* Header */}
       <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur dark:border-border dark:bg-background/80">
         <div className="flex items-center gap-4">
-          <Link
-            href={`/worlds/${worldId}`}
-            className="rounded-full p-2 hover:bg-surface dark:hover:bg-surface"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </Link>
+          <BackButton />
           <div>
             <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">メンバー</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">{world.name}</p>
