@@ -43,7 +43,8 @@ export default function PostRepostsPage() {
 
   const { data: repostUsers, isLoading } = useSWR(
     postId ? ['postReposts', postId] : null,
-    () => fetchPostReposts(postId)
+    () => fetchPostReposts(postId),
+    { revalidateOnFocus: false }
   )
 
   if (isLoading || !repostUsers) {
