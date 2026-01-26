@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Next.js 16 Cache Components を有効化
-  cacheComponents: true,
+  // cacheComponentsは無効（動的OGPとの互換性のため）
+  // cacheComponents: true,
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [

@@ -14,8 +14,6 @@ interface UserPageProps {
 
 export async function generateMetadata({ params }: UserPageProps): Promise<Metadata> {
   const { userId } = await params
-
-  // キャッシュ付きメタデータ取得
   const user = await getUserMetadata(userId)
 
   if (!user) {

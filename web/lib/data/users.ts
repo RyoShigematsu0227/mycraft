@@ -1,14 +1,9 @@
-import { cacheTag } from 'next/cache'
 import { createCacheClient } from '@/lib/supabase/cache'
 
 /**
- * ユーザープロフィールを取得（キャッシュ付き）
+ * ユーザープロフィールを取得
  */
 export async function getUserProfile(userId: string) {
-  'use cache'
-  cacheTag(`user-${userId}`)
-  cacheTag('users')
-
   const supabase = createCacheClient()
   const { data } = await supabase
     .from('users')
@@ -20,13 +15,9 @@ export async function getUserProfile(userId: string) {
 }
 
 /**
- * ユーザーIDからプロフィールを取得（キャッシュ付き）
+ * ユーザーIDからプロフィールを取得
  */
 export async function getUserProfileById(id: string) {
-  'use cache'
-  cacheTag(`user-id-${id}`)
-  cacheTag('users')
-
   const supabase = createCacheClient()
   const { data } = await supabase
     .from('users')
@@ -38,12 +29,9 @@ export async function getUserProfileById(id: string) {
 }
 
 /**
- * ユーザー統計情報を取得（キャッシュ付き）
+ * ユーザー統計情報を取得
  */
 export async function getUserStats(userId: string) {
-  'use cache'
-  cacheTag(`user-stats-${userId}`)
-
   const supabase = createCacheClient()
 
   const [followersResult, followingResult, postsResult] = await Promise.all([
@@ -69,12 +57,9 @@ export async function getUserStats(userId: string) {
 }
 
 /**
- * メタデータ用のユーザー情報を取得（キャッシュ付き）
+ * メタデータ用のユーザー情報を取得
  */
 export async function getUserMetadata(userId: string) {
-  'use cache'
-  cacheTag(`user-${userId}`)
-
   const supabase = createCacheClient()
   const { data } = await supabase
     .from('users')

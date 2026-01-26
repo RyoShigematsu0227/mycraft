@@ -12,8 +12,6 @@ interface PostPageProps {
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { postId } = await params
-
-  // キャッシュ付きメタデータ取得
   const post = await getPostMetadata(postId)
 
   if (!post || !post.user) {

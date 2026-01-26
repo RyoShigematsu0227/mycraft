@@ -11,8 +11,6 @@ interface WorldPageProps {
 
 export async function generateMetadata({ params }: WorldPageProps): Promise<Metadata> {
   const { worldId } = await params
-
-  // キャッシュ付きメタデータ取得
   const world = await getWorldMetadata(worldId)
 
   if (!world) {
