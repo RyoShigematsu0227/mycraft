@@ -73,7 +73,8 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
     window.history.replaceState(null, '', `/users/${userId}/${tab}`)
   }
 
-  if (isLoading) {
+  // キャッシュがない初回ローディング時のみスケルトン表示
+  if (isLoading && followers.length === 0 && following.length === 0) {
     return (
       <div className="mx-auto max-w-2xl">
         <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur">
