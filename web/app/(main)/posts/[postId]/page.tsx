@@ -18,6 +18,11 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     return { title: '投稿が見つかりません' }
   }
 
+  // world_only投稿はOGP情報を出さない
+  if (post.visibility === 'world_only') {
+    return { title: '投稿が見つかりません' }
+  }
+
   const user = post.user as { display_name: string; user_id: string }
   const images = post.images as { image_url: string }[] | null
   const description = post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content
@@ -54,6 +59,23 @@ export default async function PostPage({ params }: PostPageProps) {
 
   if (!post) {
     notFound()
+  }
+
+  // world_only投稿はメンバーのみ閲覧可能
+  if (post.visibility === 'world_only') {
+    if (!authUser || !post.world_id) {
+      notFound()
+    }
+    const { data: membership } = await supabase
+      .from('world_members')
+      .select('id')
+      .eq('world_id', post.world_id)
+      .eq('user_id', authUser.id)
+      .single()
+
+    if (!membership) {
+      notFound()
+    }
   }
 
   // Get counts (キャッシュ付き)

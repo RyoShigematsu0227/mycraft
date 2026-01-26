@@ -56,6 +56,7 @@ export async function getPostMetadata(postId: string) {
     .from('posts')
     .select(`
       content,
+      visibility,
       user:users!posts_user_id_fkey(display_name, user_id),
       images:post_images(image_url)
     `)
