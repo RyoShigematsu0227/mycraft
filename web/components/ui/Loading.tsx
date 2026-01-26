@@ -26,14 +26,8 @@ export default function Loading({ size = 'md', className = '', fullScreen = fals
 
         {/* Spinner ring */}
         <div
-          className={`relative animate-spin rounded-full bg-gradient-to-r from-accent to-accent-secondary ${sizes[size]} ${className}`}
-          style={{
-            maskImage: 'conic-gradient(transparent 60deg, black 90deg)',
-            WebkitMaskImage: 'conic-gradient(transparent 60deg, black 90deg)',
-          }}
-        >
-          <div className={`absolute inset-[3px] rounded-full bg-background ${size === 'sm' ? 'inset-[2px]' : ''}`} />
-        </div>
+          className={`relative animate-spin rounded-full ${borderSizes[size]} border-accent/30 border-t-accent ${sizes[size]} ${className}`}
+        />
       </div>
       {text && (
         <span className="text-sm font-medium text-muted">{text}</span>
