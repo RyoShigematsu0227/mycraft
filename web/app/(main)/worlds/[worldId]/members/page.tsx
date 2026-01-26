@@ -34,7 +34,7 @@ export default function MembersPage() {
   const worldId = params.worldId as string
   const { user } = useAuth()
 
-  const { data, isLoading } = useSWR(
+  const { data, isLoading, isValidating } = useSWR(
     worldId ? ['worldMembers', worldId] : null,
     () => fetchWorldWithMembers(worldId)
   )
@@ -42,7 +42,9 @@ export default function MembersPage() {
   const world = data?.world
   const members = data?.members ?? []
 
-  if (isLoading || !data) {
+  // Show skeleton while loading, validating, or when data is not yet available
+  // Also show skeleton if we have stale null data while revalidating
+  if (isLoading || !data || (isValidating && !world)) {
     return (
       <div className="mx-auto max-w-2xl">
         <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur">

@@ -42,7 +42,7 @@ export default function FollowingPage() {
   const userId = params.userId as string
   const { user: authUser } = useAuth()
 
-  const { data, isLoading } = useSWR(
+  const { data, isLoading, isValidating } = useSWR(
     userId ? ['following', userId] : null,
     () => fetchFollowing(userId)
   )
@@ -50,7 +50,9 @@ export default function FollowingPage() {
   const user = data?.user
   const following = data?.following ?? []
 
-  if (isLoading || !data) {
+  // Show skeleton while loading, validating, or when data is not yet available
+  // Also show skeleton if we have stale null data while revalidating
+  if (isLoading || !data || (isValidating && !user)) {
     return (
       <div className="mx-auto max-w-2xl">
         <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur">
