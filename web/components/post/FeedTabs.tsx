@@ -21,7 +21,7 @@ export default function FeedTabs({ activeTab, onTabChange, showFollowing = true 
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
-          className={`relative flex-1 px-4 py-3.5 text-center text-sm font-semibold transition-colors duration-200 ${
+          className={`relative flex-1 cursor-pointer px-4 py-3.5 text-center text-sm font-semibold transition-colors duration-200 ${
             activeTab === tab.id
               ? 'text-accent'
               : 'text-muted hover:bg-surface hover:text-foreground dark:text-muted dark:hover:bg-surface/50 dark:hover:text-foreground'
