@@ -1,4 +1,4 @@
-export default function WorldLoading() {
+export default function WorldDetailLoading() {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header Skeleton */}

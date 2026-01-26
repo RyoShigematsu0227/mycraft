@@ -1,4 +1,4 @@
-export default function UserLoading() {
+export default function UserProfileLoading() {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Profile Header Skeleton */}

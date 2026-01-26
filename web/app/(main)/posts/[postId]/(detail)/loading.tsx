@@ -1,6 +1,6 @@
 import { PostCardSkeleton } from '@/components/ui'
 
-export default function PostLoading() {
+export default function PostDetailLoading() {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
