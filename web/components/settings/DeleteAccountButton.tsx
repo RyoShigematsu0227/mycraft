@@ -1,14 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
 import { deleteAccount } from '@/actions'
 
 export default function DeleteAccountButton() {
-  const router = useRouter()
   const [showConfirm, setShowConfirm] = useState(false)
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -59,9 +57,8 @@ export default function DeleteAccountButton() {
       // Sign out locally
       await supabase.auth.signOut()
 
-      // Redirect to home
-      router.push('/')
-      router.refresh()
+      // Full page reload to reset all client state
+      window.location.href = '/'
     } catch (err) {
       console.error('Failed to delete account:', err)
       setError(err instanceof Error ? err.message : 'アカウントの削除に失敗しました')
