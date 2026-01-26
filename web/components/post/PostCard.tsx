@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import PostImages from './PostImages'
 import LikeButton from './LikeButton'
 import RepostButton from './RepostButton'
@@ -66,7 +65,6 @@ export default function PostCard({
   repostedBy = null,
   interactive = true,
 }: PostCardProps) {
-  const router = useRouter()
   const triggerRefresh = useFeedRefreshStore((state) => state.triggerRefresh)
   const stats = usePostStatsStore((state) => state.stats[post.id])
   const initPost = usePostStatsStore((state) => state.initPost)
@@ -102,15 +100,6 @@ export default function PostCard({
 
   const displayCommentCount = stats?.commentCount ?? commentCount
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    if (!interactive) return
-    const target = e.target as HTMLElement
-    if (target.closest('a') || target.closest('button')) {
-      return
-    }
-    router.push(`/posts/${post.id}`)
-  }
-
   const handleDelete = async () => {
     setDeleting(true)
     try {
@@ -127,14 +116,22 @@ export default function PostCard({
 
   return (
     <article
-      onClick={handleCardClick}
       className={`group relative overflow-hidden bg-surface transition-all duration-300 ${
         interactive ? 'cursor-pointer hover:bg-surface-hover' : ''
       }`}
     >
+      {/* Invisible link overlay for prefetching */}
+      {interactive && (
+        <Link
+          href={`/posts/${post.id}`}
+          className="absolute inset-0 z-0"
+          aria-label={`${post.user.display_name}の投稿を見る`}
+        />
+      )}
+
       {/* Animated gradient border on left */}
       {interactive && (
-        <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-accent via-accent-secondary to-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div className="absolute left-0 top-0 z-10 h-full w-1 bg-gradient-to-b from-accent via-accent-secondary to-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       )}
 
       {/* Subtle animated glow on hover */}
@@ -146,7 +143,7 @@ export default function PostCard({
       )}
 
       {/* Content wrapper */}
-      <div className="relative px-4 py-4">
+      <div className="relative z-10 px-4 py-4">
         {/* Repost indicator */}
         {repostedBy && (
           <div className="mb-3 flex items-center gap-2 pl-14">
@@ -252,12 +249,9 @@ export default function PostCard({
             <div className="-ml-2 mt-3 flex items-center justify-between">
               <div className="flex items-center gap-0.5">
                 {/* Comment button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    router.push(`/posts/${post.id}`)
-                  }}
-                  className="group/action flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-2 text-gray-500 transition-all duration-200 hover:bg-sky-500/10 hover:text-sky-500 dark:text-gray-400 dark:hover:text-sky-400"
+                <Link
+                  href={`/posts/${post.id}`}
+                  className="group/action flex items-center gap-1.5 rounded-full px-3 py-2 text-gray-500 transition-all duration-200 hover:bg-sky-500/10 hover:text-sky-500 dark:text-gray-400 dark:hover:text-sky-400"
                 >
                   <div className="relative">
                     <svg className="h-5 w-5 transition-transform duration-200 group-hover/action:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -271,7 +265,7 @@ export default function PostCard({
                   {displayCommentCount > 0 && (
                     <span className="text-sm font-medium tabular-nums">{displayCommentCount}</span>
                   )}
-                </button>
+                </Link>
 
                 {/* Repost button */}
                 <RepostButton
