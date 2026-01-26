@@ -52,6 +52,13 @@ export default function SignupForm() {
       return
     }
 
+    // Check if user already exists (OAuth user case - identities will be empty)
+    if (data.user && data.user.identities?.length === 0) {
+      setError('このメールアドレスは既に登録されています')
+      setLoading(false)
+      return
+    }
+
     // If session exists, email confirmation is disabled - redirect to setup
     if (data.session) {
       window.location.href = '/setup'
