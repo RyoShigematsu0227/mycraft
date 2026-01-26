@@ -41,12 +41,12 @@ export default function PostLikesPage() {
   const postId = params.postId as string
   const { user } = useAuth()
 
-  const { data: likeUsers = [], isLoading } = useSWR(
+  const { data: likeUsers, isLoading } = useSWR(
     postId ? ['postLikes', postId] : null,
     () => fetchPostLikes(postId)
   )
 
-  if (isLoading) {
+  if (isLoading || !likeUsers) {
     return (
       <div className="mx-auto max-w-2xl">
         <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur-sm">

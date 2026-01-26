@@ -50,7 +50,7 @@ export default function FollowingPage() {
   const user = data?.user
   const following = data?.following ?? []
 
-  if (isLoading) {
+  if (isLoading || !data) {
     return (
       <div className="mx-auto max-w-2xl">
         <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur">

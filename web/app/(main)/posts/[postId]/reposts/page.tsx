@@ -41,12 +41,12 @@ export default function PostRepostsPage() {
   const postId = params.postId as string
   const { user } = useAuth()
 
-  const { data: repostUsers = [], isLoading } = useSWR(
+  const { data: repostUsers, isLoading } = useSWR(
     postId ? ['postReposts', postId] : null,
     () => fetchPostReposts(postId)
   )
 
-  if (isLoading) {
+  if (isLoading || !repostUsers) {
     return (
       <div className="mx-auto max-w-2xl">
         <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur-sm">
