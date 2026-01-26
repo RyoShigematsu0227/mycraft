@@ -125,7 +125,7 @@ export default function DeleteAccountButton() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-foreground"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer p-1 text-muted hover:text-foreground"
                   aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
                 >
                   {showPassword ? (
@@ -153,7 +153,7 @@ export default function DeleteAccountButton() {
                 type="button"
                 onClick={handleClose}
                 disabled={loading}
-                className="flex-1 rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover disabled:opacity-50"
+                className="flex-1 cursor-pointer rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover disabled:opacity-50"
               >
                 キャンセル
               </button>
@@ -161,7 +161,7 @@ export default function DeleteAccountButton() {
                 type="button"
                 onClick={handleDelete}
                 disabled={loading || !password}
-                className="flex-1 rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 cursor-pointer rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? '削除中...' : '削除する'}
               </button>

@@ -209,7 +209,7 @@ export default function SetupForm() {
         <button
           type="submit"
           disabled={loading || userIdAvailable === false}
-          className="btn-glow w-full rounded-md bg-gradient-to-r from-accent to-accent-secondary px-4 py-2 text-white hover:from-accent-hover hover:to-accent-secondary-hover disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-glow w-full cursor-pointer rounded-md bg-gradient-to-r from-accent to-accent-secondary px-4 py-2 text-white hover:from-accent-hover hover:to-accent-secondary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? '設定中...' : '設定を完了'}
         </button>
