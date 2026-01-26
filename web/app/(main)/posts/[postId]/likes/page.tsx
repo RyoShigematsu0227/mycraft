@@ -41,14 +41,14 @@ export default function PostLikesPage() {
   const postId = params.postId as string
   const { user } = useAuth()
 
-  const { data: likeUsers = [], isLoading } = useSWR(
+  const { data: likeUsers } = useSWR(
     postId ? ['postLikes', postId] : null,
     () => fetchPostLikes(postId),
     { revalidateOnFocus: false }
   )
 
-  // キャッシュがない初回ローディング時のみスケルトン表示
-  if (isLoading && likeUsers.length === 0) {
+  // data === undefined: キャッシュなしの初回ローディング時のみスケルトン表示
+  if (likeUsers === undefined) {
     return (
       <div className="mx-auto max-w-2xl">
         <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur-sm">

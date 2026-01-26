@@ -57,15 +57,11 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
   const [activeTab, setActiveTab] = useState<'followers' | 'following'>(initialTab)
   const { user: authUser } = useAuth()
 
-  const { data, isLoading } = useSWR(
+  const { data } = useSWR(
     userId ? ['follow-data', userId] : null,
     () => fetchFollowData(userId),
     { revalidateOnFocus: false }
   )
-
-  const user = data?.user
-  const followers = data?.followers ?? []
-  const following = data?.following ?? []
 
   const handleTabChange = (tab: 'followers' | 'following') => {
     setActiveTab(tab)
@@ -73,8 +69,8 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
     window.history.replaceState(null, '', `/users/${userId}/${tab}`)
   }
 
-  // キャッシュがない初回ローディング時のみスケルトン表示
-  if (isLoading && followers.length === 0 && following.length === 0) {
+  // data === undefined: キャッシュなしの初回ローディング時のみスケルトン表示
+  if (data === undefined) {
     return (
       <div className="mx-auto max-w-2xl">
         <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur">
@@ -100,6 +96,10 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
       </div>
     )
   }
+
+  const user = data.user
+  const followers = data.followers
+  const following = data.following
 
   if (!user) {
     return (
