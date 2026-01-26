@@ -184,14 +184,14 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         </h3>
         <div className="space-y-4">
           <Input
-            label="Java Edition ユーザー名"
+            label="Java版 ユーザー名"
             value={minecraftJavaUsername}
             onChange={(e) => setMinecraftJavaUsername(e.target.value)}
             placeholder="Steve"
             hint="Minecraft Java Editionのユーザー名"
           />
           <Input
-            label="Bedrock Edition ゲーマータグ"
+            label="統合版 ゲーマータグ"
             value={minecraftBedrockGamertag}
             onChange={(e) => setMinecraftBedrockGamertag(e.target.value)}
             placeholder="Steve1234"
