@@ -9,6 +9,16 @@ export default async function LoginPage() {
   } = await supabase.auth.getUser()
 
   if (user) {
+    // Check if profile exists
+    const { data: profile } = await supabase
+      .from('users')
+      .select('id')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile) {
+      redirect('/setup')
+    }
     redirect('/')
   }
 

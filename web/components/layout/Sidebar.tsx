@@ -477,6 +477,21 @@ export default function Sidebar() {
           </div>
         </div>
       )}
+
+      {/* Logout button for authenticated users without profile */}
+      {isAuthenticated && !profile && (
+        <div className="relative border-t border-border p-3">
+          <button
+            onClick={signOut}
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-semibold text-rose-500 transition-all duration-200 hover:border-rose-500/50 hover:bg-rose-500/20"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            ログアウト
+          </button>
+        </div>
+      )}
     </aside>
   )
 }
