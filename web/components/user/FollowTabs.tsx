@@ -1,12 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import useSWR from 'swr'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
 import { UserCard } from '@/components/user'
-import { EmptyState } from '@/components/ui'
+import { EmptyState, BackButton } from '@/components/ui'
 import type { Database } from '@/types/database'
 
 type User = Database['public']['Tables']['users']['Row']
@@ -116,19 +115,7 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
       {/* Header */}
       <div className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur dark:border-border dark:bg-background/80">
         <div className="flex items-center gap-4 px-4 py-3">
-          <Link
-            href={`/users/${userId}`}
-            className="rounded-full p-2 hover:bg-surface dark:hover:bg-surface"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </Link>
+          <BackButton />
           <div>
             <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
               {user.display_name || user.user_id}

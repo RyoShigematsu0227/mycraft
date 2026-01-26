@@ -1,11 +1,11 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import Link from 'next/link'
 import useSWR from 'swr'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
 import { UserCard } from '@/components/user'
+import { BackButton } from '@/components/ui'
 
 interface LikeUser {
   id: string
@@ -75,14 +75,7 @@ export default function PostLikesPage() {
       {/* Header */}
       <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur-sm dark:border-border dark:bg-background/80">
         <div className="flex items-center gap-4">
-          <Link
-            href={`/posts/${postId}`}
-            className="rounded-full p-2 hover:bg-surface dark:hover:bg-surface"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </Link>
+          <BackButton />
           <h1 className="text-xl font-bold">いいねしたユーザー</h1>
         </div>
       </div>
