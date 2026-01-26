@@ -43,7 +43,8 @@ export default function PostLikesPage() {
 
   const { data: likeUsers, isLoading } = useSWR(
     postId ? ['postLikes', postId] : null,
-    () => fetchPostLikes(postId)
+    () => fetchPostLikes(postId),
+    { revalidateOnFocus: false }
   )
 
   if (isLoading || !likeUsers) {
