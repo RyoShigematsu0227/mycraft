@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -9,6 +10,13 @@ import { Button } from '@/components/ui'
 
 interface UserPageProps {
   params: Promise<{ userId: string }>
+}
+
+// 静的メタデータ（cacheComponentsとの互換性のため）
+// 動的OGPはopengraph-image.tsxで実装
+export const metadata: Metadata = {
+  title: 'ユーザー',
+  description: 'MyCraftユーザーのプロフィール',
 }
 
 export default async function UserPage({ params }: UserPageProps) {

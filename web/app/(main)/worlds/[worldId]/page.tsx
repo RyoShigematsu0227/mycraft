@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getWorld, getWorldOwner, getWorldMemberCount } from '@/lib/data'
@@ -6,6 +7,13 @@ import { InfiniteFeed } from '@/components/post'
 
 interface WorldPageProps {
   params: Promise<{ worldId: string }>
+}
+
+// 静的メタデータ（cacheComponentsとの互換性のため）
+// 動的OGPはopengraph-image.tsxで実装
+export const metadata: Metadata = {
+  title: 'ワールド',
+  description: 'MyCraftワールド',
 }
 
 export default async function WorldPage({ params }: WorldPageProps) {

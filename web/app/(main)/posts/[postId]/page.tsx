@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getPost, getPostStats } from '@/lib/data'
@@ -9,8 +10,14 @@ interface PostPageProps {
   params: Promise<{ postId: string }>
 }
 
-export default async function PostPage({ params }: PostPageProps) {
+// 静的メタデータ（cacheComponentsとの互換性のため）
+// 動的OGPはopengraph-image.tsxで実装
+export const metadata: Metadata = {
+  title: '投稿',
+  description: 'MyCraftの投稿',
+}
 
+export default async function PostPage({ params }: PostPageProps) {
   const { postId } = await params
   const supabase = await createClient()
 
