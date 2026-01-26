@@ -1,14 +1,9 @@
-import { cacheTag } from 'next/cache'
 import { createCacheClient } from '@/lib/supabase/cache'
 
 /**
- * ワールド情報を取得（キャッシュ付き）
+ * ワールド情報を取得
  */
 export async function getWorld(worldId: string) {
-  'use cache'
-  cacheTag(`world-${worldId}`)
-  cacheTag('worlds')
-
   const supabase = createCacheClient()
   const { data } = await supabase
     .from('worlds')
@@ -20,12 +15,9 @@ export async function getWorld(worldId: string) {
 }
 
 /**
- * ワールドのオーナー情報を取得（キャッシュ付き）
+ * ワールドのオーナー情報を取得
  */
 export async function getWorldOwner(ownerId: string) {
-  'use cache'
-  cacheTag(`user-id-${ownerId}`)
-
   const supabase = createCacheClient()
   const { data } = await supabase
     .from('users')
@@ -37,12 +29,9 @@ export async function getWorldOwner(ownerId: string) {
 }
 
 /**
- * ワールドのメンバー数を取得（キャッシュ付き）
+ * ワールドのメンバー数を取得
  */
 export async function getWorldMemberCount(worldId: string) {
-  'use cache'
-  cacheTag(`world-stats-${worldId}`)
-
   const supabase = createCacheClient()
   const { count } = await supabase
     .from('world_members')
@@ -53,12 +42,9 @@ export async function getWorldMemberCount(worldId: string) {
 }
 
 /**
- * メタデータ用のワールド情報を取得（キャッシュ付き）
+ * メタデータ用のワールド情報を取得
  */
 export async function getWorldMetadata(worldId: string) {
-  'use cache'
-  cacheTag(`world-${worldId}`)
-
   const supabase = createCacheClient()
   const { data } = await supabase
     .from('worlds')

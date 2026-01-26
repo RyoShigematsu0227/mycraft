@@ -1,14 +1,9 @@
-import { cacheTag } from 'next/cache'
 import { createCacheClient } from '@/lib/supabase/cache'
 
 /**
- * 投稿情報を取得（キャッシュ付き）
+ * 投稿情報を取得
  */
 export async function getPost(postId: string) {
-  'use cache'
-  cacheTag(`post-${postId}`)
-  cacheTag('posts')
-
   const supabase = createCacheClient()
   const { data } = await supabase
     .from('posts')
@@ -25,12 +20,9 @@ export async function getPost(postId: string) {
 }
 
 /**
- * 投稿の統計情報を取得（キャッシュ付き）
+ * 投稿の統計情報を取得
  */
 export async function getPostStats(postId: string) {
-  'use cache'
-  cacheTag(`post-stats-${postId}`)
-
   const supabase = createCacheClient()
 
   const [likesResult, repostsResult, commentsResult] = await Promise.all([
@@ -56,12 +48,9 @@ export async function getPostStats(postId: string) {
 }
 
 /**
- * メタデータ用の投稿情報を取得（キャッシュ付き）
+ * メタデータ用の投稿情報を取得
  */
 export async function getPostMetadata(postId: string) {
-  'use cache'
-  cacheTag(`post-${postId}`)
-
   const supabase = createCacheClient()
   const { data } = await supabase
     .from('posts')
@@ -75,4 +64,3 @@ export async function getPostMetadata(postId: string) {
 
   return data
 }
-
