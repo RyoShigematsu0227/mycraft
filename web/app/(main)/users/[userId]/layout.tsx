@@ -12,5 +12,14 @@ export default function UserLayout({
   const pathname = usePathname()
   const isEngagementRoute = pathname.includes('/followers') || pathname.includes('/following')
 
-  return isEngagementRoute ? engagement : children
+  return (
+    <>
+      <div style={{ display: isEngagementRoute ? 'none' : 'block' }}>
+        {children}
+      </div>
+      <div style={{ display: isEngagementRoute ? 'block' : 'none' }}>
+        {engagement}
+      </div>
+    </>
+  )
 }
