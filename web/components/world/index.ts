@@ -1,5 +1,6 @@
 export { default as WorldIcon } from './WorldIcon'
 export { default as WorldCard } from './WorldCard'
+export { default as WorldContent } from './WorldContent'
 export { default as WorldForm } from './WorldForm'
 export { default as WorldHeader } from './WorldHeader'
 export { default as WorldList } from './WorldList'

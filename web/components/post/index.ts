@@ -1,4 +1,5 @@
 export { default as PostCard } from './PostCard'
+export { default as PostDetailContent } from './PostDetailContent'
 export { default as PostImages } from './PostImages'
 export { default as PostForm } from './PostForm'
 export { default as PostModal } from './PostModal'
