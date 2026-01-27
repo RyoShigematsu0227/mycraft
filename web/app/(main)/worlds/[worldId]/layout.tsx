@@ -5,10 +5,5 @@ export default function WorldLayout({
   children: React.ReactNode
   engagement: React.ReactNode
 }) {
-  return (
-    <>
-      {children}
-      {engagement}
-    </>
-  )
+  return engagement || children
 }
