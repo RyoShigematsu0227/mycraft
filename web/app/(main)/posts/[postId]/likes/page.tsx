@@ -43,8 +43,7 @@ export default function PostLikesPage() {
 
   const { data: likeUsers } = useSWR(
     postId ? ['postLikes', postId] : null,
-    () => fetchPostLikes(postId),
-    { revalidateOnFocus: false }
+    () => fetchPostLikes(postId)
   )
 
   // data === undefined: キャッシュなしの初回ローディング時のみスケルトン表示

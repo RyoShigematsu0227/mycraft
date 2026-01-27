@@ -36,8 +36,7 @@ export default function MembersPage() {
 
   const { data } = useSWR(
     worldId ? ['worldMembers', worldId] : null,
-    () => fetchWorldWithMembers(worldId),
-    { revalidateOnFocus: false }
+    () => fetchWorldWithMembers(worldId)
   )
 
   // data === undefined: キャッシュなしの初回ローディング時のみスケルトン表示

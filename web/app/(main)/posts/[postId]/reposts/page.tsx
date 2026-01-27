@@ -43,8 +43,7 @@ export default function PostRepostsPage() {
 
   const { data: repostUsers } = useSWR(
     postId ? ['postReposts', postId] : null,
-    () => fetchPostReposts(postId),
-    { revalidateOnFocus: false }
+    () => fetchPostReposts(postId)
   )
 
   // data === undefined: キャッシュなしの初回ローディング時のみスケルトン表示

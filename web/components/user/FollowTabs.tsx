@@ -59,8 +59,7 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
 
   const { data } = useSWR(
     userId ? ['follow-data', userId] : null,
-    () => fetchFollowData(userId),
-    { revalidateOnFocus: false }
+    () => fetchFollowData(userId)
   )
 
   const handleTabChange = (tab: 'followers' | 'following') => {
