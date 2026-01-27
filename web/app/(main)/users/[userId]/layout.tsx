@@ -1,3 +1,7 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+
 export default function UserLayout({
   children,
   engagement,
@@ -5,5 +9,8 @@ export default function UserLayout({
   children: React.ReactNode
   engagement: React.ReactNode
 }) {
-  return engagement || children
+  const pathname = usePathname()
+  const isEngagementRoute = pathname.includes('/followers') || pathname.includes('/following')
+
+  return isEngagementRoute ? engagement : children
 }

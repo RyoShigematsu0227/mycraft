@@ -1,3 +1,7 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+
 export default function PostLayout({
   children,
   engagement,
@@ -5,5 +9,8 @@ export default function PostLayout({
   children: React.ReactNode
   engagement: React.ReactNode
 }) {
-  return engagement || children
+  const pathname = usePathname()
+  const isEngagementRoute = pathname.includes('/likes') || pathname.includes('/reposts')
+
+  return isEngagementRoute ? engagement : children
 }
