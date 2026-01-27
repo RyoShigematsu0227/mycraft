@@ -1,50 +1,22 @@
-import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getPost, getPostStats, getPostMetadata } from '@/lib/data'
-import { PostDetailContent } from '@/components/post'
+import { createClient } from '@/lib/supabase/server'
+import { getPost, getPostStats } from '@/lib/data'
+import { PostCard } from '@/components/post'
+import { CommentSection } from '@/components/comment'
 import { BackButton } from '@/components/ui'
 
 interface PostPageProps {
   params: Promise<{ postId: string }>
 }
 
-export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-  const { postId } = await params
-  const post = await getPostMetadata(postId)
-
-  if (!post || !post.user) {
-    return { title: '投稿が見つかりません' }
-  }
-
-  // world_only投稿はOGP情報を出さない
-  if (post.visibility === 'world_only') {
-    return { title: '投稿が見つかりません' }
-  }
-
-  const user = post.user as { display_name: string; user_id: string }
-  const images = post.images as { image_url: string }[] | null
-  const description = post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content
-  const title = `${user.display_name}さんの投稿`
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: images && images.length > 0 ? [{ url: images[0].image_url }] : undefined,
-    },
-    twitter: {
-      card: images && images.length > 0 ? 'summary_large_image' : 'summary',
-      title,
-      description,
-      images: images && images.length > 0 ? [images[0].image_url] : undefined,
-    },
-  }
-}
-
 export default async function PostPage({ params }: PostPageProps) {
   const { postId } = await params
+  const supabase = await createClient()
+
+  // Get current user (動的 - キャッシュしない)
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser()
 
   // Get post with user and world (キャッシュ付き)
   const post = await getPost(postId)
@@ -53,8 +25,47 @@ export default async function PostPage({ params }: PostPageProps) {
     notFound()
   }
 
+  // world_only投稿はメンバーのみ閲覧可能
+  if (post.visibility === 'world_only') {
+    if (!authUser || !post.world_id) {
+      notFound()
+    }
+    const { data: membership } = await supabase
+      .from('world_members')
+      .select('id')
+      .eq('world_id', post.world_id)
+      .eq('user_id', authUser.id)
+      .single()
+
+    if (!membership) {
+      notFound()
+    }
+  }
+
   // Get counts (キャッシュ付き)
   const stats = await getPostStats(postId)
+
+  // Check if user has liked/reposted (動的 - キャッシュしない)
+  let isLiked = false
+  let isReposted = false
+  if (authUser) {
+    const [likeCheck, repostCheck] = await Promise.all([
+      supabase
+        .from('likes')
+        .select('id')
+        .eq('post_id', postId)
+        .eq('user_id', authUser.id)
+        .single(),
+      supabase
+        .from('reposts')
+        .select('id')
+        .eq('post_id', postId)
+        .eq('user_id', authUser.id)
+        .single(),
+    ])
+    isLiked = !!likeCheck.data
+    isReposted = !!repostCheck.data
+  }
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -66,8 +77,20 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
       </div>
 
-      {/* Post content (Client Component for auth-dependent data) */}
-      <PostDetailContent post={post} stats={stats} />
+      {/* Post */}
+      <PostCard
+        post={post}
+        currentUserId={authUser?.id}
+        likeCount={stats.likesCount}
+        repostCount={stats.repostsCount}
+        commentCount={stats.commentsCount}
+        isLiked={isLiked}
+        isReposted={isReposted}
+        interactive={false}
+      />
+
+      {/* Comments section */}
+      <CommentSection postId={postId} currentUserId={authUser?.id} />
     </div>
   )
 }
