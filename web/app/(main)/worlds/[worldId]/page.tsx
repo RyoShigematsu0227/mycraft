@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 import { getWorld, getWorldOwner, getWorldMemberCount, getWorldMetadata } from '@/lib/data'
-import { WorldContent } from '@/components/world'
+import { WorldHeader } from '@/components/world'
+import { InfiniteFeed } from '@/components/post'
 
 interface WorldPageProps {
   params: Promise<{ worldId: string }>
@@ -36,6 +38,12 @@ export async function generateMetadata({ params }: WorldPageProps): Promise<Meta
 
 export default async function WorldPage({ params }: WorldPageProps) {
   const { worldId } = await params
+  const supabase = await createClient()
+
+  // Get current user (動的 - キャッシュしない)
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser()
 
   // Get world (キャッシュ付き)
   const world = await getWorld(worldId)
@@ -50,12 +58,37 @@ export default async function WorldPage({ params }: WorldPageProps) {
   // Get member count (キャッシュ付き)
   const memberCount = await getWorldMemberCount(worldId)
 
+  // Check if current user is a member (動的 - キャッシュしない)
+  let isMember = false
+  if (authUser) {
+    const { data: membership } = await supabase
+      .from('world_members')
+      .select('id')
+      .eq('world_id', worldId)
+      .eq('user_id', authUser.id)
+      .single()
+    isMember = !!membership
+  }
+
+  const isOwner = authUser?.id === world.owner_id
+
   return (
     <div className="mx-auto max-w-2xl">
-      <WorldContent
+      <WorldHeader
         world={world}
         owner={owner}
         memberCount={memberCount}
+        isMember={isMember}
+        isOwner={isOwner}
+        currentUserId={authUser?.id}
+      />
+
+      {/* Posts Section */}
+      <InfiniteFeed
+        type="latest"
+        currentUserId={authUser?.id}
+        worldId={world.id}
+        showWorldInfo={false}
       />
     </div>
   )
