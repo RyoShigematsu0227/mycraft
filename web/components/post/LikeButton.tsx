@@ -34,7 +34,7 @@ export default function LikeButton({
   }
 
   return (
-    <div className="flex items-center">
+    <div className="pointer-events-auto flex items-center">
       <button
         onClick={handleClick}
         disabled={isLoading}

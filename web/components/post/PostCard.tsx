@@ -120,11 +120,11 @@ export default function PostCard({
         interactive ? 'cursor-pointer hover:bg-surface-hover' : ''
       }`}
     >
-      {/* Invisible link overlay for prefetching */}
+      {/* Link overlay for navigation and prefetching */}
       {interactive && (
         <Link
           href={`/posts/${post.id}`}
-          className="absolute inset-0 z-0"
+          className="absolute inset-0 z-10"
           aria-label={`${post.user.display_name}の投稿を見る`}
         />
       )}
@@ -142,8 +142,8 @@ export default function PostCard({
         </div>
       )}
 
-      {/* Content wrapper */}
-      <div className="relative z-10 px-4 py-4">
+      {/* Content wrapper - pointer-events-none to let clicks pass through to Link */}
+      <div className={`relative z-20 px-4 py-4 ${interactive ? 'pointer-events-none' : ''}`}>
         {/* Repost indicator */}
         {repostedBy && (
           <div className="mb-3 flex items-center gap-2 pl-14">
@@ -151,7 +151,7 @@ export default function PostCard({
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              <Link href={`/users/${repostedBy.userId}`} className="hover:underline">
+              <Link href={`/users/${repostedBy.userId}`} className="pointer-events-auto hover:underline">
                 {repostedBy.displayName}
               </Link>
               <span className="text-emerald-500/60">がリポスト</span>
@@ -165,7 +165,7 @@ export default function PostCard({
             {interactive && (
               <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-accent/40 to-accent-secondary/40 opacity-0 blur transition-opacity duration-300 group-hover:opacity-100" />
             )}
-            <Link href={`/users/${post.user.user_id}`} className="relative block">
+            <Link href={`/users/${post.user.user_id}`} className="pointer-events-auto relative block">
               <div className={`relative h-11 w-11 overflow-hidden rounded-full bg-gray-200 ring-2 ring-surface transition-all duration-300 dark:bg-gray-700 ${interactive ? 'group-hover:ring-accent/30' : ''}`}>
                 <Image
                   src={post.user.avatar_url || '/defaults/default-avatar.svg'}
@@ -184,7 +184,7 @@ export default function PostCard({
             <div className="flex items-center gap-2">
               <Link
                 href={`/users/${post.user.user_id}`}
-                className="group/name flex items-center gap-1.5"
+                className="pointer-events-auto group/name flex items-center gap-1.5"
               >
                 <span className="truncate font-bold text-gray-900 transition-colors group-hover/name:text-accent dark:text-gray-100">
                   {post.user.display_name}
@@ -204,7 +204,7 @@ export default function PostCard({
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <Link
                   href={`/worlds/${post.world.id}`}
-                  className="group/world inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-surface to-surface-hover px-3 py-1.5 ring-1 ring-border transition-all duration-300 hover:ring-accent/50 hover:shadow-md dark:from-surface dark:to-surface-hover"
+                  className="pointer-events-auto group/world inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-surface to-surface-hover px-3 py-1.5 ring-1 ring-border transition-all duration-300 hover:ring-accent/50 hover:shadow-md dark:from-surface dark:to-surface-hover"
                 >
                   <div className="relative h-5 w-5 overflow-hidden rounded-md bg-gray-200 ring-1 ring-white/50 dark:bg-gray-700">
                     <Image
@@ -251,7 +251,7 @@ export default function PostCard({
                 {/* Comment button */}
                 <Link
                   href={`/posts/${post.id}`}
-                  className="group/action flex items-center gap-1.5 rounded-full px-3 py-2 text-gray-500 transition-all duration-200 hover:bg-sky-500/10 hover:text-sky-500 dark:text-gray-400 dark:hover:text-sky-400"
+                  className="pointer-events-auto group/action flex items-center gap-1.5 rounded-full px-3 py-2 text-gray-500 transition-all duration-200 hover:bg-sky-500/10 hover:text-sky-500 dark:text-gray-400 dark:hover:text-sky-400"
                 >
                   <div className="relative">
                     <svg className="h-5 w-5 transition-transform duration-200 group-hover/action:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -287,8 +287,7 @@ export default function PostCard({
               <div className="flex items-center">
                 {/* Share button */}
                 <button
-                  onClick={async (e) => {
-                    e.stopPropagation()
+                  onClick={async () => {
                     const url = `${window.location.origin}/posts/${post.id}`
                     if (navigator.share) {
                       try {
@@ -301,7 +300,7 @@ export default function PostCard({
                       alert('リンクをコピーしました')
                     }
                   }}
-                  className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-accent/10 hover:text-accent"
+                  className="pointer-events-auto cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-accent/10 hover:text-accent"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15" />
@@ -310,12 +309,9 @@ export default function PostCard({
 
                 {/* More menu (for owner) */}
                 {isOwner && (
-                  <div ref={menuRef} className="relative">
+                  <div ref={menuRef} className="pointer-events-auto relative">
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setShowMenu(!showMenu)
-                      }}
+                      onClick={() => setShowMenu(!showMenu)}
                       className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-surface-hover hover:text-foreground"
                     >
                       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -326,8 +322,7 @@ export default function PostCard({
                     {showMenu && (
                       <div className="absolute bottom-full right-0 z-20 mb-1 w-36 rounded-xl bg-surface py-1 shadow-lg ring-1 ring-border">
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation()
+                          onClick={() => {
                             setShowMenu(false)
                             setShowDeleteConfirm(true)
                           }}
