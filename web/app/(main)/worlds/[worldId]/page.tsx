@@ -1,11 +1,39 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { getWorld, getWorldOwner, getWorldMemberCount } from '@/lib/data'
+import { getWorld, getWorldOwner, getWorldMemberCount, getWorldMetadata } from '@/lib/data'
 import { WorldHeader } from '@/components/world'
 import { InfiniteFeed } from '@/components/post'
 
 interface WorldPageProps {
   params: Promise<{ worldId: string }>
+}
+
+export async function generateMetadata({ params }: WorldPageProps): Promise<Metadata> {
+  const { worldId } = await params
+  const world = await getWorldMetadata(worldId)
+
+  if (!world) {
+    return { title: 'ワールドが見つかりません' }
+  }
+
+  const description = world.description || `${world.name} - Minecraftワールド`
+
+  return {
+    title: world.name,
+    description,
+    openGraph: {
+      title: world.name,
+      description,
+      images: world.icon_url ? [{ url: world.icon_url }] : undefined,
+    },
+    twitter: {
+      card: 'summary',
+      title: world.name,
+      description,
+      images: world.icon_url ? [world.icon_url] : undefined,
+    },
+  }
 }
 
 export default async function WorldPage({ params }: WorldPageProps) {
