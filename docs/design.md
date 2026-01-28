@@ -280,28 +280,33 @@ components/
 │   ├── Header.tsx
 │   ├── Sidebar.tsx
 │   ├── BottomNav.tsx (mobile)
-│   └── Layout.tsx
+│   └── MainLayout.tsx
 ├── auth/
 │   ├── LoginForm.tsx
 │   ├── SignupForm.tsx
 │   └── AuthGuard.tsx
+├── settings/
+│   └── ProfileForm.tsx
 ├── user/
 │   ├── UserCard.tsx
 │   ├── UserAvatar.tsx
-│   ├── ProfileForm.tsx
-│   └── FollowButton.tsx
+│   ├── FollowButton.tsx
+│   └── FollowTabs.tsx (フォロー/フォロワー切り替え)
 ├── world/
 │   ├── WorldCard.tsx
 │   ├── WorldIcon.tsx
 │   ├── WorldForm.tsx
+│   ├── WorldModal.tsx (ワールド作成モーダル)
 │   ├── JoinButton.tsx
 │   └── MemberList.tsx
 ├── post/
 │   ├── PostCard.tsx
 │   ├── PostForm.tsx
+│   ├── PostModal.tsx (投稿作成モーダル)
 │   ├── PostImages.tsx
 │   ├── LikeButton.tsx
 │   ├── RepostButton.tsx
+│   ├── EngagementTabs.tsx (いいね/リポスト切り替え)
 │   └── CommentSection.tsx
 ├── comment/
 │   ├── CommentCard.tsx
@@ -320,9 +325,15 @@ components/
 └── ui/
     ├── Button.tsx
     ├── Input.tsx
+    ├── Textarea.tsx
     ├── Modal.tsx
+    ├── ConfirmDialog.tsx (確認ダイアログ、Portal使用)
     ├── Avatar.tsx
-    └── ImageUpload.tsx
+    ├── ImageUpload.tsx
+    ├── ImageCropper.tsx (画像トリミング)
+    ├── Linkify.tsx (URL自動リンク化)
+    ├── Loading.tsx
+    └── EmptyState.tsx
 ```
 
 ---
@@ -388,3 +399,51 @@ ORDER BY score DESC, created_at DESC
 | notifications | user_id, is_read | 未読通知取得 |
 | world_members | world_id | ワールドメンバー一覧 |
 | world_members | user_id | 参加ワールド一覧 |
+
+---
+
+## 8. 状態管理設計
+
+### 8.1 Zustand Stores
+
+グローバル状態管理にZustandを使用。
+
+| Store | 用途 |
+|-------|------|
+| useAuthStore | 認証状態（ユーザー情報、ログイン状態） |
+| usePostModalStore | 投稿作成モーダルの開閉状態 |
+| useWorldModalStore | ワールド作成モーダルの開閉状態 |
+| usePostStatsStore | 投稿のいいね・リポスト・コメント数の楽観的更新 |
+| useFeedRefreshStore | フィードのリフレッシュトリガー |
+
+### 8.2 SWRキャッシュキー
+
+サーバー状態管理にSWRを使用。キャッシュキーは配列形式で管理。
+
+| キープレフィックス | 用途 |
+|-------------------|------|
+| `['feed', type, ...]` | フィードデータ |
+| `['profile', userId]` | ユーザープロフィール |
+| `['world', worldId]` | ワールド詳細 |
+| `['userWorlds', userId]` | ユーザーの参加ワールド一覧 |
+| `['worldMembers', worldId]` | ワールドメンバー一覧 |
+| `['comments', postId]` | 投稿のコメント一覧 |
+| `['postEngagement', postId]` | 投稿のエンゲージメント状態 |
+| `['postLikes', postId]` | 投稿のいいねユーザー一覧 |
+| `['postReposts', postId]` | 投稿のリポストユーザー一覧 |
+| `['follow-data', userId]` | フォロー/フォロワー情報 |
+| `['notifications']` | 通知一覧 |
+
+### 8.3 カスタムフック
+
+| フック | 用途 |
+|--------|------|
+| useAuth | 認証状態の取得・操作 |
+| useFeed | フィードの無限スクロール取得 |
+| useLike | 投稿へのいいね操作（楽観的更新） |
+| useRepost | 投稿のリポスト操作（楽観的更新） |
+| useFollow | ユーザーのフォロー操作（楽観的更新） |
+| useCommentLike | コメントへのいいね操作（楽観的更新） |
+| useWorldMembership | ワールド参加・脱退操作 |
+| useNotifications | 通知の取得・既読処理 |
+| useSearch | 検索機能 |
