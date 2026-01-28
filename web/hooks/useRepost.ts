@@ -96,8 +96,14 @@ export function useRepost({
         if (error) throw error
       }
 
-      // Invalidate the post reposts list cache
+      // Invalidate caches
       mutate(['postReposts', postId])
+      // EngagementTabs用のキャッシュも無効化
+      mutate(
+        (key) => Array.isArray(key) && key[0] === 'postEngagement' && key[1] === postId,
+        undefined,
+        { revalidate: true }
+      )
     } catch (error) {
       // Revert optimistic update on error
       console.error('Repost toggle error:', error)

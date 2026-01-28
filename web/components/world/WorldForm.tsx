@@ -74,12 +74,14 @@ export default function WorldForm({ world, userId, onSuccess }: WorldFormProps) 
           iconUrl: newIconUrl || undefined,
         })
 
-        // サイドバーのワールド一覧を更新
+        // キャッシュを更新
         mutate(
           (key) => Array.isArray(key) && key[0] === 'userWorlds',
           undefined,
           { revalidate: true }
         )
+        // ワールド詳細・編集ページのキャッシュを更新
+        mutate(['world', world.id])
 
         if (onSuccess) {
           onSuccess(world.id)
