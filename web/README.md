@@ -14,7 +14,7 @@ MyCraftのWebフロントエンドアプリケーション。
 
 ### 前提条件
 
-- Node.js 18+
+- Node.js 18.17+
 - npm または yarn
 - Supabaseローカル環境（Docker）
 
