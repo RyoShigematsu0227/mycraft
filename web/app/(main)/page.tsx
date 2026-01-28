@@ -53,7 +53,7 @@ export default function Home() {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3.5 backdrop-blur-md dark:border-border dark:bg-background/80">
+      <div className="sticky top-0 z-40 border-b border-border bg-background/80 px-4 py-3.5 backdrop-blur-md dark:border-border dark:bg-background/80">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">ホーム</h1>
           <NewPostButton />

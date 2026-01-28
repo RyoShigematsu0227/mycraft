@@ -10,9 +10,10 @@ interface MemberListProps {
   members: User[]
   ownerId: string
   currentUserId?: string
+  followingIds?: Set<string>
 }
 
-export default function MemberList({ members, ownerId, currentUserId }: MemberListProps) {
+export default function MemberList({ members, ownerId, currentUserId, followingIds = new Set() }: MemberListProps) {
   if (members.length === 0) {
     return (
       <EmptyState
@@ -42,6 +43,7 @@ export default function MemberList({ members, ownerId, currentUserId }: MemberLi
                 currentUserId={currentUserId}
                 showBio={false}
                 showFollowButton={true}
+                isFollowing={followingIds.has(member.id)}
               />
             </div>
             {member.id === ownerId && (

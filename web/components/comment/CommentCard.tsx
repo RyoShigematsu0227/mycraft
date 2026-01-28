@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { UserAvatar } from '@/components/user'
 import { ConfirmDialog } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
+import { usePostStatsStore } from '@/lib/stores'
 import CommentLikeButton from './CommentLikeButton'
 import CommentForm from './CommentForm'
 import type { Database } from '@/types/database'
@@ -70,6 +71,8 @@ export default function CommentCard({
     try {
       const supabase = createClient()
       await supabase.from('comments').delete().eq('id', comment.id)
+      // Update comment count in store
+      usePostStatsStore.getState().decrementCommentCount(postId)
       setShowDeleteConfirm(false)
       onDeleteSuccess?.()
     } catch (error) {

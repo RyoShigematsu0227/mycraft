@@ -15,10 +15,11 @@ interface FollowTabsProps {
   initialTab: 'followers' | 'following'
 }
 
-async function fetchFollowData(userHandle: string): Promise<{
+async function fetchFollowData(userHandle: string, currentUserId?: string): Promise<{
   user: User | null
   followers: User[]
   following: User[]
+  currentUserFollowingIds: Set<string>
 }> {
   const supabase = createClient()
 
@@ -30,7 +31,7 @@ async function fetchFollowData(userHandle: string): Promise<{
     .single()
 
   if (!user) {
-    return { user: null, followers: [], following: [] }
+    return { user: null, followers: [], following: [], currentUserFollowingIds: new Set() }
   }
 
   // Get followers and following in parallel
@@ -50,7 +51,21 @@ async function fetchFollowData(userHandle: string): Promise<{
   const followers = (followersResult.data?.map((f) => f.follower).filter(Boolean) || []) as User[]
   const following = (followingResult.data?.map((f) => f.following).filter(Boolean) || []) as User[]
 
-  return { user, followers, following }
+  // Get which users the current user is following
+  let currentUserFollowingIds = new Set<string>()
+  if (currentUserId) {
+    const allUserIds = [...followers, ...following].map((u) => u.id)
+    if (allUserIds.length > 0) {
+      const { data: followingData } = await supabase
+        .from('follows')
+        .select('following_id')
+        .eq('follower_id', currentUserId)
+        .in('following_id', allUserIds)
+      currentUserFollowingIds = new Set(followingData?.map((f) => f.following_id) || [])
+    }
+  }
+
+  return { user, followers, following, currentUserFollowingIds }
 }
 
 export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
@@ -58,8 +73,8 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
   const { user: authUser } = useAuth()
 
   const { data, isLoading } = useSWR(
-    userId ? ['follow-data', userId] : null,
-    () => fetchFollowData(userId)
+    userId ? ['follow-data', userId, authUser?.id] : null,
+    () => fetchFollowData(userId, authUser?.id)
   )
 
   const handleTabChange = (tab: 'followers' | 'following') => {
@@ -99,6 +114,7 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
   const user = data?.user
   const followers = data?.followers ?? []
   const following = data?.following ?? []
+  const currentUserFollowingIds = data?.currentUserFollowingIds ?? new Set<string>()
 
   if (!user) {
     return (
@@ -172,6 +188,7 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
                 currentUserId={authUser?.id}
                 showBio={true}
                 showFollowButton={true}
+                isFollowing={currentUserFollowingIds.has(listUser.id)}
               />
             </div>
           ))

@@ -35,12 +35,25 @@ export function useRepost({
   const toggleRepostStore = usePostStatsStore((state) => state.toggleRepost)
   const rollbackRepost = usePostStatsStore((state) => state.rollbackRepost)
 
-  // Initialize store with repost-related values (merges with existing)
+  // Initialize/update store with server values
+  // Preserve local count only if repostDirty flag is set (user made optimistic update)
   useEffect(() => {
-    initPost(postId, {
-      repostCount: initialCount,
-      isReposted: initialReposted,
-    })
+    const existing = usePostStatsStore.getState().stats[postId]
+    if (existing) {
+      // Update isReposted from server (always sync this)
+      if (initialReposted !== existing.isReposted && !existing.repostDirty) {
+        usePostStatsStore.getState().setIsReposted(postId, initialReposted)
+      }
+      // Update count only if not dirty (no local optimistic update to preserve)
+      if (!existing.repostDirty && initialCount !== existing.repostCount) {
+        usePostStatsStore.getState().setRepostCount(postId, initialCount)
+      }
+    } else {
+      initPost(postId, {
+        repostCount: initialCount,
+        isReposted: initialReposted,
+      })
+    }
   }, [postId, initialCount, initialReposted, initPost])
 
   const isReposted = stats?.isReposted ?? initialReposted

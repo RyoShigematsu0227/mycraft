@@ -5,6 +5,9 @@ interface UserStats {
   followingCount: number
   postsCount: number
   isFollowing: boolean
+  // Dirty flags: true if user has modified (preserve optimistic update)
+  followersDirty?: boolean
+  followingDirty?: boolean
 }
 
 interface UserStatsState {
@@ -120,6 +123,7 @@ export const useUserStatsStore = create<UserStatsState>((set, get) => ({
           followersCount: wasFollowing
             ? Math.max(0, prevFollowersCount - 1)
             : prevFollowersCount + 1,
+          followersDirty: true,
         },
         // Update current user's following count
         [currentUserId]: {
@@ -127,6 +131,7 @@ export const useUserStatsStore = create<UserStatsState>((set, get) => ({
           followingCount: wasFollowing
             ? Math.max(0, prevFollowingCount - 1)
             : prevFollowingCount + 1,
+          followingDirty: true,
         },
       },
     }))

@@ -24,13 +24,30 @@ export default function UserProfileStats({
   const stats = useUserStatsStore((state) => state.stats[userId])
   const initUser = useUserStatsStore((state) => state.initUser)
 
+  // Initialize/update store with server values, respecting dirty flags
   useEffect(() => {
-    initUser(userId, {
-      followersCount: initialStats.followersCount,
-      followingCount: initialStats.followingCount,
-      postsCount: initialStats.postsCount,
-      isFollowing,
-    })
+    const existing = useUserStatsStore.getState().stats[userId]
+    if (!existing) {
+      initUser(userId, {
+        followersCount: initialStats.followersCount,
+        followingCount: initialStats.followingCount,
+        postsCount: initialStats.postsCount,
+        isFollowing,
+      })
+    } else {
+      // Only update values that aren't dirty (haven't been modified by user)
+      const updates: Partial<typeof existing> = { postsCount: initialStats.postsCount }
+      if (!existing.followersDirty && existing.followersCount !== initialStats.followersCount) {
+        updates.followersCount = initialStats.followersCount
+      }
+      if (!existing.followingDirty && existing.followingCount !== initialStats.followingCount) {
+        updates.followingCount = initialStats.followingCount
+      }
+      if (!existing.followersDirty && existing.isFollowing !== isFollowing) {
+        updates.isFollowing = isFollowing
+      }
+      initUser(userId, { ...existing, ...updates })
+    }
   }, [userId, initialStats, isFollowing, initUser])
 
   const followersCount = stats?.followersCount ?? initialStats.followersCount
