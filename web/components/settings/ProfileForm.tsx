@@ -126,6 +126,13 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       // Invalidate profile cache
       mutate(['profile', user.id])
 
+      // Invalidate feed caches to update avatar in posts
+      mutate(
+        (key) => Array.isArray(key) && key[0] === 'feed',
+        undefined,
+        { revalidate: true }
+      )
+
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {

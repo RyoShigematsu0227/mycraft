@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { WorldIcon, JoinButton, WorldStats } from '@/components/world'
-import { Button } from '@/components/ui'
+import { Button, Linkify } from '@/components/ui'
 import type { Database } from '@/types/database'
 
 type World = Database['public']['Tables']['worlds']['Row']
@@ -146,7 +146,7 @@ export default function WorldHeader({
           <div className="mt-4 rounded-lg bg-surface-hover p-4 ring-1 ring-border">
             <h3 className="text-sm font-medium text-foreground">参加方法</h3>
             <p className="mt-1 text-sm text-muted whitespace-pre-wrap break-words">
-              {world.how_to_join}
+              <Linkify>{world.how_to_join}</Linkify>
             </p>
           </div>
         )}

@@ -125,6 +125,12 @@ export function useFollow({
         undefined,
         { revalidate: true }
       )
+      // FollowTabs用のキャッシュも無効化
+      mutate(
+        (key) => Array.isArray(key) && key[0] === 'follow-data',
+        undefined,
+        { revalidate: true }
+      )
     } catch (error) {
       // Revert optimistic update on error
       console.error('Follow toggle error:', error)

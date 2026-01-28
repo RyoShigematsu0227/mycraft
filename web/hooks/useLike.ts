@@ -96,8 +96,14 @@ export function useLike({
         if (error) throw error
       }
 
-      // Invalidate the post likes list cache
+      // Invalidate caches
       mutate(['postLikes', postId])
+      // EngagementTabs用のキャッシュも無効化
+      mutate(
+        (key) => Array.isArray(key) && key[0] === 'postEngagement' && key[1] === postId,
+        undefined,
+        { revalidate: true }
+      )
     } catch (error: unknown) {
       // Revert optimistic update on error
       const err = error as { message?: string; code?: string; details?: string }
