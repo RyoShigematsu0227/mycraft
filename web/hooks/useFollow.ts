@@ -34,9 +34,18 @@ export function useFollow({
   const toggleFollowStore = useUserStatsStore((state) => state.toggleFollow)
   const rollbackFollow = useUserStatsStore((state) => state.rollbackFollow)
 
-  // Initialize store with initial values if not already set
+  // Initialize/update store with server values
+  // Preserve local state only if followersDirty flag is set (user made optimistic update)
   useEffect(() => {
-    if (!targetStats && initialFollowing !== undefined) {
+    const existing = useUserStatsStore.getState().stats[targetUserId]
+    if (existing) {
+      // Update isFollowing from server only if not dirty (no local optimistic update to preserve)
+      if (initialFollowing !== undefined && !existing.followersDirty) {
+        if (initialFollowing !== existing.isFollowing) {
+          setIsFollowing(targetUserId, initialFollowing)
+        }
+      }
+    } else if (initialFollowing !== undefined) {
       initUser(targetUserId, {
         followersCount: 0,
         followingCount: 0,
@@ -44,7 +53,7 @@ export function useFollow({
         isFollowing: initialFollowing,
       })
     }
-  }, [targetUserId, initialFollowing, targetStats, initUser])
+  }, [targetUserId, initialFollowing, initUser, setIsFollowing])
 
   // Check initial follow status if not provided
   useEffect(() => {
@@ -62,25 +71,26 @@ export function useFollow({
         .eq('following_id', targetUserId)
         .single()
 
-      const isFollowing = !!data
+      const isFollowingFromServer = !!data
+      const existing = useUserStatsStore.getState().stats[targetUserId]
 
-      // Initialize or update store
-      if (!targetStats) {
+      // Initialize or update store only if not dirty
+      if (!existing) {
         initUser(targetUserId, {
           followersCount: 0,
           followingCount: 0,
           postsCount: 0,
-          isFollowing,
+          isFollowing: isFollowingFromServer,
         })
-      } else {
-        setIsFollowing(targetUserId, isFollowing)
+      } else if (!existing.followersDirty) {
+        setIsFollowing(targetUserId, isFollowingFromServer)
       }
 
       setIsLoading(false)
     }
 
     checkFollowStatus()
-  }, [currentUserId, targetUserId, initialFollowing, targetStats, initUser, setIsFollowing])
+  }, [currentUserId, targetUserId, initialFollowing, initUser, setIsFollowing])
 
   const isFollowing = targetStats?.isFollowing ?? initialFollowing ?? false
 
@@ -119,18 +129,14 @@ export function useFollow({
         if (error) throw error
       }
 
-      // Invalidate following feed cache using SWR mutate
+      // フォロー中フィードはすぐに反映が必要なのでrevalidate
       mutate(
         (key) => Array.isArray(key) && key[0] === 'feed' && key[1] === 'following',
         undefined,
         { revalidate: true }
       )
-      // FollowTabs用のキャッシュも無効化
-      mutate(
-        (key) => Array.isArray(key) && key[0] === 'follow-data',
-        undefined,
-        { revalidate: true }
-      )
+      // FollowTabs用のキャッシュは無効化しない
+      // UIはZustand storeで即座に更新済み、画面遷移時にSWRが自然に再取得する
     } catch (error) {
       // Revert optimistic update on error
       console.error('Follow toggle error:', error)
