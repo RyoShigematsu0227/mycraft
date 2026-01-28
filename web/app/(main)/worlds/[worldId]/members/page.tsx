@@ -11,7 +11,7 @@ import type { Database } from '@/types/database'
 type World = Database['public']['Tables']['worlds']['Row']
 type User = Database['public']['Tables']['users']['Row']
 
-async function fetchWorldWithMembers(worldId: string) {
+async function fetchWorldWithMembers(worldId: string, currentUserId?: string) {
   const supabase = createClient()
 
   const [worldResult, membersResult] = await Promise.all([
@@ -26,7 +26,19 @@ async function fetchWorldWithMembers(worldId: string) {
   const world = worldResult.data as World | null
   const members = (membersResult.data?.map((m) => m.user).filter(Boolean) || []) as User[]
 
-  return { world, members }
+  // Get which members the current user is following
+  let followingIds = new Set<string>()
+  if (currentUserId && members.length > 0) {
+    const memberIds = members.map((m) => m.id)
+    const { data: followingData } = await supabase
+      .from('follows')
+      .select('following_id')
+      .eq('follower_id', currentUserId)
+      .in('following_id', memberIds)
+    followingIds = new Set(followingData?.map((f) => f.following_id) || [])
+  }
+
+  return { world, members, followingIds }
 }
 
 export default function MembersPage() {
@@ -35,8 +47,8 @@ export default function MembersPage() {
   const { user } = useAuth()
 
   const { data, isLoading } = useSWR(
-    worldId ? ['worldMembers', worldId] : null,
-    () => fetchWorldWithMembers(worldId)
+    worldId ? ['worldMembers', worldId, user?.id] : null,
+    () => fetchWorldWithMembers(worldId, user?.id)
   )
 
   // isLoading: キャッシュなしの初回ローディング時のみtrue
@@ -69,6 +81,7 @@ export default function MembersPage() {
 
   const world = data?.world
   const members = data?.members ?? []
+  const followingIds = data?.followingIds ?? new Set<string>()
 
   if (!world) {
     return (
@@ -96,6 +109,7 @@ export default function MembersPage() {
         members={members}
         ownerId={world.owner_id}
         currentUserId={user?.id}
+        followingIds={followingIds}
       />
     </div>
   )

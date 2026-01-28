@@ -75,15 +75,16 @@ export default function PostCard({
 
   const isOwner = currentUserId === post.user_id
 
+  // Initialize commentCount in store (like/repost are handled by their respective hooks)
   useEffect(() => {
-    initPost(post.id, {
-      likeCount,
-      repostCount,
-      commentCount,
-      isLiked,
-      isReposted,
-    })
-  }, [post.id, likeCount, repostCount, commentCount, isLiked, isReposted, initPost])
+    const existing = usePostStatsStore.getState().stats[post.id]
+    if (!existing) {
+      initPost(post.id, { commentCount })
+    } else if (!existing.commentDirty && existing.commentCount !== commentCount) {
+      // Only update if not dirty (no local optimistic update to preserve)
+      initPost(post.id, { commentCount })
+    }
+  }, [post.id, commentCount, initPost])
 
   // Close menu when clicking outside
   useEffect(() => {

@@ -6,6 +6,10 @@ interface PostStats {
   commentCount: number
   isLiked: boolean
   isReposted: boolean
+  // Dirty flags: true if user has modified (preserve optimistic update)
+  likeDirty?: boolean
+  repostDirty?: boolean
+  commentDirty?: boolean
 }
 
 interface PostStatsState {
@@ -99,6 +103,7 @@ export const usePostStatsStore = create<PostStatsState>((set, get) => ({
         [postId]: {
           ...(state.stats[postId] || defaultStats),
           commentCount: (state.stats[postId]?.commentCount || 0) + 1,
+          commentDirty: true,
         },
       },
     })),
@@ -110,6 +115,7 @@ export const usePostStatsStore = create<PostStatsState>((set, get) => ({
         [postId]: {
           ...(state.stats[postId] || defaultStats),
           commentCount: Math.max(0, (state.stats[postId]?.commentCount || 0) - 1),
+          commentDirty: true,
         },
       },
     })),
@@ -148,6 +154,7 @@ export const usePostStatsStore = create<PostStatsState>((set, get) => ({
           ...current,
           isLiked: !wasLiked,
           likeCount: wasLiked ? Math.max(0, prevCount - 1) : prevCount + 1,
+          likeDirty: true, // Mark as modified by user
         },
       },
     }))
@@ -167,6 +174,7 @@ export const usePostStatsStore = create<PostStatsState>((set, get) => ({
           ...current,
           isReposted: !wasReposted,
           repostCount: wasReposted ? Math.max(0, prevCount - 1) : prevCount + 1,
+          repostDirty: true, // Mark as modified by user
         },
       },
     }))

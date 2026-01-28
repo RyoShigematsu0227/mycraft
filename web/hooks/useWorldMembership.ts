@@ -110,6 +110,13 @@ export function useWorldMembership({
         undefined,
         { revalidate: true }
       )
+
+      // メンバー一覧ページのキャッシュを更新
+      mutate(
+        (key) => Array.isArray(key) && key[0] === 'worldMembers' && key[1] === worldId,
+        undefined,
+        { revalidate: true }
+      )
     } catch (error) {
       // Revert optimistic update on error
       const err = error as { message?: string; code?: string }

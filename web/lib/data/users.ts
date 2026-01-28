@@ -1,4 +1,5 @@
 import { createCacheClient } from '@/lib/supabase/cache'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * ユーザープロフィールを取得
@@ -29,10 +30,10 @@ export async function getUserProfileById(id: string) {
 }
 
 /**
- * ユーザー統計情報を取得
+ * ユーザー統計情報を取得（動的 - キャッシュしない）
  */
 export async function getUserStats(userId: string) {
-  const supabase = createCacheClient()
+  const supabase = await createClient()
 
   const [followersResult, followingResult, postsResult] = await Promise.all([
     supabase
