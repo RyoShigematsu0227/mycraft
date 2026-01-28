@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { Button } from '@/components/ui'
 
 interface ConfirmDialogProps {
@@ -66,7 +67,8 @@ export default function ConfirmDialog({
 
   if (!isOpen) return null
 
-  return (
+  // Use portal to render at document body level to avoid z-index stacking context issues
+  return createPortal(
     <div className="fixed inset-0 z-[100] overflow-y-auto">
       {/* Backdrop */}
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
@@ -128,6 +130,7 @@ export default function ConfirmDialog({
         </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
