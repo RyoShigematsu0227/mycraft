@@ -54,6 +54,11 @@ export function useRepost({
 
     if (isLoading) return
 
+    // Ensure store is initialized before toggle
+    if (!usePostStatsStore.getState().stats[postId]) {
+      initPost(postId, { repostCount: initialCount, isReposted: initialReposted })
+    }
+
     // Optimistic update via store
     const { wasReposted, prevCount } = toggleRepostStore(postId)
     setIsLoading(true)
@@ -87,7 +92,7 @@ export function useRepost({
     } finally {
       setIsLoading(false)
     }
-  }, [postId, currentUserId, isLoading, router, toggleRepostStore, rollbackRepost, mutate])
+  }, [postId, currentUserId, isLoading, router, initPost, initialCount, initialReposted, toggleRepostStore, rollbackRepost, mutate])
 
   return { isReposted, repostCount, isLoading, toggleRepost }
 }

@@ -54,6 +54,11 @@ export function useLike({
 
     if (isLoading) return
 
+    // Ensure store is initialized before toggle
+    if (!usePostStatsStore.getState().stats[postId]) {
+      initPost(postId, { likeCount: initialCount, isLiked: initialLiked })
+    }
+
     // Optimistic update via store
     const { wasLiked, prevCount } = toggleLikeStore(postId)
     setIsLoading(true)
@@ -88,7 +93,7 @@ export function useLike({
     } finally {
       setIsLoading(false)
     }
-  }, [postId, currentUserId, isLoading, router, toggleLikeStore, rollbackLike, mutate])
+  }, [postId, currentUserId, isLoading, router, initPost, initialCount, initialLiked, toggleLikeStore, rollbackLike, mutate])
 
   return { isLiked, likeCount, isLoading, toggleLike }
 }
