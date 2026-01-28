@@ -5,14 +5,14 @@ MinecraftワールドのSNSアプリ。ユーザーはワールドの住人に�
 ## Tech Stack
 
 - **Frontend**: Next.js (App Router), TypeScript, Tailwind CSS
-- **State**: Zustand (グローバル), Tanstack Query (サーバー)
+- **State**: Zustand (グローバル), SWR (サーバー)
 - **Backend**: Supabase (Auth, Database, Storage, Realtime)
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 18.17+
 - npm or yarn
 - Supabase CLI
 
