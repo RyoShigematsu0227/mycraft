@@ -17,7 +17,7 @@ interface PostFormProps {
   userId: string
   worlds: World[]
   defaultWorldId?: string
-  onSuccess?: () => void
+  onSuccess?: (worldId: string) => void
 }
 
 type Visibility = 'public' | 'world_only'
@@ -157,7 +157,7 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
       triggerRefresh()
 
       if (onSuccess) {
-        onSuccess()
+        onSuccess(selectedWorldId)
       } else {
         router.push(`/posts/${post.id}`)
       }

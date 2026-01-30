@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { usePostModalStore } from '@/lib/stores'
@@ -23,15 +23,21 @@ async function fetchUserWorlds(userId: string): Promise<World[]> {
 
 export default function PostModal() {
   const router = useRouter()
+  const pathname = usePathname()
   const { user: authUser } = useAuth()
   const { isOpen, defaultWorldId, closeModal } = usePostModalStore()
   const modalRef = useRef<HTMLDivElement>(null)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [targetWorldId, setTargetWorldId] = useState<string | null>(null)
 
   // Fetch user's worlds with SWR
   const { data: worlds = [], isLoading } = useSWR(
     authUser?.id && isOpen ? ['userWorlds', authUser.id] : null,
     () => fetchUserWorlds(authUser!.id)
   )
+
+  // Get target world name for success message
+  const targetWorld = worlds.find((w) => w.id === targetWorldId)
 
   // Close on escape key
   useEffect(() => {
@@ -69,10 +75,36 @@ export default function PostModal() {
     }
   }, [isOpen])
 
+  // Reset success state when modal is closed
+  useEffect(() => {
+    if (!isOpen) {
+      setShowSuccess(false)
+      setTargetWorldId(null)
+    }
+  }, [isOpen])
+
   // Handle successful post
-  const handleSuccess = () => {
-    closeModal()
-    // PostFormでtriggerRefresh()が呼ばれるのでここでは不要
+  const handleSuccess = (worldId: string) => {
+    // Check if already on this world's page
+    const isOnWorldPage = pathname?.startsWith(`/worlds/${worldId}`)
+
+    if (isOnWorldPage) {
+      // Already on the world page, just close
+      closeModal()
+      return
+    }
+
+    // Show success animation before navigating
+    setTargetWorldId(worldId)
+    setShowSuccess(true)
+
+    // Navigate after brief delay
+    setTimeout(() => {
+      closeModal()
+      setShowSuccess(false)
+      setTargetWorldId(null)
+      router.push(`/worlds/${worldId}`)
+    }, 800)
   }
 
   if (!isOpen || !authUser) return null
@@ -91,20 +123,44 @@ export default function PostModal() {
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
-            <h2 className="text-lg font-bold text-foreground">新しい投稿</h2>
-            <button
-              onClick={closeModal}
-              className="cursor-pointer rounded-full p-2 text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
-            >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            <h2 className="text-lg font-bold text-foreground">
+              {showSuccess ? '完了' : '新しい投稿'}
+            </h2>
+            {!showSuccess && (
+              <button
+                onClick={closeModal}
+                className="cursor-pointer rounded-full p-2 text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
 
           {/* Content */}
           <div className="p-4">
-            {isLoading ? (
+            {showSuccess ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+                  <svg
+                    className="h-8 w-8 animate-bounce text-green-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-lg font-bold text-foreground">投稿しました！</p>
+                {targetWorld && (
+                  <p className="mt-1 text-sm text-muted">
+                    {targetWorld.name} に移動中...
+                  </p>
+                )}
+              </div>
+            ) : isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
               </div>
