@@ -2,11 +2,9 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { useSWRConfig } from 'swr'
 import { createClient } from '@/lib/supabase/client'
 
 interface UseCommentLikeProps {
-  postId: string
   commentId: string
   currentUserId?: string
   initialLiked?: boolean
@@ -14,14 +12,12 @@ interface UseCommentLikeProps {
 }
 
 export default function useCommentLike({
-  postId,
   commentId,
   currentUserId,
   initialLiked = false,
   initialCount = 0,
 }: UseCommentLikeProps) {
   const router = useRouter()
-  const { mutate } = useSWRConfig()
   const supabase = createClient()
   const [isLiked, setIsLiked] = useState(initialLiked)
   const [likeCount, setLikeCount] = useState(initialCount)
@@ -60,12 +56,8 @@ export default function useCommentLike({
         if (error) throw error
       }
 
-      // コメントキャッシュを無効化
-      mutate(
-        (key) => Array.isArray(key) && key[0] === 'comments' && key[1] === postId,
-        undefined,
-        { revalidate: true }
-      )
+      // コメントキャッシュは無効化しない
+      // UIはローカルstateで即座に更新済み、画面遷移時にSWRが自然に再取得する
     } catch {
       // Revert optimistic update
       setIsLiked(wasLiked)
@@ -73,7 +65,7 @@ export default function useCommentLike({
     } finally {
       setLoading(false)
     }
-  }, [commentId, postId, currentUserId, isLiked, loading, router, supabase, mutate])
+  }, [commentId, currentUserId, isLiked, loading, router, supabase])
 
   return {
     isLiked,

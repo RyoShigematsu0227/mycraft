@@ -4,7 +4,6 @@ import { useState } from 'react'
 import useCommentLike from '@/hooks/useCommentLike'
 
 interface CommentLikeButtonProps {
-  postId: string
   commentId: string
   currentUserId?: string
   initialLiked?: boolean
@@ -12,14 +11,12 @@ interface CommentLikeButtonProps {
 }
 
 export default function CommentLikeButton({
-  postId,
   commentId,
   currentUserId,
   initialLiked = false,
   initialCount = 0,
 }: CommentLikeButtonProps) {
   const { isLiked, likeCount, toggleLike, loading } = useCommentLike({
-    postId,
     commentId,
     currentUserId,
     initialLiked,

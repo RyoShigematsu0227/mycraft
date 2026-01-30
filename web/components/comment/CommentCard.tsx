@@ -129,7 +129,6 @@ export default function CommentCard({
             {/* Actions */}
             <div className="-ml-2 mt-2 flex items-center gap-1">
               <CommentLikeButton
-                postId={postId}
                 commentId={comment.id}
                 currentUserId={currentUserId}
                 initialLiked={comment.is_liked}

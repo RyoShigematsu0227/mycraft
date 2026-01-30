@@ -33,7 +33,7 @@ export default function SearchPage() {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur dark:border-border dark:bg-background/80">
+      <div className="sticky top-0 z-30 border-b border-border bg-background/80 px-4 py-3 backdrop-blur dark:border-border dark:bg-background/80">
         <div className="flex items-center gap-4">
           <BackButton />
           <div className="flex-1">

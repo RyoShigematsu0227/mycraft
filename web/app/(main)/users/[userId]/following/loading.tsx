@@ -1,7 +1,7 @@
 export default function Loading() {
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
+      <div className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
         <div className="flex items-center gap-4 px-4 py-3">
           <div className="h-9 w-9 animate-pulse rounded-full bg-surface-hover" />
           <div className="space-y-1">
