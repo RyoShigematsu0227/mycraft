@@ -4,7 +4,7 @@ export default function PostDetailLoading() {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur dark:border-border dark:bg-background/80">
+      <div className="sticky top-0 z-30 border-b border-border bg-background/80 px-4 py-3 backdrop-blur dark:border-border dark:bg-background/80">
         <div className="flex items-center gap-4">
           <div className="h-9 w-9 animate-pulse rounded-full bg-surface-hover" />
           <div className="h-6 w-12 animate-pulse rounded bg-surface-hover" />

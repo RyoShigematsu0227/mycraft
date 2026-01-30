@@ -46,6 +46,18 @@ function getNotificationContent(notification: NotificationWithActor): {
           </div>
         ),
       }
+    case 'reply':
+      return {
+        actionText: 'があなたのコメントに返信しました',
+        link: `/posts/${notification.post_id}`,
+        icon: (
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-sky-500 dark:bg-sky-900/30">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+            </svg>
+          </div>
+        ),
+      }
     case 'follow':
       return {
         actionText: 'があなたをフォローしました',

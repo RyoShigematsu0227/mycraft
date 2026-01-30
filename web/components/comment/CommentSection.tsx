@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import useSWR, { useSWRConfig } from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import CommentCard from './CommentCard'
@@ -102,13 +102,15 @@ async function fetchComments(postId: string, currentUserId?: string): Promise<Co
 
 export default function CommentSection({ postId, currentUserId }: CommentSectionProps) {
   const { mutate } = useSWRConfig()
+  // Track when we made local changes to skip realtime-triggered revalidation
+  const localChangeRef = useRef(false)
 
   const { data: comments = [], isLoading } = useSWR(
     ['comments', postId, currentUserId],
     () => fetchComments(postId, currentUserId)
   )
 
-  // Realtime subscription for new comments
+  // Realtime subscription for new comments from other users
   useEffect(() => {
     const supabase = createClient()
 
@@ -123,6 +125,13 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
           filter: `post_id=eq.${postId}`,
         },
         () => {
+          // Skip revalidation if we just made a local change
+          // (optimistic update already handled it)
+          if (localChangeRef.current) {
+            localChangeRef.current = false
+            return
+          }
+          // Revalidate for changes from other users
           mutate(['comments', postId, currentUserId])
         }
       )
@@ -133,8 +142,9 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
     }
   }, [postId, currentUserId, mutate])
 
-  const handleCommentSuccess = () => {
-    mutate(['comments', postId, currentUserId])
+  // Called after local comment create/delete to skip next realtime revalidation
+  const handleLocalChange = () => {
+    localChangeRef.current = true
   }
 
   if (isLoading) {
@@ -178,7 +188,7 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
         <CommentForm
           postId={postId}
           currentUserId={currentUserId}
-          onSuccess={handleCommentSuccess}
+          onSuccess={handleLocalChange}
         />
       </div>
 
@@ -205,8 +215,8 @@ export default function CommentSection({ postId, currentUserId }: CommentSection
                 comment={comment}
                 postId={postId}
                 currentUserId={currentUserId}
-                onReplySuccess={handleCommentSuccess}
-                onDeleteSuccess={handleCommentSuccess}
+                onReplySuccess={handleLocalChange}
+                onDeleteSuccess={handleLocalChange}
               />
             ))}
           </div>
