@@ -1,5 +1,20 @@
 -- Add 'reply' to the allowed notification types
-ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_type_check;
+-- Drop any existing check constraint on the type column
+DO $$
+DECLARE
+  constraint_name text;
+BEGIN
+  SELECT conname INTO constraint_name
+  FROM pg_constraint
+  WHERE conrelid = 'notifications'::regclass
+  AND contype = 'c'
+  AND pg_get_constraintdef(oid) LIKE '%type%';
+
+  IF constraint_name IS NOT NULL THEN
+    EXECUTE 'ALTER TABLE notifications DROP CONSTRAINT ' || constraint_name;
+  END IF;
+END $$;
+
 ALTER TABLE notifications ADD CONSTRAINT notifications_type_check
   CHECK (type IN ('like', 'comment', 'follow', 'repost', 'comment_like', 'reply'));
 
