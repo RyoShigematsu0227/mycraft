@@ -187,6 +187,10 @@ export default function useFeed({ type, currentUserId, worldId, profileUserId }:
   } = useSWRInfinite(getKey, fetcher, {
     // 追加ページ読み込み時に最初のページを再取得しない
     revalidateFirstPage: false,
+    // マウント時に必ず再検証（タブ切り替え時に新しいデータを取得）
+    revalidateOnMount: true,
+    // フォーカス時に全ページを再検証しない（最初のページのみ）
+    revalidateAll: false,
   })
 
   // Flatten all posts from all pages

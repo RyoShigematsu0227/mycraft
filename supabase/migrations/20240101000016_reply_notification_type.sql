@@ -1,3 +1,8 @@
+-- Add 'reply' to the allowed notification types
+ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_type_check;
+ALTER TABLE notifications ADD CONSTRAINT notifications_type_check
+  CHECK (type IN ('like', 'comment', 'follow', 'repost', 'comment_like', 'reply'));
+
 -- Update comment notification trigger to use 'reply' type for replies to comments
 CREATE OR REPLACE FUNCTION on_comment_created()
 RETURNS TRIGGER AS $$
