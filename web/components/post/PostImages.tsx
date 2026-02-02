@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 
 interface PostImagesProps {
@@ -53,7 +54,7 @@ export default function PostImages({ images }: PostImagesProps) {
               e.stopPropagation()
               setSelectedIndex(index)
             }}
-            className={`pointer-events-auto group/img relative overflow-hidden bg-gray-100 dark:bg-gray-800 ${
+            className={`pointer-events-auto cursor-pointer group/img relative overflow-hidden bg-gray-100 dark:bg-gray-800 ${
               images.length === 3 && index === 0 ? 'row-span-2' : ''
             }`}
             style={{
@@ -89,10 +90,10 @@ export default function PostImages({ images }: PostImagesProps) {
         ))}
       </div>
 
-      {/* Enhanced Lightbox */}
-      {selectedIndex !== null && (
+      {/* Enhanced Lightbox - rendered via Portal to escape parent styling */}
+      {selectedIndex !== null && typeof document !== 'undefined' && createPortal(
         <div
-          className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-200 ${
+          className={`fixed inset-0 z-[200] flex items-center justify-center transition-all duration-200 ${
             isClosing ? 'bg-black/0' : 'bg-black/95'
           }`}
           onClick={handleClose}
@@ -102,7 +103,7 @@ export default function PostImages({ images }: PostImagesProps) {
 
           {/* Close button */}
           <button
-            className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-3 text-white backdrop-blur-md transition-all hover:bg-white/20 hover:scale-110"
+            className="absolute right-4 top-4 z-10 cursor-pointer rounded-full bg-white/10 p-3 text-white backdrop-blur-md transition-all hover:bg-white/20 hover:scale-110"
             onClick={handleClose}
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -114,7 +115,7 @@ export default function PostImages({ images }: PostImagesProps) {
           {sortedImages.length > 1 && (
             <>
               <button
-                className="absolute left-4 z-10 rounded-full bg-white/10 p-3 text-white backdrop-blur-md transition-all hover:bg-white/20 hover:scale-110 disabled:opacity-30 disabled:hover:scale-100"
+                className="absolute left-4 z-10 cursor-pointer rounded-full bg-white/10 p-3 text-white backdrop-blur-md transition-all hover:bg-white/20 hover:scale-110 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100"
                 onClick={(e) => {
                   e.stopPropagation()
                   setSelectedIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : prev))
@@ -126,7 +127,7 @@ export default function PostImages({ images }: PostImagesProps) {
                 </svg>
               </button>
               <button
-                className="absolute right-4 z-10 rounded-full bg-white/10 p-3 text-white backdrop-blur-md transition-all hover:bg-white/20 hover:scale-110 disabled:opacity-30 disabled:hover:scale-100"
+                className="absolute right-4 z-10 cursor-pointer rounded-full bg-white/10 p-3 text-white backdrop-blur-md transition-all hover:bg-white/20 hover:scale-110 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100"
                 onClick={(e) => {
                   e.stopPropagation()
                   setSelectedIndex((prev) =>
@@ -134,7 +135,7 @@ export default function PostImages({ images }: PostImagesProps) {
                   )
                 }}
                 disabled={selectedIndex === sortedImages.length - 1}
-                style={{ right: selectedIndex === sortedImages.length - 1 ? '1rem' : '1rem', top: '50%', transform: 'translateY(-50%)' }}
+                style={{ right: '1rem', top: '50%', transform: 'translateY(-50%)' }}
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -173,7 +174,7 @@ export default function PostImages({ images }: PostImagesProps) {
                       e.stopPropagation()
                       setSelectedIndex(idx)
                     }}
-                    className={`relative h-10 w-10 overflow-hidden rounded-md transition-all ${
+                    className={`relative h-10 w-10 cursor-pointer overflow-hidden rounded-md transition-all ${
                       idx === selectedIndex
                         ? 'ring-2 ring-white scale-110'
                         : 'opacity-60 hover:opacity-100'
@@ -198,7 +199,8 @@ export default function PostImages({ images }: PostImagesProps) {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )
