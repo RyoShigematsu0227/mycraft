@@ -70,13 +70,26 @@ export default function PostModal() {
     }
   }, [isOpen])
 
-  // Handle successful post - navigate immediately
+  // Close modal when pathname changes (navigation completed)
+  const previousPathname = useRef(pathname)
+  useEffect(() => {
+    if (previousPathname.current !== pathname && isOpen) {
+      closeModal()
+    }
+    previousPathname.current = pathname
+  }, [pathname, isOpen, closeModal])
+
+  // Handle successful post - navigate immediately (modal stays open during navigation)
   const handleSuccess = (worldId: string) => {
-    closeModal()
+    // モーダルは閉じない - パス変更時に自動的に閉じる
+    // これにより、遷移中もモーダルが表示され続け、背景の空白時間がなくなる
 
     // Check if already on this world's page
     const isOnWorldPage = pathname?.startsWith(`/worlds/${worldId}`)
-    if (!isOnWorldPage) {
+    if (isOnWorldPage) {
+      // 既にワールドページにいる場合は閉じるだけ
+      closeModal()
+    } else {
       router.push(`/worlds/${worldId}`)
     }
   }
