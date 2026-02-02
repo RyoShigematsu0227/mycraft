@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 
 interface PostImagesProps {
@@ -89,8 +90,8 @@ export default function PostImages({ images }: PostImagesProps) {
         ))}
       </div>
 
-      {/* Enhanced Lightbox */}
-      {selectedIndex !== null && (
+      {/* Enhanced Lightbox - rendered via Portal to escape parent styling */}
+      {selectedIndex !== null && typeof document !== 'undefined' && createPortal(
         <div
           className={`fixed inset-0 z-[200] flex items-center justify-center transition-all duration-200 ${
             isClosing ? 'bg-black/0' : 'bg-black/95'
@@ -198,7 +199,8 @@ export default function PostImages({ images }: PostImagesProps) {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )
