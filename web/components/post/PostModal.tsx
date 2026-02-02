@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { usePostModalStore } from '@/lib/stores'
@@ -136,15 +137,13 @@ export default function PostModal() {
                 </div>
                 <p className="font-medium text-foreground">ワールドに参加してください</p>
                 <p className="mt-1 text-sm text-muted">投稿するには、まずワールドに参加する必要があります</p>
-                <button
-                  onClick={() => {
-                    closeModal()
-                    router.push('/worlds')
-                  }}
-                  className="mt-4 cursor-pointer rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-6 py-2 font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:shadow-xl hover:shadow-accent/30"
+                <Link
+                  href="/worlds"
+                  onClick={closeModal}
+                  className="mt-4 inline-block cursor-pointer rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-6 py-2 font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:shadow-xl hover:shadow-accent/30"
                 >
                   ワールドを探す
-                </button>
+                </Link>
               </div>
             ) : (
               <PostForm
