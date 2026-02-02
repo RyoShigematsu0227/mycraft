@@ -102,15 +102,32 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
     setLoading(true)
     setError('')
 
+    // 即座に遷移（投稿処理はバックグラウンドで実行）
+    const worldIdToNavigate = selectedWorldId
+    const contentToPost = content.trim()
+    const visibilityToPost = visibility
+    const imagesToUpload = [...images]
+
+    // Reset form immediately
+    resetForm()
+
+    // 即座にコールバック/遷移
+    if (onSuccess) {
+      onSuccess(worldIdToNavigate)
+    } else {
+      router.push(`/worlds/${worldIdToNavigate}`)
+    }
+
+    // バックグラウンドで投稿処理
     try {
       // Create post
       const { data: post, error: postError } = await supabase
         .from('posts')
         .insert({
           user_id: userId,
-          world_id: selectedWorldId,
-          content: content.trim(),
-          visibility,
+          world_id: worldIdToNavigate,
+          content: contentToPost,
+          visibility: visibilityToPost,
         })
         .select()
         .single()
@@ -118,8 +135,8 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
       if (postError) throw postError
 
       // Upload images
-      if (images.length > 0) {
-        const imagePromises = images.map(async (file, index) => {
+      if (imagesToUpload.length > 0) {
+        const imagePromises = imagesToUpload.map(async (file, index) => {
           const fileExt = file.name.split('.').pop()
           const fileName = `${post.id}/${index}.${fileExt}`
 
@@ -147,24 +164,14 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
         if (imagesError) throw imagesError
       }
 
-      // Reset form before navigation to prevent stale state on browser back
-      resetForm()
-
       // キャッシュ無効化
       await invalidateUserPostsCache(userId)
 
       // フィードをリフレッシュ
       triggerRefresh()
-
-      if (onSuccess) {
-        onSuccess(selectedWorldId)
-      } else {
-        router.push(`/posts/${post.id}`)
-      }
     } catch (err) {
       console.error('Post creation error:', err)
-      setError(err instanceof Error ? translateError(err.message) : '投稿に失敗しました')
-      setLoading(false)
+      // バックグラウンドエラーはコンソールに記録（既に遷移済みのため）
     }
   }
 
