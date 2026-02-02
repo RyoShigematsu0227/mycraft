@@ -49,10 +49,11 @@ export default function PostImages({ images }: PostImagesProps) {
           <button
             key={image.id}
             onClick={(e) => {
+              e.preventDefault()
               e.stopPropagation()
               setSelectedIndex(index)
             }}
-            className={`group/img relative overflow-hidden bg-gray-100 dark:bg-gray-800 ${
+            className={`pointer-events-auto group/img relative overflow-hidden bg-gray-100 dark:bg-gray-800 ${
               images.length === 3 && index === 0 ? 'row-span-2' : ''
             }`}
             style={{

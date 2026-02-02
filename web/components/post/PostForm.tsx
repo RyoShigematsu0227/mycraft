@@ -2,11 +2,12 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { invalidateUserPostsCache } from '@/actions'
 import { useFeedRefreshStore } from '@/lib/stores'
-import { Button, Textarea } from '@/components/ui'
+import { Textarea } from '@/components/ui'
 import { WorldIcon } from '@/components/world'
 import type { Database } from '@/types/database'
 
@@ -91,40 +92,15 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
     setImagePreviews((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    // Prevent double submission
-    if (loading) return
-    if (!content.trim() || !selectedWorldId) return
-
-    setLoading(true)
-    setError('')
-
-    // 即座に遷移（投稿処理はバックグラウンドで実行）
-    const worldIdToNavigate = selectedWorldId
-    const contentToPost = content.trim()
-    const visibilityToPost = visibility
-    const imagesToUpload = [...images]
-
-    // フォームはリセットせず、ローディング状態を維持
-    // モーダルが閉じる時（ナビゲーション完了時）にコンポーネントがアンマウントされる
-
-    // 即座にコールバック/遷移（モーダルは閉じない）
-    if (onSuccess) {
-      onSuccess(worldIdToNavigate)
-    } else {
-      router.push(`/worlds/${worldIdToNavigate}`)
-    }
-
-    // バックグラウンドで投稿処理
+  // バックグラウンドで投稿処理を実行する関数
+  const submitPostInBackground = async (worldIdToPost: string, contentToPost: string, visibilityToPost: Visibility, imagesToUpload: File[]) => {
     try {
       // Create post
       const { data: post, error: postError } = await supabase
         .from('posts')
         .insert({
           user_id: userId,
-          world_id: worldIdToNavigate,
+          world_id: worldIdToPost,
           content: contentToPost,
           visibility: visibilityToPost,
         })
@@ -174,8 +150,46 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
     }
   }
 
+  // 投稿を開始する（Linkクリック時またはCtrl+Enter時）
+  const startSubmit = () => {
+    if (loading || !content.trim() || !selectedWorldId) return false
+
+    setLoading(true)
+    setError('')
+
+    // 現在の値をキャプチャしてバックグラウンドで投稿
+    submitPostInBackground(selectedWorldId, content.trim(), visibility, [...images])
+
+    return true
+  }
+
+  // 既にワールドページにいるかチェック
+  const isOnTargetWorldPage = () => {
+    if (typeof window === 'undefined') return false
+    return window.location.pathname.startsWith(`/worlds/${selectedWorldId}`)
+  }
+
+  // Linkクリック時のハンドラ
+  const handleLinkClick = (e: React.MouseEvent) => {
+    // バリデーション失敗時は遷移を止める
+    if (loading || !content.trim() || !selectedWorldId) {
+      e.preventDefault()
+      return
+    }
+
+    // 投稿処理を開始
+    startSubmit()
+
+    // 既にワールドページにいる場合は遷移せず、コールバックで閉じる
+    if (isOnTargetWorldPage()) {
+      e.preventDefault()
+      onSuccess?.(selectedWorldId)
+    }
+    // それ以外はLinkがそのまま遷移
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="space-y-4">
       {error && (
         <div className="rounded-md bg-red-50 p-4 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
           {error}
@@ -227,8 +241,13 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
         onKeyDown={(e) => {
           if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
             e.preventDefault()
-            if (content.trim() && selectedWorldId && !loading) {
-              handleSubmit(e)
+            if (startSubmit()) {
+              // 投稿開始成功、遷移を実行
+              if (isOnTargetWorldPage()) {
+                onSuccess?.(selectedWorldId)
+              } else {
+                router.push(`/worlds/${selectedWorldId}`)
+              }
             }
           }
         }}
@@ -293,10 +312,19 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
             {images.length}/4
           </span>
         </div>
-        <Button type="submit" disabled={loading || !content.trim() || !selectedWorldId}>
+        <Link
+          href={selectedWorldId ? `/worlds/${selectedWorldId}` : '#'}
+          onClick={handleLinkClick}
+          className={`inline-flex items-center justify-center rounded-xl px-6 py-2 font-semibold text-white shadow-lg transition-all ${
+            loading || !content.trim() || !selectedWorldId
+              ? 'cursor-not-allowed bg-gray-400 opacity-50'
+              : 'bg-gradient-to-r from-accent to-accent-secondary shadow-accent/20 hover:shadow-xl hover:shadow-accent/30'
+          }`}
+          aria-disabled={loading || !content.trim() || !selectedWorldId}
+        >
           {loading ? '投稿中...' : '投稿する'}
-        </Button>
+        </Link>
       </div>
-    </form>
+    </div>
   )
 }
