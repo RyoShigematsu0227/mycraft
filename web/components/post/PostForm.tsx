@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { translateError } from '@/lib/utils/errorMessages'
 import { invalidateUserPostsCache } from '@/actions'
 import { useFeedRefreshStore } from '@/lib/stores'
 import { Button, Textarea } from '@/components/ui'
@@ -55,14 +54,14 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
     return () => window.removeEventListener('pageshow', handlePageShow)
   }, [])
 
-  const resetForm = () => {
-    setContent('')
-    setImages([])
-    imagePreviews.forEach((url) => URL.revokeObjectURL(url))
-    setImagePreviews([])
-    setLoading(false)
-    setError('')
-  }
+  // Cleanup preview URLs on unmount
+  const imagePreviewsRef = useRef(imagePreviews)
+  imagePreviewsRef.current = imagePreviews
+  useEffect(() => {
+    return () => {
+      imagePreviewsRef.current.forEach((url) => URL.revokeObjectURL(url))
+    }
+  }, [])
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Prevent any form submission that might be triggered
@@ -108,10 +107,10 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
     const visibilityToPost = visibility
     const imagesToUpload = [...images]
 
-    // Reset form immediately
-    resetForm()
+    // フォームはリセットせず、ローディング状態を維持
+    // モーダルが閉じる時（ナビゲーション完了時）にコンポーネントがアンマウントされる
 
-    // 即座にコールバック/遷移
+    // 即座にコールバック/遷移（モーダルは閉じない）
     if (onSuccess) {
       onSuccess(worldIdToNavigate)
     } else {
