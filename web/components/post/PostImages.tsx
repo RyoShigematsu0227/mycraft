@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import Image from 'next/image'
 
@@ -11,6 +11,11 @@ interface PostImagesProps {
 export default function PostImages({ images }: PostImagesProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [isClosing, setIsClosing] = useState(false)
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set())
+
+  const handleImageLoad = useCallback((imageId: string) => {
+    setLoadedImages((prev) => new Set(prev).add(imageId))
+  }, [])
 
   const handleClose = () => {
     setIsClosing(true)
@@ -61,12 +66,21 @@ export default function PostImages({ images }: PostImagesProps) {
               aspectRatio: images.length === 1 ? '16/9' : images.length === 3 && index === 0 ? '1/1' : '1/1',
             }}
           >
+            {/* Skeleton */}
+            {!loadedImages.has(image.id) && (
+              <div className="absolute inset-0 animate-pulse">
+                <div className="h-full w-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700" />
+              </div>
+            )}
             <Image
               src={image.image_url}
               alt=""
               fill
-              className="object-cover transition-all duration-300 group-hover/img:scale-105"
+              className={`object-cover transition-all duration-300 group-hover/img:scale-105 ${
+                loadedImages.has(image.id) ? 'opacity-100' : 'opacity-0'
+              }`}
               unoptimized
+              onLoad={() => handleImageLoad(image.id)}
             />
             {/* Hover overlay with gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover/img:opacity-100" />
