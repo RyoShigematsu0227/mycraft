@@ -75,7 +75,13 @@ export default function WorldModal() {
               onClick={closeModal}
               className="cursor-pointer rounded-full p-2 text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -83,10 +89,7 @@ export default function WorldModal() {
 
           {/* Content */}
           <div className="p-4">
-            <WorldForm
-              userId={authUser.id}
-              onSuccess={handleSuccess}
-            />
+            <WorldForm userId={authUser.id} onSuccess={handleSuccess} />
           </div>
         </div>
       </div>

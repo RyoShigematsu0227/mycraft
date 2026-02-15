@@ -62,9 +62,7 @@ export default function CommentLikeButton({
           <div className="absolute inset-0 -z-10 animate-pulse rounded-full bg-rose-500/20 blur-sm" />
         )}
       </div>
-      {likeCount > 0 && (
-        <span className="tabular-nums">{likeCount}</span>
-      )}
+      {likeCount > 0 && <span className="tabular-nums">{likeCount}</span>}
     </button>
   )
 }

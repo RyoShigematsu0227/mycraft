@@ -36,9 +36,7 @@ export default function ForgotPasswordPage() {
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="w-full max-w-md space-y-6 text-center">
           <div className="rounded-md bg-accent/10 p-4">
-            <h2 className="text-lg font-semibold text-accent">
-              メールを送信しました
-            </h2>
+            <h2 className="text-lg font-semibold text-accent">メールを送信しました</h2>
             <p className="mt-2 text-sm text-muted">
               パスワードリセット用のリンクをメールで送信しました。
               メールを確認してリンクをクリックしてください。
@@ -58,8 +56,7 @@ export default function ForgotPasswordPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold">パスワードをリセット</h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            登録したメールアドレスを入力してください。
-            パスワードリセット用のリンクを送信します。
+            登録したメールアドレスを入力してください。 パスワードリセット用のリンクを送信します。
           </p>
         </div>
 

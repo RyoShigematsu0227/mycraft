@@ -25,10 +25,12 @@ export default function useNotifications({ userId }: UseNotificationsProps) {
 
     const { data, error } = await supabase
       .from('notifications')
-      .select(`
+      .select(
+        `
         *,
         actor:users!notifications_actor_id_fkey(*)
-      `)
+      `
+      )
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(50)
@@ -47,32 +49,32 @@ export default function useNotifications({ userId }: UseNotificationsProps) {
     setLoading(false)
   }, [userId])
 
-  const markAsRead = useCallback(async (notificationId?: string) => {
-    const supabase = createClient()
+  const markAsRead = useCallback(
+    async (notificationId?: string) => {
+      const supabase = createClient()
 
-    if (notificationId) {
-      // Mark single notification as read
-      await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', notificationId)
+      if (notificationId) {
+        // Mark single notification as read
+        await supabase.from('notifications').update({ is_read: true }).eq('id', notificationId)
 
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === notificationId ? { ...n, is_read: true } : n))
-      )
-      setUnreadCount((prev) => Math.max(0, prev - 1))
-    } else {
-      // Mark all as read
-      await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('user_id', userId)
-        .eq('is_read', false)
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === notificationId ? { ...n, is_read: true } : n))
+        )
+        setUnreadCount((prev) => Math.max(0, prev - 1))
+      } else {
+        // Mark all as read
+        await supabase
+          .from('notifications')
+          .update({ is_read: true })
+          .eq('user_id', userId)
+          .eq('is_read', false)
 
-      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })))
-      setUnreadCount(0)
-    }
-  }, [userId])
+        setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })))
+        setUnreadCount(0)
+      }
+    },
+    [userId]
+  )
 
   useEffect(() => {
     void fetchNotifications()

@@ -54,9 +54,8 @@ async function fetchWorlds(currentUserId?: string): Promise<WorldWithDetails[]> 
 }
 
 export function useWorlds(currentUserId?: string) {
-  const { data, error, isLoading, mutate } = useSWR(
-    ['worlds', currentUserId],
-    () => fetchWorlds(currentUserId)
+  const { data, error, isLoading, mutate } = useSWR(['worlds', currentUserId], () =>
+    fetchWorlds(currentUserId)
   )
 
   return {

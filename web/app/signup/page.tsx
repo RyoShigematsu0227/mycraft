@@ -10,11 +10,7 @@ export default async function SignupPage() {
 
   if (user) {
     // Check if profile exists
-    const { data: profile } = await supabase
-      .from('users')
-      .select('id')
-      .eq('id', user.id)
-      .single()
+    const { data: profile } = await supabase.from('users').select('id').eq('id', user.id).single()
 
     if (!profile) {
       redirect('/setup')

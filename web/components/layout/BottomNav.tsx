@@ -17,9 +17,8 @@ export default function BottomNav() {
   const openPostModal = usePostModalStore((state) => state.openModal)
 
   // Extract worldId from pathname if on a world page
-  const worldIdFromPath = pathname?.startsWith('/worlds/') && pathname.split('/')[2]
-    ? pathname.split('/')[2]
-    : undefined
+  const worldIdFromPath =
+    pathname?.startsWith('/worlds/') && pathname.split('/')[2] ? pathname.split('/')[2] : undefined
 
   const [showMenu, setShowMenu] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
@@ -32,11 +31,7 @@ export default function BottomNav() {
       // Skip if profile is already loaded for this user
       if (profile?.id === authUser.id) return
       const supabase = createClient()
-      const { data } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', authUser.id)
-        .single()
+      const { data } = await supabase.from('users').select('*').eq('id', authUser.id).single()
       if (data) setProfile(data)
     }
     fetchProfile()
@@ -274,7 +269,9 @@ export default function BottomNav() {
                   />
                 </svg>
               )}
-              <span className="font-medium">{theme === 'dark' ? 'ライトモード' : 'ダークモード'}</span>
+              <span className="font-medium">
+                {theme === 'dark' ? 'ライトモード' : 'ダークモード'}
+              </span>
             </button>
 
             {/* Settings */}
@@ -389,7 +386,12 @@ export default function BottomNav() {
                     unoptimized
                   />
                 ) : (
-                  <svg className="h-full w-full p-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg
+                    className="h-full w-full p-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"

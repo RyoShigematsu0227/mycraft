@@ -51,9 +51,11 @@ export default function LikeButton({
               <div
                 key={i}
                 className="absolute h-1 w-1 animate-[particle_0.6s_ease-out_forwards] rounded-full bg-rose-500"
-                style={{
-                  '--particle-angle': `${i * 60}deg`,
-                } as React.CSSProperties}
+                style={
+                  {
+                    '--particle-angle': `${i * 60}deg`,
+                  } as React.CSSProperties
+                }
               />
             ))}
           </div>

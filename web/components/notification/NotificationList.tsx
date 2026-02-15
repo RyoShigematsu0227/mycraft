@@ -47,10 +47,7 @@ export default function NotificationList({ userId }: NotificationListProps) {
   return (
     <div className="divide-y divide-gray-100 dark:divide-gray-800">
       {notifications.map((notification) => (
-        <NotificationCard
-          key={notification.id}
-          notification={notification}
-        />
+        <NotificationCard key={notification.id} notification={notification} />
       ))}
     </div>
   )

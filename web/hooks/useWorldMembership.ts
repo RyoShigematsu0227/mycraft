@@ -105,11 +105,9 @@ export function useWorldMembership({
       }
 
       // サイドバーのワールド一覧を更新 using SWR mutate
-      mutate(
-        (key) => Array.isArray(key) && key[0] === 'userWorlds',
-        undefined,
-        { revalidate: true }
-      )
+      mutate((key) => Array.isArray(key) && key[0] === 'userWorlds', undefined, {
+        revalidate: true,
+      })
 
       // メンバー一覧ページのキャッシュを更新
       mutate(
@@ -125,7 +123,17 @@ export function useWorldMembership({
     } finally {
       setIsToggling(false)
     }
-  }, [currentUserId, worldId, isToggling, isLoading, router, supabase, mutate, toggleMembershipStore, rollbackMembership])
+  }, [
+    currentUserId,
+    worldId,
+    isToggling,
+    isLoading,
+    router,
+    supabase,
+    mutate,
+    toggleMembershipStore,
+    rollbackMembership,
+  ])
 
   return { isMember, isLoading: isLoading || isToggling, toggleMembership }
 }

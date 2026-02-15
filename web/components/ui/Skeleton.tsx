@@ -3,11 +3,7 @@ interface SkeletonProps {
 }
 
 export default function Skeleton({ className = '' }: SkeletonProps) {
-  return (
-    <div
-      className={`animate-pulse rounded bg-surface dark:bg-surface ${className}`}
-    />
-  )
+  return <div className={`animate-pulse rounded bg-surface dark:bg-surface ${className}`} />
 }
 
 // Pre-built skeleton patterns for common components

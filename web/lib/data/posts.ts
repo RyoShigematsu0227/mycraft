@@ -7,12 +7,14 @@ export async function getPost(postId: string) {
   const supabase = createCacheClient()
   const { data } = await supabase
     .from('posts')
-    .select(`
+    .select(
+      `
       *,
       user:users!posts_user_id_fkey(*),
       world:worlds!posts_world_id_fkey(*),
       images:post_images(*)
-    `)
+    `
+    )
     .eq('id', postId)
     .single()
 
@@ -26,18 +28,9 @@ export async function getPostStats(postId: string) {
   const supabase = createCacheClient()
 
   const [likesResult, repostsResult, commentsResult] = await Promise.all([
-    supabase
-      .from('likes')
-      .select('id', { count: 'exact', head: true })
-      .eq('post_id', postId),
-    supabase
-      .from('reposts')
-      .select('id', { count: 'exact', head: true })
-      .eq('post_id', postId),
-    supabase
-      .from('comments')
-      .select('id', { count: 'exact', head: true })
-      .eq('post_id', postId),
+    supabase.from('likes').select('id', { count: 'exact', head: true }).eq('post_id', postId),
+    supabase.from('reposts').select('id', { count: 'exact', head: true }).eq('post_id', postId),
+    supabase.from('comments').select('id', { count: 'exact', head: true }).eq('post_id', postId),
   ])
 
   return {
@@ -54,12 +47,14 @@ export async function getPostMetadata(postId: string) {
   const supabase = createCacheClient()
   const { data } = await supabase
     .from('posts')
-    .select(`
+    .select(
+      `
       content,
       visibility,
       user:users!posts_user_id_fkey(display_name, user_id),
       images:post_images(image_url)
-    `)
+    `
+    )
     .eq('id', postId)
     .single()
 

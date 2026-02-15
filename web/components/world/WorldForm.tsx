@@ -58,9 +58,7 @@ export default function WorldForm({ world, userId, onSuccess }: WorldFormProps) 
 
         if (uploadError) throw uploadError
 
-        const { data: urlData } = supabase.storage
-          .from('world-icons')
-          .getPublicUrl(filePath)
+        const { data: urlData } = supabase.storage.from('world-icons').getPublicUrl(filePath)
 
         newIconUrl = urlData.publicUrl
       }
@@ -75,11 +73,9 @@ export default function WorldForm({ world, userId, onSuccess }: WorldFormProps) 
         })
 
         // キャッシュを更新
-        mutate(
-          (key) => Array.isArray(key) && key[0] === 'userWorlds',
-          undefined,
-          { revalidate: true }
-        )
+        mutate((key) => Array.isArray(key) && key[0] === 'userWorlds', undefined, {
+          revalidate: true,
+        })
         // ワールド詳細・編集ページのキャッシュを更新
         mutate(['world', world.id])
 
@@ -99,11 +95,9 @@ export default function WorldForm({ world, userId, onSuccess }: WorldFormProps) 
         })
 
         // サイドバーのワールド一覧を更新
-        mutate(
-          (key) => Array.isArray(key) && key[0] === 'userWorlds',
-          undefined,
-          { revalidate: true }
-        )
+        mutate((key) => Array.isArray(key) && key[0] === 'userWorlds', undefined, {
+          revalidate: true,
+        })
 
         if (onSuccess) {
           onSuccess(newWorld.id)

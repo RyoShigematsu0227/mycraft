@@ -35,10 +35,7 @@ export default function WorldStats({
         href={`/worlds/${worldId}/members`}
         className="text-gray-600 hover:underline dark:text-gray-400"
       >
-        <span className="font-bold text-gray-900 dark:text-gray-100">
-          {memberCount}
-        </span>{' '}
-        メンバー
+        <span className="font-bold text-gray-900 dark:text-gray-100">{memberCount}</span> メンバー
       </Link>
     </div>
   )

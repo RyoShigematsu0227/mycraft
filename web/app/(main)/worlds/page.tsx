@@ -20,7 +20,9 @@ export default function WorldsPage() {
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">ワールド</h1>
           {user && (
-            <Button size="sm" onClick={openWorldModal}>新規作成</Button>
+            <Button size="sm" onClick={openWorldModal}>
+              新規作成
+            </Button>
           )}
         </div>
       </div>
@@ -55,11 +57,7 @@ export default function WorldsPage() {
           }
           title="まだワールドがありません"
           description={user ? '最初のワールドを作成しましょう' : undefined}
-          action={
-            user ? (
-              <Button onClick={openWorldModal}>ワールドを作成</Button>
-            ) : undefined
-          }
+          action={user ? <Button onClick={openWorldModal}>ワールドを作成</Button> : undefined}
         />
       ) : (
         <WorldList worlds={worlds} currentUserId={user?.id} />

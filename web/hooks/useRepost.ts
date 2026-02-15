@@ -111,7 +111,18 @@ export function useRepost({
     } finally {
       setIsLoading(false)
     }
-  }, [postId, currentUserId, isLoading, router, initPost, initialCount, initialReposted, toggleRepostStore, rollbackRepost, mutate])
+  }, [
+    postId,
+    currentUserId,
+    isLoading,
+    router,
+    initPost,
+    initialCount,
+    initialReposted,
+    toggleRepostStore,
+    rollbackRepost,
+    mutate,
+  ])
 
   return { isReposted, repostCount, isLoading, toggleRepost }
 }

@@ -139,16 +139,8 @@ async function fetchUserInteractions(
 
   const supabase = createClient()
   const [likesResult, repostsResult] = await Promise.all([
-    supabase
-      .from('likes')
-      .select('post_id')
-      .eq('user_id', currentUserId)
-      .in('post_id', postIds),
-    supabase
-      .from('reposts')
-      .select('post_id')
-      .eq('user_id', currentUserId)
-      .in('post_id', postIds),
+    supabase.from('likes').select('post_id').eq('user_id', currentUserId).in('post_id', postIds),
+    supabase.from('reposts').select('post_id').eq('user_id', currentUserId).in('post_id', postIds),
   ])
 
   return {
@@ -174,17 +166,18 @@ export default function useFeed({ type, currentUserId, worldId, profileUserId }:
 
   // Fetcher for SWRInfinite
   const fetcher = async (key: (string | null | undefined)[]) => {
-    const [, feedType, userId, wId, pUserId, cursor] = key as [string, FeedType, string | undefined, string | undefined, string | undefined, string | null]
+    const [, feedType, userId, wId, pUserId, cursor] = key as [
+      string,
+      FeedType,
+      string | undefined,
+      string | undefined,
+      string | undefined,
+      string | null,
+    ]
     return fetchFeedPage(feedType, userId, wId, pUserId, cursor)
   }
 
-  const {
-    data,
-    isValidating,
-    size,
-    setSize,
-    mutate,
-  } = useSWRInfinite(getKey, fetcher, {
+  const { data, isValidating, size, setSize, mutate } = useSWRInfinite(getKey, fetcher, {
     // 追加ページ読み込み時に最初のページを再取得しない
     revalidateFirstPage: false,
     // マウント時に必ず再検証（タブ切り替え時に新しいデータを取得）

@@ -10,5 +10,10 @@ export { default as Loading } from './Loading'
 export { default as EmptyState } from './EmptyState'
 export { default as BackButton } from './BackButton'
 export { default as ToastContainer } from './Toast'
-export { default as Skeleton, PostCardSkeleton, UserCardSkeleton, WorldCardSkeleton } from './Skeleton'
+export {
+  default as Skeleton,
+  PostCardSkeleton,
+  UserCardSkeleton,
+  WorldCardSkeleton,
+} from './Skeleton'
 export { default as Linkify } from './Linkify'

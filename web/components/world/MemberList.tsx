@@ -13,7 +13,12 @@ interface MemberListProps {
   followingIds?: Set<string>
 }
 
-export default function MemberList({ members, ownerId, currentUserId, followingIds = new Set() }: MemberListProps) {
+export default function MemberList({
+  members,
+  ownerId,
+  currentUserId,
+  followingIds = new Set(),
+}: MemberListProps) {
   if (members.length === 0) {
     return (
       <EmptyState

@@ -29,11 +29,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       }
 
       const supabase = createClient()
-      const { data: profile } = await supabase
-        .from('users')
-        .select('id')
-        .eq('id', user.id)
-        .single()
+      const { data: profile } = await supabase.from('users').select('id').eq('id', user.id).single()
 
       if (!profile) {
         // User is authenticated but has no profile, redirect to setup

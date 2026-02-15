@@ -14,16 +14,8 @@ export default function HomeFeed({ currentUserId }: HomeFeedProps) {
 
   return (
     <div>
-      <FeedTabs
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        showFollowing={!!currentUserId}
-      />
-      <InfiniteFeed
-        key={activeTab}
-        type={activeTab}
-        currentUserId={currentUserId}
-      />
+      <FeedTabs activeTab={activeTab} onTabChange={setActiveTab} showFollowing={!!currentUserId} />
+      <InfiniteFeed key={activeTab} type={activeTab} currentUserId={currentUserId} />
     </div>
   )
 }

@@ -38,7 +38,11 @@ export default function CommentForm({
   if (!currentUserId) {
     return (
       <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        コメントするには<a href="/login" className="text-accent hover:underline">ログイン</a>してください
+        コメントするには
+        <a href="/login" className="text-accent hover:underline">
+          ログイン
+        </a>
+        してください
       </div>
     )
   }

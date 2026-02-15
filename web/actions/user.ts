@@ -29,12 +29,10 @@ export async function toggleFollow(targetUserId: string, currentUserId: string) 
     if (error) throw error
   } else {
     // Follow
-    const { error } = await supabase
-      .from('follows')
-      .insert({
-        follower_id: currentUserId,
-        following_id: targetUserId,
-      })
+    const { error } = await supabase.from('follows').insert({
+      follower_id: currentUserId,
+      following_id: targetUserId,
+    })
 
     if (error) throw error
   }
@@ -65,19 +63,14 @@ export async function updateProfile(
   if (data.displayName !== undefined) updateData.display_name = data.displayName
   if (data.bio !== undefined) updateData.bio = data.bio
   if (data.avatarUrl !== undefined) updateData.avatar_url = data.avatarUrl
-  if (data.minecraftJavaUsername !== undefined) updateData.minecraft_java_username = data.minecraftJavaUsername
-  if (data.minecraftBedrockGamertag !== undefined) updateData.minecraft_bedrock_gamertag = data.minecraftBedrockGamertag
+  if (data.minecraftJavaUsername !== undefined)
+    updateData.minecraft_java_username = data.minecraftJavaUsername
+  if (data.minecraftBedrockGamertag !== undefined)
+    updateData.minecraft_bedrock_gamertag = data.minecraftBedrockGamertag
 
-  const { data: user } = await supabase
-    .from('users')
-    .select('user_id')
-    .eq('id', userId)
-    .single()
+  const { data: user } = await supabase.from('users').select('user_id').eq('id', userId).single()
 
-  const { error } = await supabase
-    .from('users')
-    .update(updateData)
-    .eq('id', userId)
+  const { error } = await supabase.from('users').update(updateData).eq('id', userId)
 
   if (error) throw error
 
@@ -108,10 +101,7 @@ export async function deleteAccount(userId: string) {
     .single()
 
   // ユーザーの投稿画像を取得して削除
-  const { data: posts } = await supabaseAdmin
-    .from('posts')
-    .select('id')
-    .eq('user_id', userId)
+  const { data: posts } = await supabaseAdmin.from('posts').select('id').eq('user_id', userId)
 
   if (posts && posts.length > 0) {
     const postIds = posts.map((p) => p.id)
@@ -163,10 +153,7 @@ export async function deleteAccount(userId: string) {
   }
 
   // public.usersから削除（カスケードで関連データも削除）
-  const { error: deleteUserError } = await supabaseAdmin
-    .from('users')
-    .delete()
-    .eq('id', userId)
+  const { error: deleteUserError } = await supabaseAdmin.from('users').delete().eq('id', userId)
 
   if (deleteUserError) {
     throw new Error(`ユーザーデータの削除に失敗しました: ${deleteUserError.message}`)

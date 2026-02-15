@@ -20,12 +20,13 @@ export default function InfiniteFeed({
   profileUserId,
   showWorldInfo = true,
 }: InfiniteFeedProps) {
-  const { posts, loading, loadingMore, hasMore, likedPosts, repostedPosts, loadMore, refresh } = useFeed({
-    type,
-    currentUserId,
-    worldId,
-    profileUserId,
-  })
+  const { posts, loading, loadingMore, hasMore, likedPosts, repostedPosts, loadMore, refresh } =
+    useFeed({
+      type,
+      currentUserId,
+      worldId,
+      profileUserId,
+    })
 
   const refreshTrigger = useFeedRefreshStore((state) => state.refreshTrigger)
 
@@ -104,7 +105,13 @@ export default function InfiniteFeed({
         <div className="relative mb-6">
           <div className="absolute -inset-4 animate-pulse rounded-full bg-gradient-to-br from-accent/20 to-accent-secondary/20 blur-xl" />
           <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-surface to-surface-hover ring-1 ring-border">
-            <svg className="h-12 w-12 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+            <svg
+              className="h-12 w-12 text-muted"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1}
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -207,7 +214,13 @@ export default function InfiniteFeed({
             <div className="flex items-center gap-3">
               <div className="h-px w-16 bg-gradient-to-r from-transparent to-border" />
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface ring-1 ring-border">
-                <svg className="h-4 w-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg
+                  className="h-4 w-4 text-muted"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>

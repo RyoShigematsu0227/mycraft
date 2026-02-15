@@ -140,7 +140,13 @@ export function useFollow({
     } catch (error) {
       // Revert optimistic update on error
       console.error('Follow toggle error:', error)
-      rollbackFollow(targetUserId, currentUserId, wasFollowing, prevFollowersCount, prevFollowingCount)
+      rollbackFollow(
+        targetUserId,
+        currentUserId,
+        wasFollowing,
+        prevFollowersCount,
+        prevFollowingCount
+      )
     } finally {
       setIsToggling(false)
     }

@@ -120,8 +120,18 @@ export default async function UserPage({ params }: UserPageProps) {
                 {isOwnProfile ? (
                   <Link href="/settings/profile">
                     <Button variant="outline" size="sm">
-                      <svg className="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      <svg
+                        className="mr-1.5 h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
                       </svg>
                       編集
                     </Button>
@@ -138,17 +148,13 @@ export default async function UserPage({ params }: UserPageProps) {
 
             {/* User info */}
             <div className="mt-4">
-              <h1 className="text-2xl font-bold text-foreground">
-                {user.display_name}
-              </h1>
+              <h1 className="text-2xl font-bold text-foreground">{user.display_name}</h1>
               <p className="text-muted">@{user.user_id}</p>
             </div>
 
             {/* Bio */}
             {user.bio && (
-              <p className="mt-4 whitespace-pre-wrap leading-relaxed text-foreground">
-                {user.bio}
-              </p>
+              <p className="mt-4 whitespace-pre-wrap leading-relaxed text-foreground">{user.bio}</p>
             )}
 
             {/* Stats */}
@@ -165,7 +171,9 @@ export default async function UserPage({ params }: UserPageProps) {
                 {user.minecraft_java_username && (
                   <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1.5 ring-1 ring-emerald-500/20">
                     <div className="flex h-5 w-5 items-center justify-center rounded bg-emerald-500/20">
-                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">J</span>
+                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                        J
+                      </span>
                     </div>
                     <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
                       {user.minecraft_java_username}
@@ -190,7 +198,11 @@ export default async function UserPage({ params }: UserPageProps) {
               <div className="mt-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="flex items-center gap-1 text-xs text-muted">
-                    <svg className="h-3.5 w-3.5 text-accent" fill="currentColor" viewBox="0 0 24 24">
+                    <svg
+                      className="h-3.5 w-3.5 text-accent"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
                       <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5z" />
                     </svg>
                     オーナー
@@ -209,9 +221,7 @@ export default async function UserPage({ params }: UserPageProps) {
                         className="h-5 w-5 rounded-full object-cover"
                         unoptimized={world.icon_url?.startsWith('http') ?? false}
                       />
-                      <span className="text-sm font-medium text-accent">
-                        {world.name}
-                      </span>
+                      <span className="text-sm font-medium text-accent">{world.name}</span>
                     </Link>
                   ))}
                 </div>

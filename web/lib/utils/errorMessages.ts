@@ -10,9 +10,12 @@ const errorTranslations: Record<string, string> = {
   'Password should be at least 6 characters': 'パスワードは6文字以上で入力してください',
   'Unable to validate email address: invalid format': 'メールアドレスの形式が正しくありません',
   'Signup requires a valid password': 'パスワードを入力してください',
-  'Email rate limit exceeded': 'メール送信の上限に達しました。しばらく時間をおいてからお試しください',
-  'For security purposes, you can only request this once every 60 seconds': 'セキュリティのため、60秒に1回のみリクエストできます',
-  'New password should be different from the old password': '新しいパスワードは現在のパスワードと異なる必要があります',
+  'Email rate limit exceeded':
+    'メール送信の上限に達しました。しばらく時間をおいてからお試しください',
+  'For security purposes, you can only request this once every 60 seconds':
+    'セキュリティのため、60秒に1回のみリクエストできます',
+  'New password should be different from the old password':
+    '新しいパスワードは現在のパスワードと異なる必要があります',
   'Auth session missing!': 'セッションが切れました。再度ログインしてください',
   'Token has expired or is invalid': 'トークンが期限切れか無効です。再度お試しください',
 
@@ -36,7 +39,8 @@ const errorTranslations: Record<string, string> = {
   'new row violates row-level security policy': '権限がありません',
 
   // Custom trigger errors
-  'You must be a member of the world to create a post': 'このワールドに投稿するには、まずワールドに参加してください',
+  'You must be a member of the world to create a post':
+    'このワールドに投稿するには、まずワールドに参加してください',
 }
 
 /**
