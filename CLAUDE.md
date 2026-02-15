@@ -5,6 +5,7 @@ MinecraftワールドのSNSアプリ。ユーザーはワールドの住人に�
 ## Tech Stack
 
 ### Web Frontend
+
 - Framework: Next.js (latest, App Router)
 - Language: TypeScript
 - Styling: Tailwind CSS
@@ -13,10 +14,12 @@ MinecraftワールドのSNSアプリ。ユーザーはワールドの住人に�
   - SWR（サーバー状態）
 
 ### Mobile Frontend（Web完成後）
+
 - Framework: Expo (React Native)
 - Language: TypeScript
 
 ### Backend
+
 - BaaS: Supabase
   - Auth: Supabase Auth (Discord, Google, Email)
   - Database: PostgreSQL
@@ -50,6 +53,7 @@ mycraft/
 ## Commands
 
 ### Web開発
+
 ```bash
 cd web
 npm run dev          # 開発サーバー起動
@@ -59,6 +63,7 @@ npm run type-check   # TypeScriptチェック
 ```
 
 ### Supabase
+
 ```bash
 supabase start       # ローカルSupabase起動
 supabase db reset    # DBリセット＋マイグレーション再実行
@@ -68,11 +73,13 @@ supabase gen types typescript --local > web/types/database.ts
 ## Coding Rules
 
 ### Before Coding
+
 - **BP-1 (MUST)**: 不明点があれば実装前に質問する
 - **BP-2 (MUST)**: 複数のアプローチがある場合はPros/Consを提示して確認する
 - **BP-3 (SHOULD)**: 大きな変更は `docs/tasks.md` のタスクと照らし合わせる
 
 ### While Coding
+
 - **C-1 (MUST)**: 既存のコードスタイル・命名規則に従う
 - **C-2 (MUST)**: 型定義は `types/` に集約する
 - **C-3 (MUST)**: Supabaseの型は自動生成したものを使う
@@ -81,6 +88,7 @@ supabase gen types typescript --local > web/types/database.ts
 - **C-6 (SHOULD NOT)**: `any` 型を使わない
 
 ### After Coding
+
 - **A-1 (MUST)**: 新しいパターンや決定事項は `docs/decisions.md` に記録
 - **A-2 (SHOULD)**: 実装完了したタスクは `docs/tasks.md` でチェックを入れる
 - **A-3 (MUST)**: 明確な指示が無い中で独断でコミットはしない

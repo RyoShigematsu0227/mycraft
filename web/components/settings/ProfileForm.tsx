@@ -87,9 +87,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
 
         if (uploadError) throw uploadError
 
-        const { data: urlData } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(filePath)
+        const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(filePath)
 
         // Add cache-busting parameter to force refresh
         newAvatarUrl = `${urlData.publicUrl}?t=${Date.now()}`
@@ -127,11 +125,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       mutate(['profile', user.id])
 
       // Invalidate feed caches to update avatar in posts
-      mutate(
-        (key) => Array.isArray(key) && key[0] === 'feed',
-        undefined,
-        { revalidate: true }
-      )
+      mutate((key) => Array.isArray(key) && key[0] === 'feed', undefined, { revalidate: true })
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000)

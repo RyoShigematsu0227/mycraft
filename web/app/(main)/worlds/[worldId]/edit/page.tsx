@@ -12,11 +12,7 @@ type World = Database['public']['Tables']['worlds']['Row']
 
 async function fetchWorld(worldId: string): Promise<World | null> {
   const supabase = createClient()
-  const { data } = await supabase
-    .from('worlds')
-    .select('*')
-    .eq('id', worldId)
-    .single()
+  const { data } = await supabase.from('worlds').select('*').eq('id', worldId).single()
   return data
 }
 
@@ -26,9 +22,8 @@ export default function EditWorldPage() {
   const worldId = params.worldId as string
   const { user, isLoading: authLoading } = useAuth()
 
-  const { data: world, isLoading: worldLoading } = useSWR(
-    worldId ? ['world', worldId] : null,
-    () => fetchWorld(worldId)
+  const { data: world, isLoading: worldLoading } = useSWR(worldId ? ['world', worldId] : null, () =>
+    fetchWorld(worldId)
   )
 
   // 未認証の場合はログインページへ
@@ -66,18 +61,14 @@ export default function EditWorldPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6">
-      <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
-        ワールドを編集
-      </h1>
+      <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">ワールドを編集</h1>
       <div className="rounded-xl border border-border bg-surface p-6">
         <WorldForm world={world} userId={user.id} />
       </div>
 
       {/* Danger Zone */}
       <div className="mt-8 rounded-lg border border-red-200 bg-red-50 p-6 dark:border-red-900/50 dark:bg-red-900/10">
-        <h2 className="text-lg font-bold text-red-600 dark:text-red-400">
-          危険な操作
-        </h2>
+        <h2 className="text-lg font-bold text-red-600 dark:text-red-400">危険な操作</h2>
         <p className="mt-2 text-sm text-red-600/80 dark:text-red-400/80">
           ワールドを削除すると、すべての投稿・メンバー情報が完全に削除されます。
         </p>

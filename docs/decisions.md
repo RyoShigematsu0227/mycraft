@@ -12,6 +12,7 @@
 なぜこの決定が必要だったか
 
 **選択肢**
+
 1. 選択肢A - Pros / Cons
 2. 選択肢B - Pros / Cons
 
@@ -31,6 +32,7 @@
 Webアプリ + 将来的なモバイル対応が必要
 
 **選択肢**
+
 1. Next.js + Expo + Supabase
    - Pros: TypeScript統一、Supabaseで認証・DB・Storageが一括管理
    - Cons: Supabaseへの依存
@@ -49,6 +51,7 @@ Next.js + Expo + Supabase を採用。MVP開発のスピードを優先。
 クライアント状態とサーバー状態の管理方法
 
 **選択肢**
+
 1. Zustand + Tanstack Query
    - Pros: 軽量、役割分担が明確
 2. Redux Toolkit + RTK Query
@@ -66,6 +69,7 @@ Zustand（グローバル状態） + Tanstack Query（サーバー状態）を�
 ユーザーページのURLを `/@{user_id}` にする予定だったが、Next.js App Routerでは `@` プレフィックスがParallel Routes（スロット）用に予約されているため、そのまま使用できない。
 
 **選択肢**
+
 1. `/users/{user_id}` - 標準的なパターン
    - Pros: シンプル、App Routerと競合しない
    - Cons: TwitterライクなURL形式ではない
@@ -90,6 +94,7 @@ Zustand（グローバル状態） + Tanstack Query（サーバー状態）を�
 HTMLの`<button>`要素は、`type`属性を指定しない場合デフォルトで`type="submit"`となる。そのため、フォーム内にあるボタンをクリックすると意図せずフォームが送信される。
 
 **選択肢**
+
 1. Button使用箇所で毎回`type="button"`を明示的に指定
    - Pros: 既存の挙動を変えない
    - Cons: 指定漏れのリスク、ボイラープレート増加
@@ -108,6 +113,7 @@ Buttonコンポーネントのデフォルトを`type="button"`に変更。フ�
 サーバー状態管理にTanStack Queryを使用していたが、SNSアプリの要件を見直した結果、よりシンプルなライブラリで十分と判断。
 
 **選択肢**
+
 1. TanStack Query継続
    - Pros: 機能豊富、細かいキャッシュ制御
    - Cons: バンドルサイズ大、学習コスト高
@@ -126,6 +132,7 @@ SWRへ移行。useSWRInfiniteで無限スクロール、mutateでキャッシュ
 ワールド作成（/worlds/new）と投稿作成（/posts/new）が別ページだったが、UXの一貫性とナビゲーションの簡略化のためモーダル化を検討。
 
 **選択肢**
+
 1. 専用ページを維持
    - Pros: URL共有可能、ブラウザの戻る対応
    - Cons: ページ遷移のオーバーヘッド
@@ -155,18 +162,19 @@ SWRへ移行。useSWRInfiniteで無限スクロール、mutateでキャッシュ
 
 **決定**
 以下のパターンで統一的にキャッシュ無効化を実装:
+
 - 楽観的更新はZustand storeで管理（dirty flagで保護）
 - API成功後にSWR `mutate()` で関連キャッシュを無効化
 - キャッシュキーのプレフィックスマッチングで柔軟に無効化
 
-| 操作 | 無効化するキャッシュ |
-|------|---------------------|
-| いいね/リポスト | `postEngagement`, `postLikes`/`postReposts` |
-| フォロー | `feed` (following), `follow-data` |
-| コメントいいね | `comments` |
-| プロフィール更新 | `profile`, `feed` (アバター更新のため) |
-| ワールド更新 | `world`, `userWorlds` |
-| ワールド参加/脱退 | `userWorlds`, `worldMembers` |
+| 操作              | 無効化するキャッシュ                        |
+| ----------------- | ------------------------------------------- |
+| いいね/リポスト   | `postEngagement`, `postLikes`/`postReposts` |
+| フォロー          | `feed` (following), `follow-data`           |
+| コメントいいね    | `comments`                                  |
+| プロフィール更新  | `profile`, `feed` (アバター更新のため)      |
+| ワールド更新      | `world`, `userWorlds`                       |
+| ワールド参加/脱退 | `userWorlds`, `worldMembers`                |
 
 ---
 

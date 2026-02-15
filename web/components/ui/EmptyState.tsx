@@ -22,9 +22,7 @@ export default function EmptyState({
 
           {/* Icon container */}
           <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-surface to-surface-hover ring-1 ring-border">
-            <div className="text-muted">
-              {icon}
-            </div>
+            <div className="text-muted">{icon}</div>
           </div>
         </div>
       )}

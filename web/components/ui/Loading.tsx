@@ -5,7 +5,12 @@ interface LoadingProps {
   text?: string
 }
 
-export default function Loading({ size = 'md', className = '', fullScreen = false, text }: LoadingProps) {
+export default function Loading({
+  size = 'md',
+  className = '',
+  fullScreen = false,
+  text,
+}: LoadingProps) {
   const sizes = {
     sm: 'h-4 w-4',
     md: 'h-8 w-8',
@@ -22,16 +27,16 @@ export default function Loading({ size = 'md', className = '', fullScreen = fals
     <div className="flex flex-col items-center gap-3">
       <div className="relative">
         {/* Glow effect */}
-        <div className={`absolute inset-0 animate-pulse rounded-full bg-accent/20 blur-md ${sizes[size]}`} />
+        <div
+          className={`absolute inset-0 animate-pulse rounded-full bg-accent/20 blur-md ${sizes[size]}`}
+        />
 
         {/* Spinner ring */}
         <div
           className={`relative animate-spin rounded-full ${borderSizes[size]} border-accent/30 border-t-accent ${sizes[size]} ${className}`}
         />
       </div>
-      {text && (
-        <span className="text-sm font-medium text-muted">{text}</span>
-      )}
+      {text && <span className="text-sm font-medium text-muted">{text}</span>}
     </div>
   )
 
@@ -47,9 +52,5 @@ export default function Loading({ size = 'md', className = '', fullScreen = fals
     )
   }
 
-  return (
-    <div className="flex justify-center py-8">
-      {spinner}
-    </div>
-  )
+  return <div className="flex justify-center py-8">{spinner}</div>
 }

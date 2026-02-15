@@ -112,7 +112,18 @@ export function useLike({
     } finally {
       setIsLoading(false)
     }
-  }, [postId, currentUserId, isLoading, router, initPost, initialCount, initialLiked, toggleLikeStore, rollbackLike, mutate])
+  }, [
+    postId,
+    currentUserId,
+    isLoading,
+    router,
+    initPost,
+    initialCount,
+    initialLiked,
+    toggleLikeStore,
+    rollbackLike,
+    mutate,
+  ])
 
   return { isLiked, likeCount, isLoading, toggleLike }
 }

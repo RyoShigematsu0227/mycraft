@@ -61,7 +61,9 @@ export default function WorldCard({
       {/* Background Layer */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient Background */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${getGradient(world.name)} opacity-60 transition-opacity duration-500 group-hover:opacity-100`} />
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${getGradient(world.name)} opacity-60 transition-opacity duration-500 group-hover:opacity-100`}
+        />
 
         {/* Animated Glow */}
         <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-accent/20 blur-3xl transition-all duration-700 group-hover:scale-150 group-hover:bg-accent/30" />
@@ -127,9 +129,7 @@ export default function WorldCard({
                 <span className="ml-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
                   {displayMemberCount}
                 </span>
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  メンバー
-                </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">メンバー</span>
               </div>
             </div>
           </div>
@@ -145,8 +145,18 @@ export default function WorldCard({
         {/* Action Area */}
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             <span>Minecraft ワールド</span>
           </div>
@@ -164,7 +174,13 @@ export default function WorldCard({
           {!currentUserId && (
             <span className="flex items-center gap-1 text-sm font-medium text-accent transition-transform duration-300 group-hover:translate-x-1">
               詳細を見る
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </span>

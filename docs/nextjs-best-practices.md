@@ -52,30 +52,31 @@ Next.js 16では、PPRが Cache Components に統合されました。静的シ�
 
 ```tsx
 // next.config.ts
-import type { NextConfig } from 'next'
+import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
-  cacheComponents: true,  // Cache Components を有効化
-}
-export default nextConfig
+  cacheComponents: true, // Cache Components を有効化
+};
+export default nextConfig;
 ```
 
 ```tsx
 // app/page.tsx
-import { Suspense } from "react"
+import { Suspense } from "react";
 
 export default function Page() {
   return (
     <>
-      <StaticHeader />  {/* ビルド時にレンダリング */}
+      <StaticHeader /> {/* ビルド時にレンダリング */}
       <Suspense fallback={<FeedSkeleton />}>
-        <DynamicFeed />  {/* リクエスト時にストリーミング */}
+        <DynamicFeed /> {/* リクエスト時にストリーミング */}
       </Suspense>
     </>
-  )
+  );
 }
 ```
 
 **SNSでの活用例**:
+
 - ヘッダー、ナビゲーション → 静的（`use cache`でキャッシュ）
 - フィード、通知バッジ → 動的（Suspenseでラップ）
 
@@ -85,12 +86,12 @@ export default function Page() {
 
 ### Server Actions vs Route Handlers
 
-| 用途 | 推奨手法 |
-|------|----------|
-| データの書き込み（mutations） | Server Actions |
-| データの読み取り（queries） | Server Component内でfetch / Route Handlers |
-| Client Componentからの読み取り | Route Handlers (GET) |
-| 外部からのWebhook受信 | Route Handlers |
+| 用途                           | 推奨手法                                   |
+| ------------------------------ | ------------------------------------------ |
+| データの書き込み（mutations）  | Server Actions                             |
+| データの読み取り（queries）    | Server Component内でfetch / Route Handlers |
+| Client Componentからの読み取り | Route Handlers (GET)                       |
+| 外部からのWebhook受信          | Route Handlers                             |
 
 #### Server Actions
 
@@ -122,8 +123,8 @@ export async function createPost(formData: FormData) {
 ```tsx
 // app/api/posts/route.ts
 export async function GET(request: Request) {
-  const posts = await db.posts.findMany()
-  return Response.json(posts)
+  const posts = await db.posts.findMany();
+  return Response.json(posts);
 }
 ```
 
@@ -143,13 +144,13 @@ Next.js 16では、キャッシュが**完全にオプトイン**になりまし
 
 ```tsx
 // キャッシュされる関数
-import { cacheTag } from 'next/cache'
+import { cacheTag } from "next/cache";
 
 export async function getProducts() {
-  'use cache'
-  cacheTag('products')
-  const products = await db.query('SELECT * FROM products')
-  return products
+  "use cache";
+  cacheTag("products");
+  const products = await db.query("SELECT * FROM products");
+  return products;
 }
 ```
 
@@ -157,32 +158,32 @@ export async function getProducts() {
 
 Next.js 16では3つの無効化APIがあります：
 
-| API | 用途 | 特徴 |
-|-----|------|------|
-| `updateTag()` | Server Actions専用 | 即時反映（read-your-writes） |
-| `revalidateTag()` | Server Actions / Route Handlers | 次のリクエストで反映 |
-| `refresh()` | Server Actions | キャッシュされていない動的データの更新 |
+| API               | 用途                            | 特徴                                   |
+| ----------------- | ------------------------------- | -------------------------------------- |
+| `updateTag()`     | Server Actions専用              | 即時反映（read-your-writes）           |
+| `revalidateTag()` | Server Actions / Route Handlers | 次のリクエストで反映                   |
+| `refresh()`       | Server Actions                  | キャッシュされていない動的データの更新 |
 
 ```tsx
-'use server'
-import { updateTag, revalidateTag, refresh } from 'next/cache'
+"use server";
+import { updateTag, revalidateTag, refresh } from "next/cache";
 
 // ユーザーが自分の変更を即座に見る必要がある場合
 export async function updateProfile(data: ProfileData) {
-  await db.users.update(data)
-  updateTag('user-profile')  // 即時反映
+  await db.users.update(data);
+  updateTag("user-profile"); // 即時反映
 }
 
 // 他のユーザーへの反映は遅延しても良い場合
 export async function publishPost(data: PostData) {
-  await db.posts.create(data)
-  revalidateTag('posts')  // 次のリクエストで反映
+  await db.posts.create(data);
+  revalidateTag("posts"); // 次のリクエストで反映
 }
 
 // 通知バッジなどキャッシュされていない動的データの更新
 export async function markNotificationRead(id: string) {
-  await db.notifications.markAsRead(id)
-  refresh()  // 動的データを更新（通知カウントなど）
+  await db.notifications.markAsRead(id);
+  refresh(); // 動的データを更新（通知カウントなど）
 }
 ```
 
@@ -191,36 +192,36 @@ export async function markNotificationRead(id: string) {
 ```tsx
 // ユーザープロフィール
 export async function getUserProfile(userId: string) {
-  'use cache'
-  cacheTag(`user-${userId}`)
-  return await db.users.findUnique({ where: { id: userId } })
+  "use cache";
+  cacheTag(`user-${userId}`);
+  return await db.users.findUnique({ where: { id: userId } });
 }
 
 // 投稿詳細
 export async function getPost(postId: string) {
-  'use cache'
-  cacheTag(`post-${postId}`)
-  cacheTag('posts')
-  return await db.posts.findUnique({ where: { id: postId } })
+  "use cache";
+  cacheTag(`post-${postId}`);
+  cacheTag("posts");
+  return await db.posts.findUnique({ where: { id: postId } });
 }
 
 // ワールド情報
 export async function getWorld(worldId: string) {
-  'use cache'
-  cacheTag(`world-${worldId}`)
-  return await db.worlds.findUnique({ where: { id: worldId } })
+  "use cache";
+  cacheTag(`world-${worldId}`);
+  return await db.worlds.findUnique({ where: { id: worldId } });
 }
 ```
 
 ### SNS各機能のキャッシュ方針
 
-| 機能 | キャッシュ | 無効化API |
-|------|-----------|-----------|
+| 機能                 | キャッシュ         | 無効化API          |
+| -------------------- | ------------------ | ------------------ |
 | ユーザープロフィール | `use cache` + タグ | `updateTag` (即時) |
-| フィード | キャッシュなし | - |
-| 投稿詳細 | `use cache` + タグ | `revalidateTag` |
-| ワールド情報 | `use cache` + タグ | `revalidateTag` |
-| 通知カウント | キャッシュなし | `refresh()` |
+| フィード             | キャッシュなし     | -                  |
+| 投稿詳細             | `use cache` + タグ | `revalidateTag`    |
+| ワールド情報         | `use cache` + タグ | `revalidateTag`    |
+| 通知カウント         | キャッシュなし     | `refresh()`        |
 
 ---
 
@@ -235,19 +236,19 @@ SNSフィードには `useInfiniteQuery` が最適。
 
 ```tsx
 // hooks/useFeed.ts
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 export function useFeed() {
   return useInfiniteQuery({
-    queryKey: ['feed'],
+    queryKey: ["feed"],
     queryFn: async ({ pageParam }) => {
-      const res = await fetch(`/api/feed?cursor=${pageParam}`)
-      return res.json()
+      const res = await fetch(`/api/feed?cursor=${pageParam}`);
+      return res.json();
     },
     initialPageParam: null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     staleTime: 1000 * 60, // 1分
-  })
+  });
 }
 ```
 
@@ -255,26 +256,26 @@ export function useFeed() {
 
 ```tsx
 // components/InfiniteFeed.tsx
-import { useInView } from 'react-intersection-observer'
+import { useInView } from "react-intersection-observer";
 
 export function InfiniteFeed() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useFeed()
-  const { ref, inView } = useInView()
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useFeed();
+  const { ref, inView } = useInView();
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
+      fetchNextPage();
     }
-  }, [inView, hasNextPage, isFetchingNextPage])
+  }, [inView, hasNextPage, isFetchingNextPage]);
 
   return (
     <>
-      {data?.pages.map(page =>
-        page.posts.map(post => <PostCard key={post.id} post={post} />)
+      {data?.pages.map((page) =>
+        page.posts.map((post) => <PostCard key={post.id} post={post} />),
       )}
       <div ref={ref} /> {/* 監視ポイント */}
     </>
-  )
+  );
 }
 ```
 
@@ -286,7 +287,7 @@ export function InfiniteFeed() {
 useInfiniteQuery({
   // ...
   maxPages: 10, // 最大10ページ保持
-})
+});
 ```
 
 ---
@@ -299,45 +300,47 @@ useInfiniteQuery({
 
 ```tsx
 // components/LikeButton.tsx
-'use client'
+"use client";
 
-import { useOptimistic, useTransition } from 'react'
-import { toggleLike } from '@/actions/like'
+import { useOptimistic, useTransition } from "react";
+import { toggleLike } from "@/actions/like";
 
 export function LikeButton({ postId, initialLiked, initialCount }) {
-  const [isPending, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition();
   const [optimistic, setOptimistic] = useOptimistic(
     { liked: initialLiked, count: initialCount },
     (state, newLiked: boolean) => ({
       liked: newLiked,
-      count: state.count + (newLiked ? 1 : -1)
-    })
-  )
+      count: state.count + (newLiked ? 1 : -1),
+    }),
+  );
 
   const handleClick = () => {
     startTransition(async () => {
-      setOptimistic(!optimistic.liked)
-      await toggleLike(postId)
-    })
-  }
+      setOptimistic(!optimistic.liked);
+      await toggleLike(postId);
+    });
+  };
 
   return (
     <button onClick={handleClick} disabled={isPending}>
-      {optimistic.liked ? '❤️' : '🤍'} {optimistic.count}
+      {optimistic.liked ? "❤️" : "🤍"} {optimistic.count}
     </button>
-  )
+  );
 }
 ```
 
 ### 適用すべき/すべきでないアクション
 
 **楽観的更新向き**:
+
 - いいね/解除
 - リポスト
 - フォロー/解除
 - ブックマーク
 
 **楽観的更新不向き**:
+
 - 投稿作成（失敗時のリスク高）
 - 削除（取り消し困難）
 - 認証関連
@@ -350,38 +353,38 @@ export function LikeButton({ postId, initialLiked, initialCount }) {
 
 ```tsx
 // hooks/useNotifications.ts
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useQueryClient } from '@tanstack/react-query'
+import { useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function useRealtimeNotifications(userId: string) {
-  const supabase = createClient()
-  const queryClient = useQueryClient()
+  const supabase = createClient();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const channel = supabase
       .channel(`notifications:${userId}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${userId}`,
         },
         (payload) => {
           // キャッシュを無効化して再フェッチ
-          queryClient.invalidateQueries({ queryKey: ['notifications'] })
-        }
+          queryClient.invalidateQueries({ queryKey: ["notifications"] });
+        },
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [userId, supabase, queryClient])
+      supabase.removeChannel(channel);
+    };
+  }, [userId, supabase, queryClient]);
 }
 ```
 
@@ -404,37 +407,39 @@ USING (auth.uid() = user_id);
 
 ```tsx
 // lib/supabase/client.ts
-import { createBrowserClient } from '@supabase/ssr'
+import { createBrowserClient } from "@supabase/ssr";
 
 export function createClient() {
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
 }
 ```
 
 ```tsx
 // lib/supabase/server.ts
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
 export async function createClient() {
-  const cookieStore = await cookies()
+  const cookieStore = await cookies();
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() { return cookieStore.getAll() },
+        getAll() {
+          return cookieStore.getAll();
+        },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          )
+            cookieStore.set(name, value, options),
+          );
         },
       },
-    }
-  )
+    },
+  );
 }
 ```
 
@@ -442,10 +447,14 @@ export async function createClient() {
 
 ```tsx
 // ❌ 危険: getSession()をServer Componentで信頼しない
-const { data: { session } } = await supabase.auth.getSession()
+const {
+  data: { session },
+} = await supabase.auth.getSession();
 
 // ✅ 安全: getUser()を使用（毎回サーバー検証）
-const { data: { user } } = await supabase.auth.getUser()
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 ```
 
 **`getSession()` はCookieから読むだけで検証しない。`getUser()` は必ずSupabase Authサーバーに問い合わせる。**
@@ -456,31 +465,33 @@ Next.js 16では `middleware.ts` が `proxy.ts` に変更されました。
 
 ```tsx
 // proxy.ts
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
 export function proxy(request: NextRequest) {
-  let response = NextResponse.next({ request })
+  let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() { return request.cookies.getAll() },
+        getAll() {
+          return request.cookies.getAll();
+        },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options)
-          })
+            response.cookies.set(name, value, options);
+          });
         },
       },
-    }
-  )
+    },
+  );
 
   // セッション更新（重要）
-  supabase.auth.getUser()
+  supabase.auth.getUser();
 
-  return response
+  return response;
 }
 ```
 
@@ -492,86 +503,87 @@ export function proxy(request: NextRequest) {
 
 ### フィード
 
-| 項目 | 推奨 |
-|------|------|
-| レンダリング | Client Component（無限スクロール） |
-| データ取得 | SWR `useSWRInfinite` ※本プロジェクト採用 |
-| キャッシュ | dedupingInterval: 2秒 |
-| ページネーション | カーソルベース（timestamp） |
+| 項目             | 推奨                                     |
+| ---------------- | ---------------------------------------- |
+| レンダリング     | Client Component（無限スクロール）       |
+| データ取得       | SWR `useSWRInfinite` ※本プロジェクト採用 |
+| キャッシュ       | dedupingInterval: 2秒                    |
+| ページネーション | カーソルベース（timestamp）              |
 
 ### 投稿詳細
 
-| 項目 | 推奨 |
-|------|------|
-| レンダリング | Server Component + Cache Components |
-| 静的部分 | 投稿本文、画像、著者情報（`use cache`） |
-| 動的部分 | いいね数、コメント一覧（Suspense） |
-| キャッシュ | `cacheTag` + `revalidateTag` |
+| 項目         | 推奨                                    |
+| ------------ | --------------------------------------- |
+| レンダリング | Server Component + Cache Components     |
+| 静的部分     | 投稿本文、画像、著者情報（`use cache`） |
+| 動的部分     | いいね数、コメント一覧（Suspense）      |
+| キャッシュ   | `cacheTag` + `revalidateTag`            |
 
 ### いいね・リポスト
 
-| 項目 | 推奨 |
-|------|------|
-| レンダリング | Client Component |
-| 更新方式 | 楽観的更新 + Server Actions |
-| 状態管理 | useOptimistic + useTransition |
-| エラー時 | ロールバック + トースト通知 |
+| 項目         | 推奨                          |
+| ------------ | ----------------------------- |
+| レンダリング | Client Component              |
+| 更新方式     | 楽観的更新 + Server Actions   |
+| 状態管理     | useOptimistic + useTransition |
+| エラー時     | ロールバック + トースト通知   |
 
 ### 通知
 
-| 項目 | 推奨 |
-|------|------|
-| レンダリング | Client Component |
-| リアルタイム | Supabase Realtime |
-| 初期データ | Server Componentでプリフェッチ |
-| 未読管理 | DB + `refresh()` で即時更新 |
+| 項目         | 推奨                           |
+| ------------ | ------------------------------ |
+| レンダリング | Client Component               |
+| リアルタイム | Supabase Realtime              |
+| 初期データ   | Server Componentでプリフェッチ |
+| 未読管理     | DB + `refresh()` で即時更新    |
 
 ### ユーザープロフィール
 
-| 項目 | 推奨 |
-|------|------|
-| レンダリング | Server Component（基本情報） |
-| 投稿一覧 | Client Component（無限スクロール） |
-| フォローボタン | Client Component（楽観的更新） |
-| キャッシュ | `use cache` + `updateTag` (即時) |
+| 項目           | 推奨                               |
+| -------------- | ---------------------------------- |
+| レンダリング   | Server Component（基本情報）       |
+| 投稿一覧       | Client Component（無限スクロール） |
+| フォローボタン | Client Component（楽観的更新）     |
+| キャッシュ     | `use cache` + `updateTag` (即時)   |
 
 ### コメント
 
-| 項目 | 推奨 |
-|------|------|
-| レンダリング | Client Component |
-| 投稿 | Server Actions |
-| 更新 | 楽観的更新（新規追加のみ） |
-| ソート | 新しい順 or 古い順（選択可能） |
+| 項目         | 推奨                           |
+| ------------ | ------------------------------ |
+| レンダリング | Client Component               |
+| 投稿         | Server Actions                 |
+| 更新         | 楽観的更新（新規追加のみ）     |
+| ソート       | 新しい順 or 古い順（選択可能） |
 
 ### 検索
 
-| 項目 | 推奨 |
-|------|------|
-| レンダリング | Client Component |
-| デバウンス | 300ms |
-| キャッシュ | TanStack Queryで自動キャッシュ |
-| UI | Suspenseでローディング表示 |
+| 項目         | 推奨                           |
+| ------------ | ------------------------------ |
+| レンダリング | Client Component               |
+| デバウンス   | 300ms                          |
+| キャッシュ   | TanStack Queryで自動キャッシュ |
+| UI           | Suspenseでローディング表示     |
 
 ---
 
 ## Next.js 16 主な変更点まとめ
 
-| 項目 | Next.js 15 | Next.js 16 |
-|------|------------|------------|
-| キャッシュ | 暗黙的（予測困難） | 明示的（`use cache`） |
-| PPR | `experimental.ppr` フラグ | Cache Componentsに統合 |
-| Middleware | `middleware.ts` | `proxy.ts` |
-| キャッシュ無効化 | `revalidateTag` | `updateTag`（即時）/ `revalidateTag` |
-| 動的データ更新 | `router.refresh()` | `refresh()`（Server Actions） |
-| React | React 19 | React 19.2 |
-| Node.js | 18.17+ | 20.9.0+ |
+| 項目             | Next.js 15                | Next.js 16                           |
+| ---------------- | ------------------------- | ------------------------------------ |
+| キャッシュ       | 暗黙的（予測困難）        | 明示的（`use cache`）                |
+| PPR              | `experimental.ppr` フラグ | Cache Componentsに統合               |
+| Middleware       | `middleware.ts`           | `proxy.ts`                           |
+| キャッシュ無効化 | `revalidateTag`           | `updateTag`（即時）/ `revalidateTag` |
+| 動的データ更新   | `router.refresh()`        | `refresh()`（Server Actions）        |
+| React            | React 19                  | React 19.2                           |
+| Node.js          | 18.17+                    | 20.9.0+                              |
 
 ---
 
 ## 参考リンク
 
 ### 公式ドキュメント
+
 - [Next.js 16 Release](https://nextjs.org/blog/next-16)
 - [Next.js Cache Components](https://nextjs.org/docs/app/getting-started/cache-components)
 - [Next.js use cache Directive](https://nextjs.org/docs/app/api-reference/directives/use-cache)
@@ -584,6 +596,7 @@ export function proxy(request: NextRequest) {
 - [TanStack Query Infinite Queries](https://tanstack.com/query/latest/docs/framework/react/guides/infinite-queries)
 
 ### 解説記事
+
 - [Next.js 16 Cache Components Explained](https://webkul.com/blog/next-js-16-cache-components-explained/)
 - [What's New in Next.js 16 - Strapi](https://strapi.io/blog/next-js-16-features)
 - [Server Actions vs Route Handlers](https://makerkit.dev/blog/tutorials/server-actions-vs-route-handlers)

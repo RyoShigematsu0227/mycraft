@@ -61,10 +61,12 @@ export default function useComment({ postId, currentUserId }: UseCommentProps) {
       // Fetch the new comment with user data for optimistic update
       const { data: newCommentWithUser } = await supabase
         .from('comments')
-        .select(`
+        .select(
+          `
           *,
           user:users!comments_user_id_fkey(*)
-        `)
+        `
+        )
         .eq('id', data.id)
         .single()
 

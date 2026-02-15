@@ -25,7 +25,10 @@ interface UserStatsState {
   setIsFollowing: (userId: string, isFollowing: boolean) => void
 
   // Toggle follow with optimistic update (returns previous state for rollback)
-  toggleFollow: (targetUserId: string, currentUserId: string) => {
+  toggleFollow: (
+    targetUserId: string,
+    currentUserId: string
+  ) => {
     wasFollowing: boolean
     prevFollowersCount: number
     prevFollowingCount: number

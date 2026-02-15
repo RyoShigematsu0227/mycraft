@@ -149,10 +149,23 @@ export default function PostCard({
         {repostedBy && (
           <div className="mb-3 flex items-center gap-2 pl-14">
             <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <svg
+                className="h-3.5 w-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
               </svg>
-              <Link href={`/users/${repostedBy.userId}`} className="pointer-events-auto hover:underline">
+              <Link
+                href={`/users/${repostedBy.userId}`}
+                className="pointer-events-auto hover:underline"
+              >
                 {repostedBy.displayName}
               </Link>
               <span className="text-emerald-500/60">がリポスト</span>
@@ -166,8 +179,13 @@ export default function PostCard({
             {interactive && (
               <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-accent/40 to-accent-secondary/40 opacity-0 blur transition-opacity duration-300 group-hover:opacity-100" />
             )}
-            <Link href={`/users/${post.user.user_id}`} className="pointer-events-auto relative block">
-              <div className={`relative h-11 w-11 overflow-hidden rounded-full bg-gray-200 ring-2 ring-surface transition-all duration-300 dark:bg-gray-700 ${interactive ? 'group-hover:ring-accent/30' : ''}`}>
+            <Link
+              href={`/users/${post.user.user_id}`}
+              className="pointer-events-auto relative block"
+            >
+              <div
+                className={`relative h-11 w-11 overflow-hidden rounded-full bg-gray-200 ring-2 ring-surface transition-all duration-300 dark:bg-gray-700 ${interactive ? 'group-hover:ring-accent/30' : ''}`}
+              >
                 <Image
                   src={post.user.avatar_url || '/defaults/default-avatar.svg'}
                   alt={post.user.display_name}
@@ -224,7 +242,11 @@ export default function PostCard({
                 {post.visibility === 'world_only' && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-accent/10 to-accent-secondary/10 px-2.5 py-1 text-xs font-semibold text-accent ring-1 ring-accent/20">
                     <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                      <path
+                        fillRule="evenodd"
+                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     限定
                   </span>
@@ -255,7 +277,13 @@ export default function PostCard({
                   className="pointer-events-auto group/action flex items-center gap-1.5 rounded-full px-3 py-2 text-gray-500 transition-all duration-200 hover:bg-sky-500/10 hover:text-sky-500 dark:text-gray-400 dark:hover:text-sky-400"
                 >
                   <div className="relative">
-                    <svg className="h-5 w-5 transition-transform duration-200 group-hover/action:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <svg
+                      className="h-5 w-5 transition-transform duration-200 group-hover/action:scale-110"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -303,8 +331,18 @@ export default function PostCard({
                   }}
                   className="pointer-events-auto cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-accent/10 hover:text-accent"
                 >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15" />
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15"
+                    />
                   </svg>
                 </button>
 
@@ -315,8 +353,18 @@ export default function PostCard({
                       onClick={() => setShowMenu(!showMenu)}
                       className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-surface-hover hover:text-foreground"
                     >
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                        />
                       </svg>
                     </button>
 
@@ -329,8 +377,18 @@ export default function PostCard({
                           }}
                           className="flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-500/10"
                         >
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
                           </svg>
                           削除する
                         </button>

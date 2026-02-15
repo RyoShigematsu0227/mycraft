@@ -48,7 +48,9 @@ export default function WorldHeader({
       {/* Compact Fixed Header */}
       <div
         className={`fixed left-0 right-0 top-0 z-30 border-b border-border bg-surface/95 backdrop-blur-sm transition-all duration-200 lg:left-72 ${
-          isCompact ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
+          isCompact
+            ? 'translate-y-0 opacity-100'
+            : '-translate-y-full opacity-0 pointer-events-none'
         }`}
       >
         <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-2">
@@ -85,10 +87,7 @@ export default function WorldHeader({
       </div>
 
       {/* Full Header */}
-      <div
-        ref={headerRef}
-        className="border-b border-border bg-surface px-4 py-6"
-      >
+      <div ref={headerRef} className="border-b border-border bg-surface px-4 py-6">
         <div className="flex items-start gap-4">
           <WorldIcon
             worldId={world.id}
@@ -100,9 +99,7 @@ export default function WorldHeader({
           <div className="min-w-0 flex-1">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
-                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                  {world.name}
-                </h1>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">{world.name}</h1>
                 {owner && (
                   <Link
                     href={`/users/${owner.user_id}`}
@@ -133,11 +130,7 @@ export default function WorldHeader({
                 {world.description}
               </p>
             )}
-            <WorldStats
-              worldId={world.id}
-              initialMemberCount={memberCount}
-              isMember={isMember}
-            />
+            <WorldStats worldId={world.id} initialMemberCount={memberCount} isMember={isMember} />
           </div>
         </div>
 

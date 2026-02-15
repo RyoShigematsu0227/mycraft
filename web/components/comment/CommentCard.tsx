@@ -111,14 +111,10 @@ export default function CommentCard({
                 <span className="truncate font-bold text-foreground transition-colors group-hover/name:text-accent">
                   {comment.user.display_name}
                 </span>
-                <span className="truncate text-muted">
-                  @{comment.user.user_id}
-                </span>
+                <span className="truncate text-muted">@{comment.user.user_id}</span>
               </Link>
               <span className="text-border">·</span>
-              <time className="text-muted">
-                {formatDate(comment.created_at)}
-              </time>
+              <time className="text-muted">{formatDate(comment.created_at)}</time>
             </div>
 
             {/* Content */}
@@ -143,8 +139,18 @@ export default function CommentCard({
                       : 'text-muted hover:bg-accent/10 hover:text-accent'
                   }`}
                 >
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                  <svg
+                    className="h-3.5 w-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                    />
                   </svg>
                   返信
                 </button>
@@ -154,8 +160,18 @@ export default function CommentCard({
                   onClick={() => setShowDeleteConfirm(true)}
                   className="flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-muted transition-all duration-200 hover:bg-red-500/10 hover:text-red-500"
                 >
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <svg
+                    className="h-3.5 w-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
                   </svg>
                   削除
                 </button>

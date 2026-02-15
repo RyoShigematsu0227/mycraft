@@ -46,9 +46,8 @@ export default function MembersPage() {
   const worldId = params.worldId as string
   const { user } = useAuth()
 
-  const { data, isLoading } = useSWR(
-    worldId ? ['worldMembers', worldId, user?.id] : null,
-    () => fetchWorldWithMembers(worldId, user?.id)
+  const { data, isLoading } = useSWR(worldId ? ['worldMembers', worldId, user?.id] : null, () =>
+    fetchWorldWithMembers(worldId, user?.id)
   )
 
   // loading.tsx handles initial loading state

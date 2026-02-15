@@ -54,16 +54,11 @@ export default function UserCard({
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <Link
-                  href={`/users/${user.user_id}`}
-                  className="group/name block"
-                >
+                <Link href={`/users/${user.user_id}`} className="group/name block">
                   <span className="block truncate text-base font-bold text-foreground transition-colors group-hover/name:text-accent">
                     {user.display_name}
                   </span>
-                  <span className="block truncate text-sm text-muted">
-                    @{user.user_id}
-                  </span>
+                  <span className="block truncate text-sm text-muted">@{user.user_id}</span>
                 </Link>
               </div>
               {showFollowButton && !isOwnProfile && currentUserId && (
@@ -76,9 +71,7 @@ export default function UserCard({
             </div>
 
             {showBio && user.bio && (
-              <p className="mt-2 text-sm leading-relaxed text-muted line-clamp-2">
-                {user.bio}
-              </p>
+              <p className="mt-2 text-sm leading-relaxed text-muted line-clamp-2">{user.bio}</p>
             )}
 
             {stats && (

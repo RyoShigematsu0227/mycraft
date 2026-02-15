@@ -20,7 +20,10 @@ interface EngagementTabsProps {
   initialTab: 'likes' | 'reposts'
 }
 
-async function fetchEngagementData(postId: string, currentUserId?: string): Promise<{
+async function fetchEngagementData(
+  postId: string,
+  currentUserId?: string
+): Promise<{
   likeUsers: EngagementUser[]
   repostUsers: EngagementUser[]
   followingIds: Set<string>
@@ -31,7 +34,8 @@ async function fetchEngagementData(postId: string, currentUserId?: string): Prom
   const [likesResult, repostsResult] = await Promise.all([
     supabase
       .from('likes')
-      .select(`
+      .select(
+        `
         user:users (
           id,
           user_id,
@@ -39,12 +43,14 @@ async function fetchEngagementData(postId: string, currentUserId?: string): Prom
           avatar_url,
           bio
         )
-      `)
+      `
+      )
       .eq('post_id', postId)
       .order('created_at', { ascending: false }),
     supabase
       .from('reposts')
-      .select(`
+      .select(
+        `
         user:users (
           id,
           user_id,
@@ -52,13 +58,16 @@ async function fetchEngagementData(postId: string, currentUserId?: string): Prom
           avatar_url,
           bio
         )
-      `)
+      `
+      )
       .eq('post_id', postId)
       .order('created_at', { ascending: false }),
   ])
 
-  const likeUsers = (likesResult.data?.map((like) => like.user as EngagementUser).filter(Boolean) || [])
-  const repostUsers = (repostsResult.data?.map((repost) => repost.user as EngagementUser).filter(Boolean) || [])
+  const likeUsers =
+    likesResult.data?.map((like) => like.user as EngagementUser).filter(Boolean) || []
+  const repostUsers =
+    repostsResult.data?.map((repost) => repost.user as EngagementUser).filter(Boolean) || []
 
   // Get which users the current user is following
   let followingIds = new Set<string>()
@@ -82,9 +91,8 @@ export default function EngagementTabs({ postId, initialTab }: EngagementTabsPro
   const [activeTab, setActiveTab] = useState<'likes' | 'reposts'>(initialTab)
   const { user: authUser } = useAuth()
 
-  const { data, isLoading } = useSWR(
-    postId ? ['postEngagement', postId, authUser?.id] : null,
-    () => fetchEngagementData(postId, authUser?.id)
+  const { data, isLoading } = useSWR(postId ? ['postEngagement', postId, authUser?.id] : null, () =>
+    fetchEngagementData(postId, authUser?.id)
   )
 
   const handleTabChange = (tab: 'likes' | 'reposts') => {
@@ -125,9 +133,7 @@ export default function EngagementTabs({ postId, initialTab }: EngagementTabsPro
             }`}
           >
             いいね
-            {likeUsers.length > 0 && (
-              <span className="ml-1 text-muted">({likeUsers.length})</span>
-            )}
+            {likeUsers.length > 0 && <span className="ml-1 text-muted">({likeUsers.length})</span>}
           </button>
           <button
             onClick={() => handleTabChange('reposts')}

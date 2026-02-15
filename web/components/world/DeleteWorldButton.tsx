@@ -89,11 +89,7 @@ export default function DeleteWorldButton({ worldId, worldName }: DeleteWorldBut
 
   return (
     <>
-      <Button
-        variant="danger"
-        size="sm"
-        onClick={() => setShowConfirm(true)}
-      >
+      <Button variant="danger" size="sm" onClick={() => setShowConfirm(true)}>
         ワールドを削除
       </Button>
 

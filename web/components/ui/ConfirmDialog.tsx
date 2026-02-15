@@ -80,54 +80,51 @@ export default function ConfirmDialog({
           ref={dialogRef}
           className="relative w-full max-w-md animate-fade-in rounded-2xl bg-surface p-6 shadow-2xl ring-1 ring-border"
         >
-        {/* Icon */}
-        <div className="mb-4 flex justify-center">
-          <div
-            className={`flex h-12 w-12 items-center justify-center rounded-full ${
-              variant === 'danger' ? 'bg-red-100 dark:bg-red-900/30' : 'bg-yellow-100 dark:bg-yellow-900/30'
-            }`}
-          >
-            <svg
-              className={`h-6 w-6 ${variant === 'danger' ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
+          {/* Icon */}
+          <div className="mb-4 flex justify-center">
+            <div
+              className={`flex h-12 w-12 items-center justify-center rounded-full ${
+                variant === 'danger'
+                  ? 'bg-red-100 dark:bg-red-900/30'
+                  : 'bg-yellow-100 dark:bg-yellow-900/30'
+              }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
+              <svg
+                className={`h-6 w-6 ${variant === 'danger' ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="text-center">
-          <h3 className="text-lg font-bold text-foreground">{title}</h3>
-          <p className="mt-2 text-sm text-muted">{description}</p>
-        </div>
+          {/* Content */}
+          <div className="text-center">
+            <h3 className="text-lg font-bold text-foreground">{title}</h3>
+            <p className="mt-2 text-sm text-muted">{description}</p>
+          </div>
 
-        {/* Actions */}
-        <div className="mt-6 flex gap-3">
-          <Button
-            variant="outline"
-            className="flex-1"
-            onClick={onClose}
-            disabled={loading}
-          >
-            {cancelText}
-          </Button>
-          <Button
-            variant={variant === 'danger' ? 'danger' : 'primary'}
-            className="flex-1"
-            onClick={onConfirm}
-            loading={loading}
-          >
-            {confirmText}
-          </Button>
-        </div>
+          {/* Actions */}
+          <div className="mt-6 flex gap-3">
+            <Button variant="outline" className="flex-1" onClick={onClose} disabled={loading}>
+              {cancelText}
+            </Button>
+            <Button
+              variant={variant === 'danger' ? 'danger' : 'primary'}
+              className="flex-1"
+              onClick={onConfirm}
+              loading={loading}
+            >
+              {confirmText}
+            </Button>
+          </div>
         </div>
       </div>
     </div>,

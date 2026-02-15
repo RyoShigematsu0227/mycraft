@@ -48,7 +48,9 @@ export default function UserProfileHeader({
       {/* Compact Fixed Header */}
       <div
         className={`fixed left-0 right-0 top-0 z-30 border-b border-border bg-surface/95 backdrop-blur-sm transition-all duration-200 lg:left-72 ${
-          isCompact ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
+          isCompact
+            ? 'translate-y-0 opacity-100'
+            : '-translate-y-full opacity-0 pointer-events-none'
         }`}
       >
         <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-2">
@@ -60,9 +62,7 @@ export default function UserProfileHeader({
             showLink={false}
           />
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-sm font-bold text-foreground">
-              {displayName}
-            </h2>
+            <h2 className="truncate text-sm font-bold text-foreground">{displayName}</h2>
             <p className="text-xs text-muted">@{userIdSlug}</p>
           </div>
           <div className="shrink-0">
@@ -85,9 +85,7 @@ export default function UserProfileHeader({
       </div>
 
       {/* Full Header */}
-      <div ref={headerRef}>
-        {children}
-      </div>
+      <div ref={headerRef}>{children}</div>
     </>
   )
 }

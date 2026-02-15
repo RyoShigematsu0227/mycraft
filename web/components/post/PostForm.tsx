@@ -93,7 +93,12 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
   }
 
   // バックグラウンドで投稿処理を実行する関数
-  const submitPostInBackground = async (worldIdToPost: string, contentToPost: string, visibilityToPost: Visibility, imagesToUpload: File[]) => {
+  const submitPostInBackground = async (
+    worldIdToPost: string,
+    contentToPost: string,
+    visibilityToPost: Visibility,
+    imagesToUpload: File[]
+  ) => {
     try {
       // Create post
       const { data: post, error: postError } = await supabase
@@ -262,19 +267,19 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {imagePreviews.map((preview, index) => (
             <div key={index} className="relative aspect-square">
-              <Image
-                src={preview}
-                alt=""
-                fill
-                className="rounded-lg object-cover"
-              />
+              <Image src={preview} alt="" fill className="rounded-lg object-cover" />
               <button
                 type="button"
                 onClick={() => removeImage(index)}
                 className="absolute right-1 top-1 rounded-full bg-black/50 p-1 text-white hover:bg-black/70"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -308,9 +313,7 @@ export default function PostForm({ userId, worlds, defaultWorldId, onSuccess }: 
               />
             </svg>
           </button>
-          <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-            {images.length}/4
-          </span>
+          <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">{images.length}/4</span>
         </div>
         <Link
           href={selectedWorldId ? `/worlds/${selectedWorldId}` : '#'}

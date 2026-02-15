@@ -15,7 +15,10 @@ interface FollowTabsProps {
   initialTab: 'followers' | 'following'
 }
 
-async function fetchFollowData(userHandle: string, currentUserId?: string): Promise<{
+async function fetchFollowData(
+  userHandle: string,
+  currentUserId?: string
+): Promise<{
   user: User | null
   followers: User[]
   following: User[]
@@ -24,11 +27,7 @@ async function fetchFollowData(userHandle: string, currentUserId?: string): Prom
   const supabase = createClient()
 
   // Get profile user
-  const { data: user } = await supabase
-    .from('users')
-    .select('*')
-    .eq('user_id', userHandle)
-    .single()
+  const { data: user } = await supabase.from('users').select('*').eq('user_id', userHandle).single()
 
   if (!user) {
     return { user: null, followers: [], following: [], currentUserFollowingIds: new Set() }
@@ -72,9 +71,8 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
   const [activeTab, setActiveTab] = useState<'followers' | 'following'>(initialTab)
   const { user: authUser } = useAuth()
 
-  const { data, isLoading } = useSWR(
-    userId ? ['follow-data', userId, authUser?.id] : null,
-    () => fetchFollowData(userId, authUser?.id)
+  const { data, isLoading } = useSWR(userId ? ['follow-data', userId, authUser?.id] : null, () =>
+    fetchFollowData(userId, authUser?.id)
   )
 
   const handleTabChange = (tab: 'followers' | 'following') => {
@@ -155,7 +153,11 @@ export default function FollowTabs({ userId, initialTab }: FollowTabsProps) {
                 />
               </svg>
             }
-            title={activeTab === 'followers' ? 'まだフォロワーがいません' : 'まだ誰もフォローしていません'}
+            title={
+              activeTab === 'followers'
+                ? 'まだフォロワーがいません'
+                : 'まだ誰もフォローしていません'
+            }
           />
         ) : (
           currentList.map((listUser) => (

@@ -6,11 +6,7 @@ import { createClient } from '@/lib/supabase/server'
  */
 export async function getUserProfile(userId: string) {
   const supabase = createCacheClient()
-  const { data } = await supabase
-    .from('users')
-    .select('*')
-    .eq('user_id', userId)
-    .single()
+  const { data } = await supabase.from('users').select('*').eq('user_id', userId).single()
 
   return data
 }
@@ -20,11 +16,7 @@ export async function getUserProfile(userId: string) {
  */
 export async function getUserProfileById(id: string) {
   const supabase = createCacheClient()
-  const { data } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', id)
-    .single()
+  const { data } = await supabase.from('users').select('*').eq('id', id).single()
 
   return data
 }
@@ -40,14 +32,8 @@ export async function getUserStats(userId: string) {
       .from('follows')
       .select('id', { count: 'exact', head: true })
       .eq('following_id', userId),
-    supabase
-      .from('follows')
-      .select('id', { count: 'exact', head: true })
-      .eq('follower_id', userId),
-    supabase
-      .from('posts')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', userId),
+    supabase.from('follows').select('id', { count: 'exact', head: true }).eq('follower_id', userId),
+    supabase.from('posts').select('id', { count: 'exact', head: true }).eq('user_id', userId),
   ])
 
   return {

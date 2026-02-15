@@ -28,12 +28,10 @@ export async function toggleWorldMembership(worldId: string, userId: string) {
     if (error) throw error
   } else {
     // Join world
-    const { error } = await supabase
-      .from('world_members')
-      .insert({
-        world_id: worldId,
-        user_id: userId,
-      })
+    const { error } = await supabase.from('world_members').insert({
+      world_id: worldId,
+      user_id: userId,
+    })
 
     if (error) throw error
   }
@@ -72,12 +70,10 @@ export async function createWorld(data: {
   if (error) throw error
 
   // Owner automatically becomes a member
-  await supabase
-    .from('world_members')
-    .insert({
-      world_id: world.id,
-      user_id: data.ownerId,
-    })
+  await supabase.from('world_members').insert({
+    world_id: world.id,
+    user_id: data.ownerId,
+  })
 
   // Revalidate worlds list (即時反映)
   revalidatePath('/worlds')
@@ -106,10 +102,7 @@ export async function updateWorld(
   if (data.iconUrl !== undefined) updateData.icon_url = data.iconUrl
   updateData.updated_at = new Date().toISOString()
 
-  const { error } = await supabase
-    .from('worlds')
-    .update(updateData)
-    .eq('id', worldId)
+  const { error } = await supabase.from('worlds').update(updateData).eq('id', worldId)
 
   if (error) throw error
 

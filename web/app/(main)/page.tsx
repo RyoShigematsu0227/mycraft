@@ -19,12 +19,7 @@ export default function Home() {
       <div className="px-4 py-6">
         <EmptyState
           icon={
-            <svg
-              className="h-16 w-16"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <svg className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -55,7 +50,9 @@ export default function Home() {
       {/* Header */}
       <div className="sticky top-0 z-40 border-b border-border bg-background/80 px-4 py-3.5 backdrop-blur-md dark:border-border dark:bg-background/80">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">ホーム</h1>
+          <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+            ホーム
+          </h1>
           <NewPostButton />
         </div>
       </div>

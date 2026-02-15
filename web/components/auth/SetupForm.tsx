@@ -20,7 +20,9 @@ export default function SetupForm() {
   useEffect(() => {
     async function fetchOAuthProfile() {
       const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
 
       if (user?.user_metadata) {
         // アバターURL（Google: picture or avatar_url, Discord: avatar_url）
@@ -170,9 +172,7 @@ export default function SetupForm() {
             />
           </div>
           <div className="mt-1 flex items-center gap-2">
-            {checkingUserId && (
-              <span className="text-xs text-gray-500">確認中...</span>
-            )}
+            {checkingUserId && <span className="text-xs text-gray-500">確認中...</span>}
             {!checkingUserId && userIdAvailable === true && (
               <span className="text-xs text-green-600 dark:text-green-400">
                 このユーザーIDは使用できます

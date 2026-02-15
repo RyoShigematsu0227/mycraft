@@ -30,9 +30,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           } ${className}`}
           {...props}
         />
-        {hint && !error && (
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{hint}</p>
-        )}
+        {hint && !error && <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{hint}</p>}
         {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
       </div>
     )

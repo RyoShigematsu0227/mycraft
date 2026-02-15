@@ -74,7 +74,10 @@ export default function SearchResults({
         {/* Tabs Skeleton */}
         <div className="flex border-b border-border">
           {['ユーザー', 'ワールド', '投稿'].map((label) => (
-            <div key={label} className="flex-1 px-4 py-3 text-center text-sm font-medium text-muted">
+            <div
+              key={label}
+              className="flex-1 px-4 py-3 text-center text-sm font-medium text-muted"
+            >
               {label}
             </div>
           ))}
@@ -276,18 +279,19 @@ export default function SearchResults({
                         created_at: '',
                         updated_at: '',
                       },
-                      world: post.world_name && post.world_id
-                        ? {
-                            id: post.world_id,
-                            name: post.world_name,
-                            icon_url: post.world_icon_url,
-                            description: null,
-                            how_to_join: null,
-                            owner_id: '',
-                            created_at: '',
-                            updated_at: '',
-                          }
-                        : null,
+                      world:
+                        post.world_name && post.world_id
+                          ? {
+                              id: post.world_id,
+                              name: post.world_name,
+                              icon_url: post.world_icon_url,
+                              description: null,
+                              how_to_join: null,
+                              owner_id: '',
+                              created_at: '',
+                              updated_at: '',
+                            }
+                          : null,
                       images,
                     }}
                     currentUserId={currentUserId}

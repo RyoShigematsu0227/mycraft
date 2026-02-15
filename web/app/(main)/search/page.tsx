@@ -23,12 +23,15 @@ export default function SearchPage() {
     }
   }, [initialQuery, search])
 
-  const handleSearch = useCallback((query: string) => {
-    if (query.trim()) {
-      setHasSearched(true)
-    }
-    search(query)
-  }, [search])
+  const handleSearch = useCallback(
+    (query: string) => {
+      if (query.trim()) {
+        setHasSearched(true)
+      }
+      search(query)
+    },
+    [search]
+  )
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -37,7 +40,12 @@ export default function SearchPage() {
         <div className="flex items-center gap-4">
           <BackButton />
           <div className="flex-1">
-            <SearchBar initialQuery={initialQuery} onSearch={handleSearch} onTyping={setIsTyping} autoFocus />
+            <SearchBar
+              initialQuery={initialQuery}
+              onSearch={handleSearch}
+              onTyping={setIsTyping}
+              autoFocus
+            />
           </div>
         </div>
       </div>

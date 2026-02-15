@@ -36,9 +36,7 @@ export async function toggleLike(postId: string, userId: string) {
     if (error) throw error
   } else {
     // Like
-    const { error } = await supabase
-      .from('likes')
-      .insert({ post_id: postId, user_id: userId })
+    const { error } = await supabase.from('likes').insert({ post_id: postId, user_id: userId })
 
     if (error) throw error
   }
@@ -74,9 +72,7 @@ export async function toggleRepost(postId: string, userId: string) {
     if (error) throw error
   } else {
     // Repost
-    const { error } = await supabase
-      .from('reposts')
-      .insert({ post_id: postId, user_id: userId })
+    const { error } = await supabase.from('reposts').insert({ post_id: postId, user_id: userId })
 
     if (error) throw error
   }
@@ -96,11 +92,7 @@ export async function deletePost(postId: string, userId?: string) {
   // userIdが指定されていない場合は投稿から取得
   let authorId = userId
   if (!authorId) {
-    const { data: post } = await supabase
-      .from('posts')
-      .select('user_id')
-      .eq('id', postId)
-      .single()
+    const { data: post } = await supabase.from('posts').select('user_id').eq('id', postId).single()
     authorId = post?.user_id
   }
 
@@ -125,10 +117,7 @@ export async function deletePost(postId: string, userId?: string) {
     }
   }
 
-  const { error } = await supabase
-    .from('posts')
-    .delete()
-    .eq('id', postId)
+  const { error } = await supabase.from('posts').delete().eq('id', postId)
 
   if (error) throw error
 

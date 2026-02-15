@@ -41,7 +41,9 @@ export async function POST(request: NextRequest) {
         { auth: { autoRefreshToken: false, persistSession: false } }
       )
 
-      const { data: authUser, error: authError } = await adminClient.auth.admin.getUserById(userData.id)
+      const { data: authUser, error: authError } = await adminClient.auth.admin.getUserById(
+        userData.id
+      )
 
       if (authError || !authUser?.user?.email) {
         return NextResponse.json(
@@ -81,9 +83,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ redirectTo: '/' })
   } catch {
-    return NextResponse.json(
-      { error: 'ログインに失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'ログインに失敗しました' }, { status: 500 })
   }
 }

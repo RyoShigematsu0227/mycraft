@@ -25,7 +25,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 
   const user = post.user as { display_name: string; user_id: string }
   const images = post.images as { image_url: string }[] | null
-  const description = post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content
+  const description =
+    post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content
   const title = `${user.display_name}さんの投稿`
 
   return {
@@ -86,12 +87,7 @@ export default async function PostPage({ params }: PostPageProps) {
   let isReposted = false
   if (authUser) {
     const [likeCheck, repostCheck] = await Promise.all([
-      supabase
-        .from('likes')
-        .select('id')
-        .eq('post_id', postId)
-        .eq('user_id', authUser.id)
-        .single(),
+      supabase.from('likes').select('id').eq('post_id', postId).eq('user_id', authUser.id).single(),
       supabase
         .from('reposts')
         .select('id')

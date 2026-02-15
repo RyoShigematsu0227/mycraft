@@ -62,7 +62,9 @@ export default function UserAvatar({
     <div className={`group/avatar relative shrink-0 ${className}`}>
       {/* Glow effect */}
       {showGlow && (
-        <div className={`absolute ${glowSizes[size]} rounded-full bg-gradient-to-br from-accent/50 to-accent-secondary/50 opacity-0 blur transition-opacity duration-300 group-hover/avatar:opacity-100`} />
+        <div
+          className={`absolute ${glowSizes[size]} rounded-full bg-gradient-to-br from-accent/50 to-accent-secondary/50 opacity-0 blur transition-opacity duration-300 group-hover/avatar:opacity-100`}
+        />
       )}
 
       {/* Avatar container */}

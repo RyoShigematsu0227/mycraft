@@ -5,11 +5,7 @@ import { createCacheClient } from '@/lib/supabase/cache'
  */
 export async function getWorld(worldId: string) {
   const supabase = createCacheClient()
-  const { data } = await supabase
-    .from('worlds')
-    .select('*')
-    .eq('id', worldId)
-    .single()
+  const { data } = await supabase.from('worlds').select('*').eq('id', worldId).single()
 
   return data
 }
@@ -19,11 +15,7 @@ export async function getWorld(worldId: string) {
  */
 export async function getWorldOwner(ownerId: string) {
   const supabase = createCacheClient()
-  const { data } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', ownerId)
-    .single()
+  const { data } = await supabase.from('users').select('*').eq('id', ownerId).single()
 
   return data
 }
